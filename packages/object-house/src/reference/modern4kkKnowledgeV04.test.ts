@@ -35,7 +35,7 @@ test('every approved question can retrieve its answer without sending the entire
 test('paraphrased buyer questions retrieve useful facts, including technical reference evidence', () => {
   const cases: readonly [string, RegExp][] = [
     ['Kolik má dům metrů čtverečních užitné a zastavěné plochy?',/112,9/],
-    ['Jak velkou parcelu potřebuji?',/13.*26|16.*29/],
+    ['Jak velkou parcelu potřebuji?',/13[\s\S]*26|16[\s\S]*29/],
     ['Vejdeme se sem se třemi dětmi a potřebujeme pracovnu?',/třemi dětmi/],
     ['Čím se topí a jde i chladit?',/Zehnder/],
     ['Jakou má dům požární odolnost?',/REI 45/],
@@ -52,5 +52,5 @@ test('reference technical values do not become facts of an unrelated authored ho
     identity:{...context.specification.identity,role:'authored' as const}}};
   assert.ok(!selectCanonicalChatHouseKnowledge(other).facts.some(x=>x.scope==='REFERENCE_PROJECT'));
   const fire=canonicalHouseKnowledgeEntries(selection,'Jakou má dům požární odolnost?');
-  assert.ok(fire.some(x=>x.text.includes('REI 45') && x.text.includes('referenční realizace')));
+  assert.ok(fire.some(x=>x.text.includes('REI 45') && /referenční realizac[ei]/.test(x.text)));
 });

@@ -121,3 +121,5 @@ export {
   selectCanonicalChatHouseKnowledge,
   selectCanonicalHouseKnowledge,
 } from "./runtime-context/selectCanonicalHouseKnowledge";
+
+export { clientHouseKnowledgeText, clientHouseFactText } from "./knowledge/clientHouseKnowledgeText";

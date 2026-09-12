@@ -47,6 +47,7 @@ export type HouseKnowledgeSource = {
   readonly sourceId: string;
   readonly kind: HouseKnowledgeSourceKind;
   readonly label?: string;
+  readonly editorialNotes?: readonly string[];
 };
 
 /**
@@ -73,5 +74,9 @@ export type HouseKnowledgeAtom = {
   readonly interpretationPoint?: string;
   /** Conclusions that must not be inferred from this fact or Priority selection. */
   readonly unsupportedConclusions?: readonly string[];
+  /** Search-only vocabulary, never an additional factual assertion. */
+  readonly retrievalAliases?: readonly string[];
+  /** Client-readable limitations, distinct from instructions to the model. */
+  readonly clientQualifications?: readonly string[];
   readonly relatedTopics: readonly string[];
 };

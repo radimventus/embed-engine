@@ -96,11 +96,14 @@ export const KNOWLEDGE_V04: readonly HouseKnowledgeAtom[] = [
     "source": {
       "sourceId": "bungalov-4kk-xlsx04-r7",
       "kind": "PRODUCT_DOCUMENTATION",
-      "label": "XLSX 04, List 1, D7:H7"
+      "label": "XLSX 04, List 1, D7:H7",
+      "editorialNotes": [
+        "Odpověď schválená v XLSX 04; původní zdroj není v tabulce vyplněn."
+      ]
     },
     "temporalStatus": "CURRENT",
     "constraints": [
-      "Odpověď schválená v XLSX 04; původní zdroj není v tabulce vyplněn. Nevymýšlet citaci."
+      "Nevymýšlet citaci; doložený externí zdroj není k dispozici."
     ],
     "relatedTopics": [
       "dispozice",
@@ -500,11 +503,14 @@ export const KNOWLEDGE_V04: readonly HouseKnowledgeAtom[] = [
     "source": {
       "sourceId": "bungalov-4kk-xlsx04-r27",
       "kind": "PRODUCT_DOCUMENTATION",
-      "label": "XLSX 04, List 1, D27:H27"
+      "label": "XLSX 04, List 1, D27:H27",
+      "editorialNotes": [
+        "Odpověď schválená v XLSX 04; původní zdroj není v tabulce vyplněn."
+      ]
     },
     "temporalStatus": "CURRENT",
     "constraints": [
-      "Odpověď schválená v XLSX 04; původní zdroj není v tabulce vyplněn. Nevymýšlet citaci."
+      "Nevymýšlet citaci; doložený externí zdroj není k dispozici."
     ],
     "relatedTopics": [
       "dispozice",
@@ -542,11 +548,14 @@ export const KNOWLEDGE_V04: readonly HouseKnowledgeAtom[] = [
     "source": {
       "sourceId": "bungalov-4kk-xlsx04-r29",
       "kind": "PRODUCT_DOCUMENTATION",
-      "label": "XLSX 04, List 1, D29:H29"
+      "label": "XLSX 04, List 1, D29:H29",
+      "editorialNotes": [
+        "Odpověď schválená v XLSX 04; původní zdroj není v tabulce vyplněn."
+      ]
     },
     "temporalStatus": "CURRENT",
     "constraints": [
-      "Odpověď schválená v XLSX 04; původní zdroj není v tabulce vyplněn. Nevymýšlet citaci."
+      "Nevymýšlet citaci; doložený externí zdroj není k dispozici."
     ],
     "relatedTopics": [
       "dispozice",
@@ -584,11 +593,14 @@ export const KNOWLEDGE_V04: readonly HouseKnowledgeAtom[] = [
     "source": {
       "sourceId": "bungalov-4kk-xlsx04-r31",
       "kind": "PRODUCT_DOCUMENTATION",
-      "label": "XLSX 04, List 1, D31:H31"
+      "label": "XLSX 04, List 1, D31:H31",
+      "editorialNotes": [
+        "Odpověď schválená v XLSX 04; původní zdroj není v tabulce vyplněn."
+      ]
     },
     "temporalStatus": "CURRENT",
     "constraints": [
-      "Odpověď schválená v XLSX 04; původní zdroj není v tabulce vyplněn. Nevymýšlet citaci."
+      "Nevymýšlet citaci; doložený externí zdroj není k dispozici."
     ],
     "relatedTopics": [
       "dispozice",
@@ -759,11 +771,14 @@ export const KNOWLEDGE_V04: readonly HouseKnowledgeAtom[] = [
     "source": {
       "sourceId": "bungalov-4kk-xlsx04-r41",
       "kind": "PRODUCT_DOCUMENTATION",
-      "label": "XLSX 04, List 1, D41:H41"
+      "label": "XLSX 04, List 1, D41:H41",
+      "editorialNotes": [
+        "Odpověď schválená v XLSX 04; původní zdroj není v tabulce vyplněn."
+      ]
     },
     "temporalStatus": "CURRENT",
     "constraints": [
-      "Odpověď schválená v XLSX 04; původní zdroj není v tabulce vyplněn. Nevymýšlet citaci."
+      "Nevymýšlet citaci; doložený externí zdroj není k dispozici."
     ],
     "relatedTopics": [
       "pozemek"
@@ -858,11 +873,14 @@ export const KNOWLEDGE_V04: readonly HouseKnowledgeAtom[] = [
     "source": {
       "sourceId": "bungalov-4kk-xlsx04-r46",
       "kind": "PRODUCT_DOCUMENTATION",
-      "label": "XLSX 04, List 1, D46:H46"
+      "label": "XLSX 04, List 1, D46:H46",
+      "editorialNotes": [
+        "Odpověď schválená v XLSX 04; původní zdroj není v tabulce vyplněn."
+      ]
     },
     "temporalStatus": "CURRENT",
     "constraints": [
-      "Odpověď schválená v XLSX 04; původní zdroj není v tabulce vyplněn. Nevymýšlet citaci."
+      "Nevymýšlet citaci; doložený externí zdroj není k dispozici."
     ],
     "relatedTopics": [
       "pozemek"
@@ -879,11 +897,14 @@ export const KNOWLEDGE_V04: readonly HouseKnowledgeAtom[] = [
     "source": {
       "sourceId": "bungalov-4kk-xlsx04-r47",
       "kind": "PRODUCT_DOCUMENTATION",
-      "label": "XLSX 04, List 1, D47:H47"
+      "label": "XLSX 04, List 1, D47:H47",
+      "editorialNotes": [
+        "Odpověď schválená v XLSX 04; původní zdroj není v tabulce vyplněn."
+      ]
     },
     "temporalStatus": "CURRENT",
     "constraints": [
-      "Odpověď schválená v XLSX 04; původní zdroj není v tabulce vyplněn. Nevymýšlet citaci."
+      "Nevymýšlet citaci; doložený externí zdroj není k dispozici."
     ],
     "relatedTopics": [
       "pozemek"
@@ -919,11 +940,14 @@ export const KNOWLEDGE_V04: readonly HouseKnowledgeAtom[] = [
     "source": {
       "sourceId": "bungalov-4kk-xlsx04-r49",
       "kind": "PRODUCT_DOCUMENTATION",
-      "label": "XLSX 04, List 1, D49:H49"
+      "label": "XLSX 04, List 1, D49:H49",
+      "editorialNotes": [
+        "Odpověď schválená v XLSX 04; původní zdroj není v tabulce vyplněn."
+      ]
     },
     "temporalStatus": "CURRENT",
     "constraints": [
-      "Odpověď schválená v XLSX 04; původní zdroj není v tabulce vyplněn. Nevymýšlet citaci."
+      "Nevymýšlet citaci; doložený externí zdroj není k dispozici."
     ],
     "relatedTopics": [
       "pozemek"
@@ -997,11 +1021,14 @@ export const KNOWLEDGE_V04: readonly HouseKnowledgeAtom[] = [
     "source": {
       "sourceId": "bungalov-4kk-xlsx04-r53",
       "kind": "PRODUCT_DOCUMENTATION",
-      "label": "XLSX 04, List 1, D53:H53"
+      "label": "XLSX 04, List 1, D53:H53",
+      "editorialNotes": [
+        "Odpověď schválená v XLSX 04; původní zdroj není v tabulce vyplněn."
+      ]
     },
     "temporalStatus": "CURRENT",
     "constraints": [
-      "Odpověď schválená v XLSX 04; původní zdroj není v tabulce vyplněn. Nevymýšlet citaci."
+      "Nevymýšlet citaci; doložený externí zdroj není k dispozici."
     ],
     "relatedTopics": [
       "pozemek"
@@ -1018,11 +1045,14 @@ export const KNOWLEDGE_V04: readonly HouseKnowledgeAtom[] = [
     "source": {
       "sourceId": "bungalov-4kk-xlsx04-r54",
       "kind": "PRODUCT_DOCUMENTATION",
-      "label": "XLSX 04, List 1, D54:H54"
+      "label": "XLSX 04, List 1, D54:H54",
+      "editorialNotes": [
+        "Odpověď schválená v XLSX 04; původní zdroj není v tabulce vyplněn."
+      ]
     },
     "temporalStatus": "CURRENT",
     "constraints": [
-      "Odpověď schválená v XLSX 04; původní zdroj není v tabulce vyplněn. Nevymýšlet citaci."
+      "Nevymýšlet citaci; doložený externí zdroj není k dispozici."
     ],
     "relatedTopics": [
       "pozemek"
@@ -1519,11 +1549,14 @@ export const KNOWLEDGE_V04: readonly HouseKnowledgeAtom[] = [
     "source": {
       "sourceId": "bungalov-4kk-xlsx04-r80",
       "kind": "PRODUCT_DOCUMENTATION",
-      "label": "XLSX 04, List 1, D80:H80"
+      "label": "XLSX 04, List 1, D80:H80",
+      "editorialNotes": [
+        "Odpověď schválená v XLSX 04; původní zdroj není v tabulce vyplněn."
+      ]
     },
     "temporalStatus": "CURRENT",
     "constraints": [
-      "Odpověď schválená v XLSX 04; původní zdroj není v tabulce vyplněn. Nevymýšlet citaci."
+      "Nevymýšlet citaci; doložený externí zdroj není k dispozici."
     ],
     "relatedTopics": [
       "dispozice"
@@ -2058,12 +2091,15 @@ export const KNOWLEDGE_V04: readonly HouseKnowledgeAtom[] = [
     "source": {
       "sourceId": "bungalov-4kk-xlsx04-r106",
       "kind": "PRODUCT_DOCUMENTATION",
-      "label": "XLSX 04, List 1, D106:H106"
+      "label": "XLSX 04, List 1, D106:H106",
+      "editorialNotes": [
+        "Odpověď schválená v XLSX 04; původní zdroj není v tabulce vyplněn."
+      ]
     },
     "temporalStatus": "CURRENT",
     "constraints": [
       "Výběr priority není konfigurátor a neurčuje estetický vkus návštěvníka ani požadavek na změnu domu.",
-      "Odpověď schválená v XLSX 04; původní zdroj není v tabulce vyplněn. Nevymýšlet citaci."
+      "Nevymýšlet citaci; doložený externí zdroj není k dispozici."
     ],
     "relatedTopics": [
       "dispozice",
@@ -2103,12 +2139,15 @@ export const KNOWLEDGE_V04: readonly HouseKnowledgeAtom[] = [
     "source": {
       "sourceId": "bungalov-4kk-xlsx04-r109",
       "kind": "PRODUCT_DOCUMENTATION",
-      "label": "XLSX 04, List 1, D109:H109"
+      "label": "XLSX 04, List 1, D109:H109",
+      "editorialNotes": [
+        "Odpověď schválená v XLSX 04; původní zdroj není v tabulce vyplněn."
+      ]
     },
     "temporalStatus": "CURRENT",
     "constraints": [
       "Výběr priority není konfigurátor a neurčuje estetický vkus návštěvníka ani požadavek na změnu domu.",
-      "Odpověď schválená v XLSX 04; původní zdroj není v tabulce vyplněn. Nevymýšlet citaci."
+      "Nevymýšlet citaci; doložený externí zdroj není k dispozici."
     ],
     "relatedTopics": [
       "design",
@@ -2126,12 +2165,15 @@ export const KNOWLEDGE_V04: readonly HouseKnowledgeAtom[] = [
     "source": {
       "sourceId": "bungalov-4kk-xlsx04-r110",
       "kind": "PRODUCT_DOCUMENTATION",
-      "label": "XLSX 04, List 1, D110:H110"
+      "label": "XLSX 04, List 1, D110:H110",
+      "editorialNotes": [
+        "Odpověď schválená v XLSX 04; původní zdroj není v tabulce vyplněn."
+      ]
     },
     "temporalStatus": "CURRENT",
     "constraints": [
       "Výběr priority není konfigurátor a neurčuje estetický vkus návštěvníka ani požadavek na změnu domu.",
-      "Odpověď schválená v XLSX 04; původní zdroj není v tabulce vyplněn. Nevymýšlet citaci."
+      "Nevymýšlet citaci; doložený externí zdroj není k dispozici."
     ],
     "relatedTopics": [
       "design",
@@ -2149,12 +2191,15 @@ export const KNOWLEDGE_V04: readonly HouseKnowledgeAtom[] = [
     "source": {
       "sourceId": "bungalov-4kk-xlsx04-r111",
       "kind": "PRODUCT_DOCUMENTATION",
-      "label": "XLSX 04, List 1, D111:H111"
+      "label": "XLSX 04, List 1, D111:H111",
+      "editorialNotes": [
+        "Odpověď schválená v XLSX 04; původní zdroj není v tabulce vyplněn."
+      ]
     },
     "temporalStatus": "CURRENT",
     "constraints": [
       "Výběr priority není konfigurátor a neurčuje estetický vkus návštěvníka ani požadavek na změnu domu.",
-      "Odpověď schválená v XLSX 04; původní zdroj není v tabulce vyplněn. Nevymýšlet citaci."
+      "Nevymýšlet citaci; doložený externí zdroj není k dispozici."
     ],
     "relatedTopics": [
       "design",
@@ -2195,12 +2240,15 @@ export const KNOWLEDGE_V04: readonly HouseKnowledgeAtom[] = [
     "source": {
       "sourceId": "bungalov-4kk-xlsx04-r113",
       "kind": "PRODUCT_DOCUMENTATION",
-      "label": "XLSX 04, List 1, D113:H113"
+      "label": "XLSX 04, List 1, D113:H113",
+      "editorialNotes": [
+        "Odpověď schválená v XLSX 04; původní zdroj není v tabulce vyplněn."
+      ]
     },
     "temporalStatus": "CURRENT",
     "constraints": [
       "Výběr priority není konfigurátor a neurčuje estetický vkus návštěvníka ani požadavek na změnu domu.",
-      "Odpověď schválená v XLSX 04; původní zdroj není v tabulce vyplněn. Nevymýšlet citaci."
+      "Nevymýšlet citaci; doložený externí zdroj není k dispozici."
     ],
     "relatedTopics": [
       "design",
@@ -2218,12 +2266,15 @@ export const KNOWLEDGE_V04: readonly HouseKnowledgeAtom[] = [
     "source": {
       "sourceId": "bungalov-4kk-xlsx04-r114",
       "kind": "PRODUCT_DOCUMENTATION",
-      "label": "XLSX 04, List 1, D114:H114"
+      "label": "XLSX 04, List 1, D114:H114",
+      "editorialNotes": [
+        "Odpověď schválená v XLSX 04; původní zdroj není v tabulce vyplněn."
+      ]
     },
     "temporalStatus": "CURRENT",
     "constraints": [
       "Výběr priority není konfigurátor a neurčuje estetický vkus návštěvníka ani požadavek na změnu domu.",
-      "Odpověď schválená v XLSX 04; původní zdroj není v tabulce vyplněn. Nevymýšlet citaci."
+      "Nevymýšlet citaci; doložený externí zdroj není k dispozici."
     ],
     "relatedTopics": [
       "design",
@@ -2241,12 +2292,15 @@ export const KNOWLEDGE_V04: readonly HouseKnowledgeAtom[] = [
     "source": {
       "sourceId": "bungalov-4kk-xlsx04-r115",
       "kind": "PRODUCT_DOCUMENTATION",
-      "label": "XLSX 04, List 1, D115:H115"
+      "label": "XLSX 04, List 1, D115:H115",
+      "editorialNotes": [
+        "Odpověď schválená v XLSX 04; původní zdroj není v tabulce vyplněn."
+      ]
     },
     "temporalStatus": "CURRENT",
     "constraints": [
       "Výběr priority není konfigurátor a neurčuje estetický vkus návštěvníka ani požadavek na změnu domu.",
-      "Odpověď schválená v XLSX 04; původní zdroj není v tabulce vyplněn. Nevymýšlet citaci."
+      "Nevymýšlet citaci; doložený externí zdroj není k dispozici."
     ],
     "relatedTopics": [
       "design",
@@ -2287,12 +2341,15 @@ export const KNOWLEDGE_V04: readonly HouseKnowledgeAtom[] = [
     "source": {
       "sourceId": "bungalov-4kk-xlsx04-r117",
       "kind": "PRODUCT_DOCUMENTATION",
-      "label": "XLSX 04, List 1, D117:H117"
+      "label": "XLSX 04, List 1, D117:H117",
+      "editorialNotes": [
+        "Odpověď schválená v XLSX 04; původní zdroj není v tabulce vyplněn."
+      ]
     },
     "temporalStatus": "CURRENT",
     "constraints": [
       "Výběr priority není konfigurátor a neurčuje estetický vkus návštěvníka ani požadavek na změnu domu.",
-      "Odpověď schválená v XLSX 04; původní zdroj není v tabulce vyplněn. Nevymýšlet citaci."
+      "Nevymýšlet citaci; doložený externí zdroj není k dispozici."
     ],
     "relatedTopics": [
       "design",
@@ -2310,12 +2367,15 @@ export const KNOWLEDGE_V04: readonly HouseKnowledgeAtom[] = [
     "source": {
       "sourceId": "bungalov-4kk-xlsx04-r118",
       "kind": "PRODUCT_DOCUMENTATION",
-      "label": "XLSX 04, List 1, D118:H118"
+      "label": "XLSX 04, List 1, D118:H118",
+      "editorialNotes": [
+        "Odpověď schválená v XLSX 04; původní zdroj není v tabulce vyplněn."
+      ]
     },
     "temporalStatus": "CURRENT",
     "constraints": [
       "Výběr priority není konfigurátor a neurčuje estetický vkus návštěvníka ani požadavek na změnu domu.",
-      "Odpověď schválená v XLSX 04; původní zdroj není v tabulce vyplněn. Nevymýšlet citaci."
+      "Nevymýšlet citaci; doložený externí zdroj není k dispozici."
     ],
     "relatedTopics": [
       "design",
@@ -2622,12 +2682,15 @@ export const KNOWLEDGE_V04: readonly HouseKnowledgeAtom[] = [
     "source": {
       "sourceId": "bungalov-4kk-xlsx04-r134",
       "kind": "PRODUCT_DOCUMENTATION",
-      "label": "XLSX 04, List 1, D134:H134"
+      "label": "XLSX 04, List 1, D134:H134",
+      "editorialNotes": [
+        "Odpověď schválená v XLSX 04; původní zdroj není v tabulce vyplněn."
+      ]
     },
     "temporalStatus": "CURRENT",
     "constraints": [
       "Výběr priority není konfigurátor a neurčuje estetický vkus návštěvníka ani požadavek na změnu domu.",
-      "Odpověď schválená v XLSX 04; původní zdroj není v tabulce vyplněn. Nevymýšlet citaci."
+      "Nevymýšlet citaci; doložený externí zdroj není k dispozici."
     ],
     "relatedTopics": [
       "flexibilita",
@@ -2645,12 +2708,15 @@ export const KNOWLEDGE_V04: readonly HouseKnowledgeAtom[] = [
     "source": {
       "sourceId": "bungalov-4kk-xlsx04-r135",
       "kind": "PRODUCT_DOCUMENTATION",
-      "label": "XLSX 04, List 1, D135:H135"
+      "label": "XLSX 04, List 1, D135:H135",
+      "editorialNotes": [
+        "Odpověď schválená v XLSX 04; původní zdroj není v tabulce vyplněn."
+      ]
     },
     "temporalStatus": "CURRENT",
     "constraints": [
       "Výběr priority není konfigurátor a neurčuje estetický vkus návštěvníka ani požadavek na změnu domu.",
-      "Odpověď schválená v XLSX 04; původní zdroj není v tabulce vyplněn. Nevymýšlet citaci."
+      "Nevymýšlet citaci; doložený externí zdroj není k dispozici."
     ],
     "relatedTopics": [
       "flexibilita",
@@ -2712,12 +2778,15 @@ export const KNOWLEDGE_V04: readonly HouseKnowledgeAtom[] = [
     "source": {
       "sourceId": "bungalov-4kk-xlsx04-r138",
       "kind": "PRODUCT_DOCUMENTATION",
-      "label": "XLSX 04, List 1, D138:H138"
+      "label": "XLSX 04, List 1, D138:H138",
+      "editorialNotes": [
+        "Odpověď schválená v XLSX 04; původní zdroj není v tabulce vyplněn."
+      ]
     },
     "temporalStatus": "CURRENT",
     "constraints": [
       "Výběr priority není konfigurátor a neurčuje estetický vkus návštěvníka ani požadavek na změnu domu.",
-      "Odpověď schválená v XLSX 04; původní zdroj není v tabulce vyplněn. Nevymýšlet citaci."
+      "Nevymýšlet citaci; doložený externí zdroj není k dispozici."
     ],
     "relatedTopics": [
       "flexibilita",
@@ -2801,12 +2870,15 @@ export const KNOWLEDGE_V04: readonly HouseKnowledgeAtom[] = [
     "source": {
       "sourceId": "bungalov-4kk-xlsx04-r142",
       "kind": "PRODUCT_DOCUMENTATION",
-      "label": "XLSX 04, List 1, D142:H142"
+      "label": "XLSX 04, List 1, D142:H142",
+      "editorialNotes": [
+        "Odpověď schválená v XLSX 04; původní zdroj není v tabulce vyplněn."
+      ]
     },
     "temporalStatus": "CURRENT",
     "constraints": [
       "Výběr priority není konfigurátor a neurčuje estetický vkus návštěvníka ani požadavek na změnu domu.",
-      "Odpověď schválená v XLSX 04; původní zdroj není v tabulce vyplněn. Nevymýšlet citaci."
+      "Nevymýšlet citaci; doložený externí zdroj není k dispozici."
     ],
     "relatedTopics": [
       "flexibilita",
@@ -3041,11 +3113,14 @@ export const KNOWLEDGE_V04: readonly HouseKnowledgeAtom[] = [
     "source": {
       "sourceId": "bungalov-4kk-xlsx04-r156",
       "kind": "PRODUCT_DOCUMENTATION",
-      "label": "XLSX 04, List 1, D156:H156"
+      "label": "XLSX 04, List 1, D156:H156",
+      "editorialNotes": [
+        "Odpověď schválená v XLSX 04; původní zdroj není v tabulce vyplněn."
+      ]
     },
     "temporalStatus": "CURRENT",
     "constraints": [
-      "Odpověď schválená v XLSX 04; původní zdroj není v tabulce vyplněn. Nevymýšlet citaci."
+      "Nevymýšlet citaci; doložený externí zdroj není k dispozici."
     ],
     "relatedTopics": [
       "kvalita",
@@ -3083,11 +3158,14 @@ export const KNOWLEDGE_V04: readonly HouseKnowledgeAtom[] = [
     "source": {
       "sourceId": "bungalov-4kk-xlsx04-r158",
       "kind": "PRODUCT_DOCUMENTATION",
-      "label": "XLSX 04, List 1, D158:H158"
+      "label": "XLSX 04, List 1, D158:H158",
+      "editorialNotes": [
+        "Odpověď schválená v XLSX 04; původní zdroj není v tabulce vyplněn."
+      ]
     },
     "temporalStatus": "CURRENT",
     "constraints": [
-      "Odpověď schválená v XLSX 04; původní zdroj není v tabulce vyplněn. Nevymýšlet citaci."
+      "Nevymýšlet citaci; doložený externí zdroj není k dispozici."
     ],
     "relatedTopics": [
       "kvalita",
@@ -3145,11 +3223,14 @@ export const KNOWLEDGE_V04: readonly HouseKnowledgeAtom[] = [
     "source": {
       "sourceId": "bungalov-4kk-xlsx04-r161",
       "kind": "PRODUCT_DOCUMENTATION",
-      "label": "XLSX 04, List 1, D161:H161"
+      "label": "XLSX 04, List 1, D161:H161",
+      "editorialNotes": [
+        "Odpověď schválená v XLSX 04; původní zdroj není v tabulce vyplněn."
+      ]
     },
     "temporalStatus": "CURRENT",
     "constraints": [
-      "Odpověď schválená v XLSX 04; původní zdroj není v tabulce vyplněn. Nevymýšlet citaci."
+      "Nevymýšlet citaci; doložený externí zdroj není k dispozici."
     ],
     "relatedTopics": [
       "kvalita",
@@ -3438,11 +3519,14 @@ export const KNOWLEDGE_V04: readonly HouseKnowledgeAtom[] = [
     "source": {
       "sourceId": "bungalov-4kk-xlsx04-r210",
       "kind": "PRODUCT_DOCUMENTATION",
-      "label": "XLSX 04, List 1, D210:H210"
+      "label": "XLSX 04, List 1, D210:H210",
+      "editorialNotes": [
+        "Odpověď schválená v XLSX 04; původní zdroj není v tabulce vyplněn."
+      ]
     },
     "temporalStatus": "CURRENT",
     "constraints": [
-      "Odpověď schválená v XLSX 04; původní zdroj není v tabulce vyplněn. Nevymýšlet citaci."
+      "Nevymýšlet citaci; doložený externí zdroj není k dispozici."
     ],
     "relatedTopics": [
       "pozemek",
@@ -3460,11 +3544,14 @@ export const KNOWLEDGE_V04: readonly HouseKnowledgeAtom[] = [
     "source": {
       "sourceId": "bungalov-4kk-xlsx04-r211",
       "kind": "PRODUCT_DOCUMENTATION",
-      "label": "XLSX 04, List 1, D211:H211"
+      "label": "XLSX 04, List 1, D211:H211",
+      "editorialNotes": [
+        "Odpověď schválená v XLSX 04; původní zdroj není v tabulce vyplněn."
+      ]
     },
     "temporalStatus": "CURRENT",
     "constraints": [
-      "Odpověď schválená v XLSX 04; původní zdroj není v tabulce vyplněn. Nevymýšlet citaci."
+      "Nevymýšlet citaci; doložený externí zdroj není k dispozici."
     ],
     "relatedTopics": [
       "pozemek",
@@ -3482,11 +3569,14 @@ export const KNOWLEDGE_V04: readonly HouseKnowledgeAtom[] = [
     "source": {
       "sourceId": "bungalov-4kk-xlsx04-r212",
       "kind": "PRODUCT_DOCUMENTATION",
-      "label": "XLSX 04, List 1, D212:H212"
+      "label": "XLSX 04, List 1, D212:H212",
+      "editorialNotes": [
+        "Odpověď schválená v XLSX 04; původní zdroj není v tabulce vyplněn."
+      ]
     },
     "temporalStatus": "CURRENT",
     "constraints": [
-      "Odpověď schválená v XLSX 04; původní zdroj není v tabulce vyplněn. Nevymýšlet citaci."
+      "Nevymýšlet citaci; doložený externí zdroj není k dispozici."
     ],
     "relatedTopics": [
       "pozemek",
@@ -3709,11 +3799,14 @@ export const KNOWLEDGE_V04: readonly HouseKnowledgeAtom[] = [
     "source": {
       "sourceId": "bungalov-4kk-xlsx04-r244",
       "kind": "PRODUCT_DOCUMENTATION",
-      "label": "XLSX 04, List 1, D244:H244"
+      "label": "XLSX 04, List 1, D244:H244",
+      "editorialNotes": [
+        "Odpověď schválená v XLSX 04; původní zdroj není v tabulce vyplněn."
+      ]
     },
     "temporalStatus": "CURRENT",
     "constraints": [
-      "Odpověď schválená v XLSX 04; původní zdroj není v tabulce vyplněn. Nevymýšlet citaci."
+      "Nevymýšlet citaci; doložený externí zdroj není k dispozici."
     ],
     "relatedTopics": [
       "kvalita"
@@ -3749,11 +3842,14 @@ export const KNOWLEDGE_V04: readonly HouseKnowledgeAtom[] = [
     "source": {
       "sourceId": "bungalov-4kk-xlsx04-r246",
       "kind": "PRODUCT_DOCUMENTATION",
-      "label": "XLSX 04, List 1, D246:H246"
+      "label": "XLSX 04, List 1, D246:H246",
+      "editorialNotes": [
+        "Odpověď schválená v XLSX 04; původní zdroj není v tabulce vyplněn."
+      ]
     },
     "temporalStatus": "CURRENT",
     "constraints": [
-      "Odpověď schválená v XLSX 04; původní zdroj není v tabulce vyplněn. Nevymýšlet citaci."
+      "Nevymýšlet citaci; doložený externí zdroj není k dispozici."
     ],
     "relatedTopics": [
       "kvalita"
@@ -3833,11 +3929,14 @@ export const KNOWLEDGE_V04: readonly HouseKnowledgeAtom[] = [
     "source": {
       "sourceId": "bungalov-4kk-xlsx04-r250",
       "kind": "PRODUCT_DOCUMENTATION",
-      "label": "XLSX 04, List 1, D250:H250"
+      "label": "XLSX 04, List 1, D250:H250",
+      "editorialNotes": [
+        "Odpověď schválená v XLSX 04; původní zdroj není v tabulce vyplněn."
+      ]
     },
     "temporalStatus": "CURRENT",
     "constraints": [
-      "Odpověď schválená v XLSX 04; původní zdroj není v tabulce vyplněn. Nevymýšlet citaci."
+      "Nevymýšlet citaci; doložený externí zdroj není k dispozici."
     ],
     "relatedTopics": [
       "kvalita"
@@ -3854,11 +3953,14 @@ export const KNOWLEDGE_V04: readonly HouseKnowledgeAtom[] = [
     "source": {
       "sourceId": "bungalov-4kk-xlsx04-r251",
       "kind": "PRODUCT_DOCUMENTATION",
-      "label": "XLSX 04, List 1, D251:H251"
+      "label": "XLSX 04, List 1, D251:H251",
+      "editorialNotes": [
+        "Odpověď schválená v XLSX 04; původní zdroj není v tabulce vyplněn."
+      ]
     },
     "temporalStatus": "CURRENT",
     "constraints": [
-      "Odpověď schválená v XLSX 04; původní zdroj není v tabulce vyplněn. Nevymýšlet citaci."
+      "Nevymýšlet citaci; doložený externí zdroj není k dispozici."
     ],
     "relatedTopics": [
       "kvalita"
@@ -4393,11 +4495,14 @@ export const KNOWLEDGE_V04: readonly HouseKnowledgeAtom[] = [
     "source": {
       "sourceId": "bungalov-4kk-xlsx04-r285",
       "kind": "PRODUCT_DOCUMENTATION",
-      "label": "XLSX 04, List 1, D285:H285"
+      "label": "XLSX 04, List 1, D285:H285",
+      "editorialNotes": [
+        "Odpověď schválená v XLSX 04; původní zdroj není v tabulce vyplněn."
+      ]
     },
     "temporalStatus": "CURRENT",
     "constraints": [
-      "Odpověď schválená v XLSX 04; původní zdroj není v tabulce vyplněn. Nevymýšlet citaci."
+      "Nevymýšlet citaci; doložený externí zdroj není k dispozici."
     ],
     "relatedTopics": [
       "design",
@@ -4594,11 +4699,14 @@ export const KNOWLEDGE_V04: readonly HouseKnowledgeAtom[] = [
     "source": {
       "sourceId": "bungalov-4kk-xlsx04-r294",
       "kind": "PRODUCT_DOCUMENTATION",
-      "label": "XLSX 04, List 1, D294:H294"
+      "label": "XLSX 04, List 1, D294:H294",
+      "editorialNotes": [
+        "Odpověď schválená v XLSX 04; původní zdroj není v tabulce vyplněn."
+      ]
     },
     "temporalStatus": "CURRENT",
     "constraints": [
-      "Odpověď schválená v XLSX 04; původní zdroj není v tabulce vyplněn. Nevymýšlet citaci."
+      "Nevymýšlet citaci; doložený externí zdroj není k dispozici."
     ],
     "relatedTopics": [
       "design",
@@ -4617,11 +4725,14 @@ export const KNOWLEDGE_V04: readonly HouseKnowledgeAtom[] = [
     "source": {
       "sourceId": "bungalov-4kk-xlsx04-r295",
       "kind": "PRODUCT_DOCUMENTATION",
-      "label": "XLSX 04, List 1, D295:H295"
+      "label": "XLSX 04, List 1, D295:H295",
+      "editorialNotes": [
+        "Odpověď schválená v XLSX 04; původní zdroj není v tabulce vyplněn."
+      ]
     },
     "temporalStatus": "CURRENT",
     "constraints": [
-      "Odpověď schválená v XLSX 04; původní zdroj není v tabulce vyplněn. Nevymýšlet citaci."
+      "Nevymýšlet citaci; doložený externí zdroj není k dispozici."
     ],
     "relatedTopics": [
       "design",
@@ -5541,11 +5652,14 @@ export const KNOWLEDGE_V04: readonly HouseKnowledgeAtom[] = [
     "source": {
       "sourceId": "bungalov-4kk-xlsx04-r342",
       "kind": "PRODUCT_DOCUMENTATION",
-      "label": "XLSX 04, List 1, D342:H342"
+      "label": "XLSX 04, List 1, D342:H342",
+      "editorialNotes": [
+        "Odpověď schválená v XLSX 04; původní zdroj není v tabulce vyplněn."
+      ]
     },
     "temporalStatus": "CURRENT",
     "constraints": [
-      "Odpověď schválená v XLSX 04; původní zdroj není v tabulce vyplněn. Nevymýšlet citaci."
+      "Nevymýšlet citaci; doložený externí zdroj není k dispozici."
     ],
     "relatedTopics": [
       "kvalita"
@@ -5941,6 +6055,12 @@ export const KNOWLEDGE_V04: readonly HouseKnowledgeAtom[] = [
     "relatedTopics": [
       "kvalita",
       "údržba"
+    ],
+    "retrievalAliases": [
+      "rekuperace odpadní vody",
+      "zpětné získávání tepla",
+      "energetika",
+      "úsporná energetická řešení"
     ]
   },
   {
@@ -5961,6 +6081,12 @@ export const KNOWLEDGE_V04: readonly HouseKnowledgeAtom[] = [
     "relatedTopics": [
       "kvalita",
       "údržba"
+    ],
+    "retrievalAliases": [
+      "rekuperace odpadní vody",
+      "zpětné získávání tepla",
+      "energetika",
+      "úsporná energetická řešení"
     ]
   },
   {
@@ -6046,6 +6172,11 @@ export const KNOWLEDGE_V04: readonly HouseKnowledgeAtom[] = [
       "energie",
       "provozní-náklady",
       "údržba"
+    ],
+    "retrievalAliases": [
+      "vytápění chlazení",
+      "energetika",
+      "úsporná energetická řešení"
     ]
   },
   {
@@ -6067,6 +6198,11 @@ export const KNOWLEDGE_V04: readonly HouseKnowledgeAtom[] = [
       "energie",
       "provozní-náklady",
       "údržba"
+    ],
+    "retrievalAliases": [
+      "vytápění chlazení",
+      "energetika",
+      "úsporná energetická řešení"
     ]
   },
   {
@@ -6153,6 +6289,11 @@ export const KNOWLEDGE_V04: readonly HouseKnowledgeAtom[] = [
       "energie",
       "provozní-náklady",
       "údržba"
+    ],
+    "retrievalAliases": [
+      "větrání rekuperace vzduchu",
+      "energetika",
+      "úsporná energetická řešení"
     ]
   },
   {
@@ -6174,6 +6315,11 @@ export const KNOWLEDGE_V04: readonly HouseKnowledgeAtom[] = [
       "energie",
       "provozní-náklady",
       "údržba"
+    ],
+    "retrievalAliases": [
+      "větrání rekuperace vzduchu",
+      "energetika",
+      "úsporná energetická řešení"
     ]
   },
   {
@@ -6208,11 +6354,14 @@ export const KNOWLEDGE_V04: readonly HouseKnowledgeAtom[] = [
     "source": {
       "sourceId": "bungalov-4kk-xlsx04-r390",
       "kind": "PRODUCT_DOCUMENTATION",
-      "label": "XLSX 04, List 1, D390:H390"
+      "label": "XLSX 04, List 1, D390:H390",
+      "editorialNotes": [
+        "Odpověď schválená v XLSX 04; původní zdroj není v tabulce vyplněn."
+      ]
     },
     "temporalStatus": "CURRENT",
     "constraints": [
-      "Odpověď schválená v XLSX 04; původní zdroj není v tabulce vyplněn. Nevymýšlet citaci."
+      "Nevymýšlet citaci; doložený externí zdroj není k dispozici."
     ],
     "relatedTopics": [
       "energie",
@@ -6350,6 +6499,12 @@ export const KNOWLEDGE_V04: readonly HouseKnowledgeAtom[] = [
       "energie",
       "provozní-náklady",
       "údržba"
+    ],
+    "retrievalAliases": [
+      "rekuperace odpadní vody",
+      "zpětné získávání tepla",
+      "energetika",
+      "úsporná energetická řešení"
     ]
   },
   {
@@ -6363,11 +6518,14 @@ export const KNOWLEDGE_V04: readonly HouseKnowledgeAtom[] = [
     "source": {
       "sourceId": "bungalov-4kk-xlsx04-r397",
       "kind": "PRODUCT_DOCUMENTATION",
-      "label": "XLSX 04, List 1, D397:H397"
+      "label": "XLSX 04, List 1, D397:H397",
+      "editorialNotes": [
+        "Odpověď schválená v XLSX 04; původní zdroj není v tabulce vyplněn."
+      ]
     },
     "temporalStatus": "CURRENT",
     "constraints": [
-      "Odpověď schválená v XLSX 04; původní zdroj není v tabulce vyplněn. Nevymýšlet citaci."
+      "Nevymýšlet citaci; doložený externí zdroj není k dispozici."
     ],
     "relatedTopics": [
       "energie",
@@ -8074,11 +8232,14 @@ export const KNOWLEDGE_V04: readonly HouseKnowledgeAtom[] = [
     "source": {
       "sourceId": "bungalov-4kk-xlsx04-r519",
       "kind": "PRODUCT_DOCUMENTATION",
-      "label": "XLSX 04, List 1, D519:H519"
+      "label": "XLSX 04, List 1, D519:H519",
+      "editorialNotes": [
+        "Odpověď schválená v XLSX 04; původní zdroj není v tabulce vyplněn."
+      ]
     },
     "temporalStatus": "CURRENT",
     "constraints": [
-      "Odpověď schválená v XLSX 04; původní zdroj není v tabulce vyplněn. Nevymýšlet citaci."
+      "Nevymýšlet citaci; doložený externí zdroj není k dispozici."
     ],
     "relatedTopics": [
       "dispozice",
@@ -8591,11 +8752,14 @@ export const KNOWLEDGE_V04: readonly HouseKnowledgeAtom[] = [
     "source": {
       "sourceId": "bungalov-4kk-xlsx04-r546",
       "kind": "PRODUCT_DOCUMENTATION",
-      "label": "XLSX 04, List 1, D546:H546"
+      "label": "XLSX 04, List 1, D546:H546",
+      "editorialNotes": [
+        "Odpověď schválená v XLSX 04; původní zdroj není v tabulce vyplněn."
+      ]
     },
     "temporalStatus": "CURRENT",
     "constraints": [
-      "Odpověď schválená v XLSX 04; původní zdroj není v tabulce vyplněn. Nevymýšlet citaci."
+      "Nevymýšlet citaci; doložený externí zdroj není k dispozici."
     ],
     "relatedTopics": [
       "dispozice"
@@ -8877,11 +9041,14 @@ export const KNOWLEDGE_V04: readonly HouseKnowledgeAtom[] = [
     "source": {
       "sourceId": "bungalov-4kk-xlsx04-r561",
       "kind": "PRODUCT_DOCUMENTATION",
-      "label": "XLSX 04, List 1, D561:H561"
+      "label": "XLSX 04, List 1, D561:H561",
+      "editorialNotes": [
+        "Odpověď schválená v XLSX 04; původní zdroj není v tabulce vyplněn."
+      ]
     },
     "temporalStatus": "CURRENT",
     "constraints": [
-      "Odpověď schválená v XLSX 04; původní zdroj není v tabulce vyplněn. Nevymýšlet citaci."
+      "Nevymýšlet citaci; doložený externí zdroj není k dispozici."
     ],
     "relatedTopics": [
       "soukromí"
@@ -8917,11 +9084,14 @@ export const KNOWLEDGE_V04: readonly HouseKnowledgeAtom[] = [
     "source": {
       "sourceId": "bungalov-4kk-xlsx04-r563",
       "kind": "PRODUCT_DOCUMENTATION",
-      "label": "XLSX 04, List 1, D563:H563"
+      "label": "XLSX 04, List 1, D563:H563",
+      "editorialNotes": [
+        "Odpověď schválená v XLSX 04; původní zdroj není v tabulce vyplněn."
+      ]
     },
     "temporalStatus": "CURRENT",
     "constraints": [
-      "Odpověď schválená v XLSX 04; původní zdroj není v tabulce vyplněn. Nevymýšlet citaci."
+      "Nevymýšlet citaci; doložený externí zdroj není k dispozici."
     ],
     "relatedTopics": [
       "soukromí"
@@ -9096,11 +9266,14 @@ export const KNOWLEDGE_V04: readonly HouseKnowledgeAtom[] = [
     "source": {
       "sourceId": "bungalov-4kk-xlsx04-r573",
       "kind": "PRODUCT_DOCUMENTATION",
-      "label": "XLSX 04, List 1, D573:H573"
+      "label": "XLSX 04, List 1, D573:H573",
+      "editorialNotes": [
+        "Odpověď schválená v XLSX 04; původní zdroj není v tabulce vyplněn."
+      ]
     },
     "temporalStatus": "CURRENT",
     "constraints": [
-      "Odpověď schválená v XLSX 04; původní zdroj není v tabulce vyplněn. Nevymýšlet citaci."
+      "Nevymýšlet citaci; doložený externí zdroj není k dispozici."
     ],
     "relatedTopics": [
       "design",
@@ -9244,11 +9417,14 @@ export const KNOWLEDGE_V04: readonly HouseKnowledgeAtom[] = [
     "source": {
       "sourceId": "bungalov-4kk-xlsx04-r580",
       "kind": "PRODUCT_DOCUMENTATION",
-      "label": "XLSX 04, List 1, D580:H580"
+      "label": "XLSX 04, List 1, D580:H580",
+      "editorialNotes": [
+        "Odpověď schválená v XLSX 04; původní zdroj není v tabulce vyplněn."
+      ]
     },
     "temporalStatus": "CURRENT",
     "constraints": [
-      "Odpověď schválená v XLSX 04; původní zdroj není v tabulce vyplněn. Nevymýšlet citaci."
+      "Nevymýšlet citaci; doložený externí zdroj není k dispozici."
     ],
     "relatedTopics": [
       "design",
@@ -9286,11 +9462,14 @@ export const KNOWLEDGE_V04: readonly HouseKnowledgeAtom[] = [
     "source": {
       "sourceId": "bungalov-4kk-xlsx04-r582",
       "kind": "PRODUCT_DOCUMENTATION",
-      "label": "XLSX 04, List 1, D582:H582"
+      "label": "XLSX 04, List 1, D582:H582",
+      "editorialNotes": [
+        "Odpověď schválená v XLSX 04; původní zdroj není v tabulce vyplněn."
+      ]
     },
     "temporalStatus": "CURRENT",
     "constraints": [
-      "Odpověď schválená v XLSX 04; původní zdroj není v tabulce vyplněn. Nevymýšlet citaci."
+      "Nevymýšlet citaci; doložený externí zdroj není k dispozici."
     ],
     "relatedTopics": [
       "design",
@@ -9308,11 +9487,14 @@ export const KNOWLEDGE_V04: readonly HouseKnowledgeAtom[] = [
     "source": {
       "sourceId": "bungalov-4kk-xlsx04-r583",
       "kind": "PRODUCT_DOCUMENTATION",
-      "label": "XLSX 04, List 1, D583:H583"
+      "label": "XLSX 04, List 1, D583:H583",
+      "editorialNotes": [
+        "Odpověď schválená v XLSX 04; původní zdroj není v tabulce vyplněn."
+      ]
     },
     "temporalStatus": "CURRENT",
     "constraints": [
-      "Odpověď schválená v XLSX 04; původní zdroj není v tabulce vyplněn. Nevymýšlet citaci."
+      "Nevymýšlet citaci; doložený externí zdroj není k dispozici."
     ],
     "relatedTopics": [
       "design",
@@ -9806,11 +9988,14 @@ export const KNOWLEDGE_V04: readonly HouseKnowledgeAtom[] = [
     "source": {
       "sourceId": "bungalov-4kk-xlsx04-r608",
       "kind": "PRODUCT_DOCUMENTATION",
-      "label": "XLSX 04, List 1, D608:H608"
+      "label": "XLSX 04, List 1, D608:H608",
+      "editorialNotes": [
+        "Odpověď schválená v XLSX 04; původní zdroj není v tabulce vyplněn."
+      ]
     },
     "temporalStatus": "CURRENT",
     "constraints": [
-      "Odpověď schválená v XLSX 04; původní zdroj není v tabulce vyplněn. Nevymýšlet citaci."
+      "Nevymýšlet citaci; doložený externí zdroj není k dispozici."
     ],
     "relatedTopics": [
       "pozemek",
@@ -9972,11 +10157,14 @@ export const KNOWLEDGE_V04: readonly HouseKnowledgeAtom[] = [
     "source": {
       "sourceId": "bungalov-4kk-xlsx04-r617",
       "kind": "PRODUCT_DOCUMENTATION",
-      "label": "XLSX 04, List 1, D617:H617"
+      "label": "XLSX 04, List 1, D617:H617",
+      "editorialNotes": [
+        "Odpověď schválená v XLSX 04; původní zdroj není v tabulce vyplněn."
+      ]
     },
     "temporalStatus": "CURRENT",
     "constraints": [
-      "Odpověď schválená v XLSX 04; původní zdroj není v tabulce vyplněn. Nevymýšlet citaci."
+      "Nevymýšlet citaci; doložený externí zdroj není k dispozici."
     ],
     "relatedTopics": [
       "soukromí",
@@ -9994,11 +10182,14 @@ export const KNOWLEDGE_V04: readonly HouseKnowledgeAtom[] = [
     "source": {
       "sourceId": "bungalov-4kk-xlsx04-r618",
       "kind": "PRODUCT_DOCUMENTATION",
-      "label": "XLSX 04, List 1, D618:H618"
+      "label": "XLSX 04, List 1, D618:H618",
+      "editorialNotes": [
+        "Odpověď schválená v XLSX 04; původní zdroj není v tabulce vyplněn."
+      ]
     },
     "temporalStatus": "CURRENT",
     "constraints": [
-      "Odpověď schválená v XLSX 04; původní zdroj není v tabulce vyplněn. Nevymýšlet citaci."
+      "Nevymýšlet citaci; doložený externí zdroj není k dispozici."
     ],
     "relatedTopics": [
       "soukromí",
@@ -10016,11 +10207,14 @@ export const KNOWLEDGE_V04: readonly HouseKnowledgeAtom[] = [
     "source": {
       "sourceId": "bungalov-4kk-xlsx04-r619",
       "kind": "PRODUCT_DOCUMENTATION",
-      "label": "XLSX 04, List 1, D619:H619"
+      "label": "XLSX 04, List 1, D619:H619",
+      "editorialNotes": [
+        "Odpověď schválená v XLSX 04; původní zdroj není v tabulce vyplněn."
+      ]
     },
     "temporalStatus": "CURRENT",
     "constraints": [
-      "Odpověď schválená v XLSX 04; původní zdroj není v tabulce vyplněn. Nevymýšlet citaci."
+      "Nevymýšlet citaci; doložený externí zdroj není k dispozici."
     ],
     "relatedTopics": [
       "soukromí",
@@ -10100,11 +10294,14 @@ export const KNOWLEDGE_V04: readonly HouseKnowledgeAtom[] = [
     "source": {
       "sourceId": "bungalov-4kk-xlsx04-r623",
       "kind": "PRODUCT_DOCUMENTATION",
-      "label": "XLSX 04, List 1, D623:H623"
+      "label": "XLSX 04, List 1, D623:H623",
+      "editorialNotes": [
+        "Odpověď schválená v XLSX 04; původní zdroj není v tabulce vyplněn."
+      ]
     },
     "temporalStatus": "CURRENT",
     "constraints": [
-      "Odpověď schválená v XLSX 04; původní zdroj není v tabulce vyplněn. Nevymýšlet citaci."
+      "Nevymýšlet citaci; doložený externí zdroj není k dispozici."
     ],
     "relatedTopics": [
       "soukromí",
@@ -10122,11 +10319,14 @@ export const KNOWLEDGE_V04: readonly HouseKnowledgeAtom[] = [
     "source": {
       "sourceId": "bungalov-4kk-xlsx04-r624",
       "kind": "PRODUCT_DOCUMENTATION",
-      "label": "XLSX 04, List 1, D624:H624"
+      "label": "XLSX 04, List 1, D624:H624",
+      "editorialNotes": [
+        "Odpověď schválená v XLSX 04; původní zdroj není v tabulce vyplněn."
+      ]
     },
     "temporalStatus": "CURRENT",
     "constraints": [
-      "Odpověď schválená v XLSX 04; původní zdroj není v tabulce vyplněn. Nevymýšlet citaci."
+      "Nevymýšlet citaci; doložený externí zdroj není k dispozici."
     ],
     "relatedTopics": [
       "soukromí",
@@ -10310,11 +10510,14 @@ export const KNOWLEDGE_V04: readonly HouseKnowledgeAtom[] = [
     "source": {
       "sourceId": "bungalov-4kk-xlsx04-r634",
       "kind": "PRODUCT_DOCUMENTATION",
-      "label": "XLSX 04, List 1, D634:H634"
+      "label": "XLSX 04, List 1, D634:H634",
+      "editorialNotes": [
+        "Odpověď schválená v XLSX 04; původní zdroj není v tabulce vyplněn."
+      ]
     },
     "temporalStatus": "CURRENT",
     "constraints": [
-      "Odpověď schválená v XLSX 04; původní zdroj není v tabulce vyplněn. Nevymýšlet citaci.",
+      "Nevymýšlet citaci; doložený externí zdroj není k dispozici.",
       "Popis referenčního domu není cenová nabídka ani garance budoucích nákladů, výnosů či bezúdržbovosti."
     ],
     "relatedTopics": [
@@ -10355,11 +10558,14 @@ export const KNOWLEDGE_V04: readonly HouseKnowledgeAtom[] = [
     "source": {
       "sourceId": "bungalov-4kk-xlsx04-r636",
       "kind": "PRODUCT_DOCUMENTATION",
-      "label": "XLSX 04, List 1, D636:H636"
+      "label": "XLSX 04, List 1, D636:H636",
+      "editorialNotes": [
+        "Odpověď schválená v XLSX 04; původní zdroj není v tabulce vyplněn."
+      ]
     },
     "temporalStatus": "CURRENT",
     "constraints": [
-      "Odpověď schválená v XLSX 04; původní zdroj není v tabulce vyplněn. Nevymýšlet citaci.",
+      "Nevymýšlet citaci; doložený externí zdroj není k dispozici.",
       "Popis referenčního domu není cenová nabídka ani garance budoucích nákladů, výnosů či bezúdržbovosti."
     ],
     "relatedTopics": [
@@ -10489,11 +10695,14 @@ export const KNOWLEDGE_V04: readonly HouseKnowledgeAtom[] = [
     "source": {
       "sourceId": "bungalov-4kk-xlsx04-r642",
       "kind": "PRODUCT_DOCUMENTATION",
-      "label": "XLSX 04, List 1, D642:H642"
+      "label": "XLSX 04, List 1, D642:H642",
+      "editorialNotes": [
+        "Odpověď schválená v XLSX 04; původní zdroj není v tabulce vyplněn."
+      ]
     },
     "temporalStatus": "CURRENT",
     "constraints": [
-      "Odpověď schválená v XLSX 04; původní zdroj není v tabulce vyplněn. Nevymýšlet citaci.",
+      "Nevymýšlet citaci; doložený externí zdroj není k dispozici.",
       "Popis referenčního domu není cenová nabídka ani garance budoucích nákladů, výnosů či bezúdržbovosti."
     ],
     "relatedTopics": [
@@ -10512,17 +10721,23 @@ export const KNOWLEDGE_V04: readonly HouseKnowledgeAtom[] = [
     "source": {
       "sourceId": "bungalov-4kk-xlsx04-r643",
       "kind": "PRODUCT_DOCUMENTATION",
-      "label": "XLSX 04, List 1, D643:H643"
+      "label": "XLSX 04, List 1, D643:H643",
+      "editorialNotes": [
+        "Odpověď schválená v XLSX 04; původní zdroj není v tabulce vyplněn."
+      ]
     },
     "temporalStatus": "CURRENT",
     "constraints": [
       "Údaj 50 % nemá uvedený základ ani jednotku nákladů; nelze z něj určit cenu ohřevu ani podíl úspory.",
-      "Odpověď schválená v XLSX 04; původní zdroj není v tabulce vyplněn. Nevymýšlet citaci.",
+      "Nevymýšlet citaci; doložený externí zdroj není k dispozici.",
       "Popis referenčního domu není cenová nabídka ani garance budoucích nákladů, výnosů či bezúdržbovosti."
     ],
     "relatedTopics": [
       "energie",
       "provozní-náklady"
+    ],
+    "clientQualifications": [
+      "U údaje 50 % není uveden základ ani jednotka nákladů; nelze z něj určit cenu ohřevu ani podíl úspory."
     ]
   },
   {
@@ -10647,11 +10862,14 @@ export const KNOWLEDGE_V04: readonly HouseKnowledgeAtom[] = [
     "source": {
       "sourceId": "bungalov-4kk-xlsx04-r649",
       "kind": "PRODUCT_DOCUMENTATION",
-      "label": "XLSX 04, List 1, D649:H649"
+      "label": "XLSX 04, List 1, D649:H649",
+      "editorialNotes": [
+        "Odpověď schválená v XLSX 04; původní zdroj není v tabulce vyplněn."
+      ]
     },
     "temporalStatus": "CURRENT",
     "constraints": [
-      "Odpověď schválená v XLSX 04; původní zdroj není v tabulce vyplněn. Nevymýšlet citaci.",
+      "Nevymýšlet citaci; doložený externí zdroj není k dispozici.",
       "Popis referenčního domu není cenová nabídka ani garance budoucích nákladů, výnosů či bezúdržbovosti."
     ],
     "relatedTopics": [
@@ -10714,17 +10932,23 @@ export const KNOWLEDGE_V04: readonly HouseKnowledgeAtom[] = [
     "source": {
       "sourceId": "bungalov-4kk-xlsx04-r652",
       "kind": "PRODUCT_DOCUMENTATION",
-      "label": "XLSX 04, List 1, D652:H652"
+      "label": "XLSX 04, List 1, D652:H652",
+      "editorialNotes": [
+        "Odpověď schválená v XLSX 04; původní zdroj není v tabulce vyplněn."
+      ]
     },
     "temporalStatus": "CURRENT",
     "constraints": [
       "Jde o orientační vyjádření autora, nikoli úplný servisní plán, rozpočet domácnosti nebo neomezenou životnost. Neprezentovat jako garanci.",
-      "Odpověď schválená v XLSX 04; původní zdroj není v tabulce vyplněn. Nevymýšlet citaci.",
+      "Nevymýšlet citaci; doložený externí zdroj není k dispozici.",
       "Popis referenčního domu není cenová nabídka ani garance budoucích nákladů, výnosů či bezúdržbovosti."
     ],
     "relatedTopics": [
       "energie",
       "provozní-náklady"
+    ],
+    "clientQualifications": [
+      "Jde o orientační vyjádření autora, nikoli úplný servisní plán, rozpočet domácnosti nebo záruku neomezené životnosti."
     ]
   },
   {
@@ -10738,11 +10962,14 @@ export const KNOWLEDGE_V04: readonly HouseKnowledgeAtom[] = [
     "source": {
       "sourceId": "bungalov-4kk-xlsx04-r653",
       "kind": "PRODUCT_DOCUMENTATION",
-      "label": "XLSX 04, List 1, D653:H653"
+      "label": "XLSX 04, List 1, D653:H653",
+      "editorialNotes": [
+        "Odpověď schválená v XLSX 04; původní zdroj není v tabulce vyplněn."
+      ]
     },
     "temporalStatus": "CURRENT",
     "constraints": [
-      "Odpověď schválená v XLSX 04; původní zdroj není v tabulce vyplněn. Nevymýšlet citaci.",
+      "Nevymýšlet citaci; doložený externí zdroj není k dispozici.",
       "Popis referenčního domu není cenová nabídka ani garance budoucích nákladů, výnosů či bezúdržbovosti."
     ],
     "relatedTopics": [
@@ -10761,11 +10988,14 @@ export const KNOWLEDGE_V04: readonly HouseKnowledgeAtom[] = [
     "source": {
       "sourceId": "bungalov-4kk-xlsx04-r655",
       "kind": "PRODUCT_DOCUMENTATION",
-      "label": "XLSX 04, List 1, D655:H655"
+      "label": "XLSX 04, List 1, D655:H655",
+      "editorialNotes": [
+        "Odpověď schválená v XLSX 04; původní zdroj není v tabulce vyplněn."
+      ]
     },
     "temporalStatus": "CURRENT",
     "constraints": [
-      "Odpověď schválená v XLSX 04; původní zdroj není v tabulce vyplněn. Nevymýšlet citaci.",
+      "Nevymýšlet citaci; doložený externí zdroj není k dispozici.",
       "Popis referenčního domu není cenová nabídka ani garance budoucích nákladů, výnosů či bezúdržbovosti."
     ],
     "relatedTopics": [
@@ -10784,17 +11014,23 @@ export const KNOWLEDGE_V04: readonly HouseKnowledgeAtom[] = [
     "source": {
       "sourceId": "bungalov-4kk-xlsx04-r656",
       "kind": "PRODUCT_DOCUMENTATION",
-      "label": "XLSX 04, List 1, D656:H656"
+      "label": "XLSX 04, List 1, D656:H656",
+      "editorialNotes": [
+        "Odpověď schválená v XLSX 04; původní zdroj není v tabulce vyplněn."
+      ]
     },
     "temporalStatus": "CURRENT",
     "constraints": [
       "Jde o orientační vyjádření autora, nikoli úplný servisní plán, rozpočet domácnosti nebo neomezenou životnost. Neprezentovat jako garanci.",
-      "Odpověď schválená v XLSX 04; původní zdroj není v tabulce vyplněn. Nevymýšlet citaci.",
+      "Nevymýšlet citaci; doložený externí zdroj není k dispozici.",
       "Popis referenčního domu není cenová nabídka ani garance budoucích nákladů, výnosů či bezúdržbovosti."
     ],
     "relatedTopics": [
       "údržba",
       "kvalita"
+    ],
+    "clientQualifications": [
+      "Jde o orientační vyjádření autora, nikoli úplný servisní plán, rozpočet domácnosti nebo záruku neomezené životnosti."
     ]
   },
   {
@@ -10808,17 +11044,23 @@ export const KNOWLEDGE_V04: readonly HouseKnowledgeAtom[] = [
     "source": {
       "sourceId": "bungalov-4kk-xlsx04-r657",
       "kind": "PRODUCT_DOCUMENTATION",
-      "label": "XLSX 04, List 1, D657:H657"
+      "label": "XLSX 04, List 1, D657:H657",
+      "editorialNotes": [
+        "Odpověď schválená v XLSX 04; původní zdroj není v tabulce vyplněn."
+      ]
     },
     "temporalStatus": "CURRENT",
     "constraints": [
       "Jde o orientační vyjádření autora, nikoli úplný servisní plán, rozpočet domácnosti nebo neomezenou životnost. Neprezentovat jako garanci.",
-      "Odpověď schválená v XLSX 04; původní zdroj není v tabulce vyplněn. Nevymýšlet citaci.",
+      "Nevymýšlet citaci; doložený externí zdroj není k dispozici.",
       "Popis referenčního domu není cenová nabídka ani garance budoucích nákladů, výnosů či bezúdržbovosti."
     ],
     "relatedTopics": [
       "údržba",
       "kvalita"
+    ],
+    "clientQualifications": [
+      "Jde o orientační vyjádření autora, nikoli úplný servisní plán, rozpočet domácnosti nebo záruku neomezené životnosti."
     ]
   },
   {
@@ -10832,17 +11074,23 @@ export const KNOWLEDGE_V04: readonly HouseKnowledgeAtom[] = [
     "source": {
       "sourceId": "bungalov-4kk-xlsx04-r658",
       "kind": "PRODUCT_DOCUMENTATION",
-      "label": "XLSX 04, List 1, D658:H658"
+      "label": "XLSX 04, List 1, D658:H658",
+      "editorialNotes": [
+        "Odpověď schválená v XLSX 04; původní zdroj není v tabulce vyplněn."
+      ]
     },
     "temporalStatus": "CURRENT",
     "constraints": [
       "Jde o orientační vyjádření autora, nikoli úplný servisní plán, rozpočet domácnosti nebo neomezenou životnost. Neprezentovat jako garanci.",
-      "Odpověď schválená v XLSX 04; původní zdroj není v tabulce vyplněn. Nevymýšlet citaci.",
+      "Nevymýšlet citaci; doložený externí zdroj není k dispozici.",
       "Popis referenčního domu není cenová nabídka ani garance budoucích nákladů, výnosů či bezúdržbovosti."
     ],
     "relatedTopics": [
       "údržba",
       "kvalita"
+    ],
+    "clientQualifications": [
+      "Jde o orientační vyjádření autora, nikoli úplný servisní plán, rozpočet domácnosti nebo záruku neomezené životnosti."
     ]
   },
   {
@@ -10856,11 +11104,14 @@ export const KNOWLEDGE_V04: readonly HouseKnowledgeAtom[] = [
     "source": {
       "sourceId": "bungalov-4kk-xlsx04-r659",
       "kind": "PRODUCT_DOCUMENTATION",
-      "label": "XLSX 04, List 1, D659:H659"
+      "label": "XLSX 04, List 1, D659:H659",
+      "editorialNotes": [
+        "Odpověď schválená v XLSX 04; původní zdroj není v tabulce vyplněn."
+      ]
     },
     "temporalStatus": "CURRENT",
     "constraints": [
-      "Odpověď schválená v XLSX 04; původní zdroj není v tabulce vyplněn. Nevymýšlet citaci.",
+      "Nevymýšlet citaci; doložený externí zdroj není k dispozici.",
       "Popis referenčního domu není cenová nabídka ani garance budoucích nákladů, výnosů či bezúdržbovosti."
     ],
     "relatedTopics": [
@@ -10879,11 +11130,14 @@ export const KNOWLEDGE_V04: readonly HouseKnowledgeAtom[] = [
     "source": {
       "sourceId": "bungalov-4kk-xlsx04-r660",
       "kind": "PRODUCT_DOCUMENTATION",
-      "label": "XLSX 04, List 1, D660:H660"
+      "label": "XLSX 04, List 1, D660:H660",
+      "editorialNotes": [
+        "Odpověď schválená v XLSX 04; původní zdroj není v tabulce vyplněn."
+      ]
     },
     "temporalStatus": "CURRENT",
     "constraints": [
-      "Odpověď schválená v XLSX 04; původní zdroj není v tabulce vyplněn. Nevymýšlet citaci.",
+      "Nevymýšlet citaci; doložený externí zdroj není k dispozici.",
       "Popis referenčního domu není cenová nabídka ani garance budoucích nákladů, výnosů či bezúdržbovosti."
     ],
     "relatedTopics": [
@@ -11012,11 +11266,14 @@ export const KNOWLEDGE_V04: readonly HouseKnowledgeAtom[] = [
     "source": {
       "sourceId": "bungalov-4kk-xlsx04-r673",
       "kind": "PRODUCT_DOCUMENTATION",
-      "label": "XLSX 04, List 1, D673:H673"
+      "label": "XLSX 04, List 1, D673:H673",
+      "editorialNotes": [
+        "Odpověď schválená v XLSX 04; původní zdroj není v tabulce vyplněn."
+      ]
     },
     "temporalStatus": "CURRENT",
     "constraints": [
-      "Odpověď schválená v XLSX 04; původní zdroj není v tabulce vyplněn. Nevymýšlet citaci.",
+      "Nevymýšlet citaci; doložený externí zdroj není k dispozici.",
       "Popis referenčního domu není cenová nabídka ani garance budoucích nákladů, výnosů či bezúdržbovosti."
     ],
     "relatedTopics": [
@@ -11385,7 +11642,7 @@ export const FAQ_V04: readonly HousePriorityFaqItem[] = [
       "kb04-row-41"
     ],
     "constraints": [
-      "Odpověď schválená v XLSX 04; původní zdroj není v tabulce vyplněn. Nevymýšlet citaci."
+      "Nevymýšlet citaci; doložený externí zdroj není k dispozici."
     ]
   },
   {
@@ -11409,7 +11666,7 @@ export const FAQ_V04: readonly HousePriorityFaqItem[] = [
       "kb04-row-46"
     ],
     "constraints": [
-      "Odpověď schválená v XLSX 04; původní zdroj není v tabulce vyplněn. Nevymýšlet citaci."
+      "Nevymýšlet citaci; doložený externí zdroj není k dispozici."
     ]
   },
   {
@@ -11422,7 +11679,7 @@ export const FAQ_V04: readonly HousePriorityFaqItem[] = [
       "kb04-row-47"
     ],
     "constraints": [
-      "Odpověď schválená v XLSX 04; původní zdroj není v tabulce vyplněn. Nevymýšlet citaci."
+      "Nevymýšlet citaci; doložený externí zdroj není k dispozici."
     ]
   },
   {
@@ -11604,7 +11861,7 @@ export const FAQ_V04: readonly HousePriorityFaqItem[] = [
       "kb04-row-27"
     ],
     "constraints": [
-      "Odpověď schválená v XLSX 04; původní zdroj není v tabulce vyplněn. Nevymýšlet citaci."
+      "Nevymýšlet citaci; doložený externí zdroj není k dispozici."
     ]
   },
   {
@@ -11921,7 +12178,7 @@ export const FAQ_V04: readonly HousePriorityFaqItem[] = [
       "kb04-row-649"
     ],
     "constraints": [
-      "Odpověď schválená v XLSX 04; původní zdroj není v tabulce vyplněn. Nevymýšlet citaci.",
+      "Nevymýšlet citaci; doložený externí zdroj není k dispozici.",
       "Popis referenčního domu není cenová nabídka ani garance budoucích nákladů, výnosů či bezúdržbovosti."
     ]
   },
@@ -12041,7 +12298,7 @@ export const FAQ_V04: readonly HousePriorityFaqItem[] = [
     ],
     "constraints": [
       "Výběr priority není konfigurátor a neurčuje estetický vkus návštěvníka ani požadavek na změnu domu.",
-      "Odpověď schválená v XLSX 04; původní zdroj není v tabulce vyplněn. Nevymýšlet citaci."
+      "Nevymýšlet citaci; doložený externí zdroj není k dispozici."
     ]
   },
   {
@@ -12194,7 +12451,7 @@ export const FAQ_V04: readonly HousePriorityFaqItem[] = [
       "kb04-row-655"
     ],
     "constraints": [
-      "Odpověď schválená v XLSX 04; původní zdroj není v tabulce vyplněn. Nevymýšlet citaci.",
+      "Nevymýšlet citaci; doložený externí zdroj není k dispozici.",
       "Popis referenčního domu není cenová nabídka ani garance budoucích nákladů, výnosů či bezúdržbovosti."
     ]
   },
@@ -12263,7 +12520,7 @@ export const FAQ_V04: readonly HousePriorityFaqItem[] = [
       "kb04-row-80"
     ],
     "constraints": [
-      "Odpověď schválená v XLSX 04; původní zdroj není v tabulce vyplněn. Nevymýšlet citaci."
+      "Nevymýšlet citaci; doložený externí zdroj není k dispozici."
     ]
   },
   {
@@ -12289,7 +12546,7 @@ export const FAQ_V04: readonly HousePriorityFaqItem[] = [
       "kb04-row-655"
     ],
     "constraints": [
-      "Odpověď schválená v XLSX 04; původní zdroj není v tabulce vyplněn. Nevymýšlet citaci.",
+      "Nevymýšlet citaci; doložený externí zdroj není k dispozici.",
       "Popis referenčního domu není cenová nabídka ani garance budoucích nákladů, výnosů či bezúdržbovosti."
     ]
   },
@@ -12393,7 +12650,7 @@ export const FAQ_V04: readonly HousePriorityFaqItem[] = [
       "kb04-row-655"
     ],
     "constraints": [
-      "Odpověď schválená v XLSX 04; původní zdroj není v tabulce vyplněn. Nevymýšlet citaci.",
+      "Nevymýšlet citaci; doložený externí zdroj není k dispozici.",
       "Popis referenčního domu není cenová nabídka ani garance budoucích nákladů, výnosů či bezúdržbovosti."
     ]
   },
@@ -12408,7 +12665,7 @@ export const FAQ_V04: readonly HousePriorityFaqItem[] = [
     ],
     "constraints": [
       "Jde o orientační vyjádření autora, nikoli úplný servisní plán, rozpočet domácnosti nebo neomezenou životnost. Neprezentovat jako garanci.",
-      "Odpověď schválená v XLSX 04; původní zdroj není v tabulce vyplněn. Nevymýšlet citaci.",
+      "Nevymýšlet citaci; doložený externí zdroj není k dispozici.",
       "Popis referenčního domu není cenová nabídka ani garance budoucích nákladů, výnosů či bezúdržbovosti."
     ]
   },
@@ -12423,7 +12680,7 @@ export const FAQ_V04: readonly HousePriorityFaqItem[] = [
     ],
     "constraints": [
       "Jde o orientační vyjádření autora, nikoli úplný servisní plán, rozpočet domácnosti nebo neomezenou životnost. Neprezentovat jako garanci.",
-      "Odpověď schválená v XLSX 04; původní zdroj není v tabulce vyplněn. Nevymýšlet citaci.",
+      "Nevymýšlet citaci; doložený externí zdroj není k dispozici.",
       "Popis referenčního domu není cenová nabídka ani garance budoucích nákladů, výnosů či bezúdržbovosti."
     ]
   },
@@ -12438,7 +12695,7 @@ export const FAQ_V04: readonly HousePriorityFaqItem[] = [
     ],
     "constraints": [
       "Jde o orientační vyjádření autora, nikoli úplný servisní plán, rozpočet domácnosti nebo neomezenou životnost. Neprezentovat jako garanci.",
-      "Odpověď schválená v XLSX 04; původní zdroj není v tabulce vyplněn. Nevymýšlet citaci.",
+      "Nevymýšlet citaci; doložený externí zdroj není k dispozici.",
       "Popis referenčního domu není cenová nabídka ani garance budoucích nákladů, výnosů či bezúdržbovosti."
     ]
   },
@@ -12520,7 +12777,7 @@ export const FAQ_V04: readonly HousePriorityFaqItem[] = [
       "kb04-row-80"
     ],
     "constraints": [
-      "Odpověď schválená v XLSX 04; původní zdroj není v tabulce vyplněn. Nevymýšlet citaci."
+      "Nevymýšlet citaci; doložený externí zdroj není k dispozici."
     ]
   },
   {

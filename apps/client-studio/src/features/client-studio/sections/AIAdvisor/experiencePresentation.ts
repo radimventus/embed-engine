@@ -1,5 +1,5 @@
 import type { AIContextContract } from '@embed-engine/runtime';
-import type { CanonicalHouseKnowledgeSelection } from '@embed-engine/object-house';
+import { clientHouseFactText, clientHouseKnowledgeText, type CanonicalHouseKnowledgeSelection } from '@embed-engine/object-house';
 
 import { formatDecisionKeyCs } from '../../pilot/decisionTerminalLabels';
 import { formatOutcomeStatusCs } from '../../pilot/pilotVocabulary';
@@ -31,7 +31,7 @@ export function faqItemsFromAiContext(
 }
 
 /**
- * Canonical House FAQ keeps its source constraints visible with the answer.
+ * Canonical House FAQ renders facts and client qualifications, never internal instructions.
  * It is supplied already filtered by actual Runtime priorities.
  */
 export function faqItemsFromCanonicalHouseKnowledge(
@@ -40,18 +40,14 @@ export function faqItemsFromCanonicalHouseKnowledge(
   const factById = new Map(knowledge.facts.map((fact) => [fact.id, fact]));
 
   return knowledge.priorityFaq.map((item) => {
-    const linkedGuardrails = item.knowledgeAtomIds.flatMap((factId) => {
-      const fact = factById.get(factId);
-      return fact === undefined
-        ? []
-        : [...fact.constraints, ...(fact.unsupportedConclusions ?? [])];
-    });
+    const linkedFacts = item.knowledgeAtomIds.map(id => factById.get(id)).filter(fact => fact !== undefined);
 
     return Object.freeze({
       id: item.id,
       question: item.question,
-      answer: [...new Set([item.answer, ...item.constraints, ...linkedGuardrails])]
-        .join(' '),
+      answer: linkedFacts.length === 1 && linkedFacts[0]!.statement === item.answer
+        ? clientHouseFactText(linkedFacts[0]!)
+        : clientHouseKnowledgeText(item.answer),
     });
   });
 }

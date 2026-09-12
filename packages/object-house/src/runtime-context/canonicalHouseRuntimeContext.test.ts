@@ -97,7 +97,7 @@ describe('CAP-REF-07b Canonical House Runtime Context', () => {
     );
     assert.equal(
       canonicalHouseKnowledgeEntries(selection).some((entry) =>
-        /garance budoucích nákladů/i.test(entry.text),
+        /garance budoucích nákladů/i.test(entry.modelConstraints?.join(' ') ?? ''),
       ),
       true,
     );

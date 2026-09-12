@@ -64,18 +64,30 @@ with zipfile.ZipFile(SOURCE) as z:
         if 'vizuální' in provenance.lower():
             constraints.append('Vizuálně doložený popis; nepřidávat neověřené rozměry, technické parametry ani rozsah ceny.')
         if not provenance:
-            constraints.append('Odpověď schválená v XLSX 04; původní zdroj není v tabulce vyplněn. Nevymýšlet citaci.')
+            constraints.append('Nevymýšlet citaci; doložený externí zdroj není k dispozici.')
         if chapter_index in [7,29,30]:
             constraints.append('Popis referenčního domu není cenová nabídka ani garance budoucích nákladů, výnosů či bezúdržbovosti.')
         rows.append(dict(id=f'kb04-row-{n}',houseId='modern-4kk',subject=question,category=chapter,
             statement=answer,scope='REFERENCE_PROJECT' if reference else 'PRODUCT',
             confidence='CONFIRMED' if confirmed else 'DOCUMENTED',
             source=dict(sourceId=f'bungalov-4kk-xlsx04-r{n}',kind='CURRENT_CONFIRMED' if confirmed else 'PRODUCT_DOCUMENTATION',
-                label=f'XLSX 04, List 1, D{n}:H{n}' + (f' — {provenance}' if provenance else '')),
+                label=f'XLSX 04, List 1, D{n}:H{n}' + (f' — {provenance}' if provenance else ''),
+                **({} if provenance else {'editorialNotes': ['Odpověď schválená v XLSX 04; původní zdroj není v tabulce vyplněn.']})),
             temporalStatus='CURRENT',constraints=constraints,relatedTopics=TOPICS[chapter_index]))
 
 assert questions == 662 and len(rows) == 540 and skipped == 122, 'Review changed workbook scope before importing'
 by_id = {x['id']:x for x in rows}
+# Search annotations describe existing features, not new factual answers.
+for row_ids, aliases in [
+    ([371,372,396], ['rekuperace odpadní vody', 'zpětné získávání tepla', 'energetika', 'úsporná energetická řešení']),
+    ([382,383], ['vytápění chlazení', 'energetika', 'úsporná energetická řešení']),
+    ([387,388], ['větrání rekuperace vzduchu', 'energetika', 'úsporná energetická řešení']),
+]:
+    for n in row_ids:
+        by_id[f'kb04-row-{n}']['retrievalAliases'] = aliases
+for n in [652,656,657,658]:
+    by_id[f'kb04-row-{n}']['clientQualifications'] = ['Jde o orientační vyjádření autora, nikoli úplný servisní plán, rozpočet domácnosti nebo záruku neomezené životnosti.']
+by_id['kb04-row-643']['clientQualifications'] = ['U údaje 50 % není uveden základ ani jednotka nákladů; nelze z něj určit cenu ohřevu ani podíl úspory.']
 assert '112,9' in by_id['kb04-row-65']['statement']
 assert '129' in by_id['kb04-row-66']['statement']
 faq_rows = {

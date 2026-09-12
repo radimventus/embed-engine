@@ -1,3 +1,4 @@
+import { clientHouseFactText, clientHouseKnowledgeText } from '../knowledge/clientHouseKnowledgeText';
 import type { HouseKnowledgeAtom } from '../knowledge/houseKnowledgeTypes';
 import type {
   HousePriority,
@@ -68,6 +69,8 @@ export type CanonicalHouseFactInterpretation = {
 export type CanonicalHouseKnowledgeEntry = {
   readonly id: string;
   readonly text: string;
+  readonly modelConstraints?: readonly string[];
+  readonly provenance?: { readonly sourceId: string; readonly kind: string; readonly label?: string; readonly editorialNotes?: readonly string[] };
 };
 
 /**
@@ -83,50 +86,44 @@ export function canonicalHouseKnowledgeEntries(
   if (question !== undefined) {
     const terms = knowledgeTerms(question);
     const records = selection.facts.map(fact => ({ fact,
+      aliases: knowledgeTerms((fact.retrievalAliases ?? []).join(' ')),
       subject: knowledgeTerms(fact.subject), body: knowledgeTerms(fact.statement) }));
     const frequencies = new Map<string, number>();
     for (const record of records) {
-      for (const term of new Set([...record.subject, ...record.body])) {
+      for (const term of new Set([...record.subject, ...record.body, ...record.aliases])) {
         frequencies.set(term, (frequencies.get(term) ?? 0) + 1);
       }
     }
     const ranked = records.map(record => ({ ...record, score: terms.reduce((sum, term) => {
       const frequency = frequencies.get(term) ?? 0;
       const weight = Math.log(1 + records.length / (1 + frequency));
-      return sum + weight * (record.subject.includes(term) ? 5 : record.body.includes(term) ? 1 : 0);
+      return sum + weight * (record.subject.includes(term) ? 5 : record.aliases.includes(term) ? 5 : record.body.includes(term) ? 1 : 0);
     }, 0) })).filter(record => record.score > 0).sort((a,b) => b.score-a.score);
     const entries: CanonicalHouseKnowledgeEntry[] = [];
     let length = 0;
     for (const { fact } of ranked) {
-      const scope = fact.scope === 'REFERENCE_PROJECT' ? 'Údaj pro dokumentovanou referenční realizaci: ' : '';
-      const text = `${fact.subject}\n${scope}${fact.statement}\nZdroj: ${fact.source.label ?? fact.source.sourceId}. ${fact.constraints.join(' ')}`;
-      if (length + text.length > 14000) continue;
-      entries.push({id:fact.id,text}); length += text.length;
+      const entry = serializeFact(fact);
+      const size = JSON.stringify(entry).length;
+      if (length + size > 14000) continue;
+      entries.push(entry); length += size;
       if (entries.length === 12) break;
     }
     return entries;
   }
-  const interpretationByFactId = new Map(
-    selection.interpretations.map((item) => [item.factId, item.text]),
-  );
-
   return [
-    ...selection.facts.map((fact) => ({
-      id: fact.id,
-      text: [
-        fact.statement,
-        interpretationByFactId.get(fact.id) ?? '',
-        ...fact.constraints,
-        ...(fact.unsupportedConclusions ?? []),
-      ]
-        .filter(Boolean)
-        .join(' '),
-    })),
-    ...selection.guardrails.map((text, index) => ({
-      id: `guardrail:${index}`,
-      text,
-    })),
+    ...selection.facts.map(fact => serializeFact(fact)),
+    ...(selection.guardrails.length ? [{id: 'guardrails', text: '', modelConstraints: selection.guardrails}] : []),
   ];
+}
+
+function serializeFact(fact: HouseKnowledgeAtom): CanonicalHouseKnowledgeEntry {
+  return {
+    id: fact.id,
+    text: [...new Set([clientHouseKnowledgeText(fact.subject), clientHouseFactText(fact),
+      fact.safeInterpretation ? clientHouseKnowledgeText(fact.safeInterpretation) : ''])].filter(Boolean).join('\n'),
+    provenance: fact.source,
+    modelConstraints: [...new Set([...fact.constraints, ...(fact.unsupportedConclusions ?? [])])],
+  };
 }
 
 /**
@@ -140,6 +137,7 @@ export function selectCanonicalChatHouseKnowledge(
 ): CanonicalHouseKnowledgeSelection {
   const facts = context.knowledge.filter(
     (atom) =>
+      atom.houseId === context.identity.houseId &&
       atom.temporalStatus === 'CURRENT' &&
       atom.category !== 'guardrail' &&
       (atom.scope === 'PRODUCT' || atom.scope === 'DSE_KNOW_HOW' ||
@@ -196,7 +194,8 @@ export function selectCanonicalHouseKnowledge(
     ),
   );
   const isCurrentFact = (atom: HouseKnowledgeAtom): boolean =>
-    atom.temporalStatus === 'CURRENT' &&
+    atom.houseId === context.identity.houseId &&
+      atom.temporalStatus === 'CURRENT' &&
     atom.category !== 'guardrail' &&
     (atom.scope === 'PRODUCT' || atom.scope === 'DSE_KNOW_HOW' ||
       (context.specification.identity.role === 'reference' && atom.scope === 'REFERENCE_PROJECT'));

@@ -147,7 +147,7 @@ describe('Runtime presentation ownership (ED-DA-01R)', () => {
     assert.match(experienceFaq[0]!.question, /\?$/);
   });
 
-  it('presents canonical FAQ only for Runtime priorities and retains constraints', () => {
+  it('presents canonical FAQ with factual limitations and keeps model constraints separate', () => {
     const context = getCanonicalHouseRuntimeContext('modern-4kk');
     assert.ok(context);
     const knowledge = selectCanonicalHouseKnowledge(context, ['energy']);
@@ -157,7 +157,7 @@ describe('Runtime presentation ownership (ED-DA-01R)', () => {
     assert.ok(faq.every((item) => item.id.startsWith('energy-')));
     assert.match(
       faq.find((item) => item.id === 'energy-07')!.answer,
-      /trvalou energetickou soběstačnost/i,
+      /přesný finanční přínos samostatně nevyčísluje/i,
     );
   });
 
