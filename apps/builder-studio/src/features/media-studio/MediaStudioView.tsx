@@ -331,6 +331,15 @@ function HeroManager({
           {model.heroUrl !== null ? (
             <img
               src={model.heroUrl}
+              onError={(event) => {
+                if (
+                  model.heroFallbackUrl !== null &&
+                  event.currentTarget.dataset.fallbackApplied !== 'true'
+                ) {
+                  event.currentTarget.dataset.fallbackApplied = 'true';
+                  event.currentTarget.src = model.heroFallbackUrl;
+                }
+              }}
               alt={meta.alt || 'Hero'}
               className="mt-2 aspect-[16/9] w-full rounded-[12px] object-cover bg-builder-soft"
               style={{
@@ -350,6 +359,15 @@ function HeroManager({
           {model.heroUrl !== null ? (
             <img
               src={model.heroUrl}
+              onError={(event) => {
+                if (
+                  model.heroFallbackUrl !== null &&
+                  event.currentTarget.dataset.fallbackApplied !== 'true'
+                ) {
+                  event.currentTarget.dataset.fallbackApplied = 'true';
+                  event.currentTarget.src = model.heroFallbackUrl;
+                }
+              }}
               alt={meta.alt || 'Hero'}
               className="mt-2 mx-auto aspect-[9/16] max-w-[220px] rounded-[12px] object-cover bg-builder-soft"
               style={{

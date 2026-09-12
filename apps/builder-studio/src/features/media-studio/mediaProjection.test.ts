@@ -44,6 +44,7 @@ describe('mediaProjection (EPIC-BX-05)', () => {
       geometryByFloor: {},
       mountedAt: '2026-08-18T08:00:00.000Z',
       dirtyState: 'clean',
+      packageRootLabel: '/house-packages/patrovy-5kk',
     } as never;
     const model = buildMediaStudioModel({
       projectId: 'house-a',
@@ -55,6 +56,9 @@ describe('mediaProjection (EPIC-BX-05)', () => {
       model.gallery[0]?.url,
       'https://api.conis.cz/public/house-packages/house-a/media/gallery/01.webp',
     );
-    assert.equal(model.gallery[0]?.fallbackUrl, '/house-package/media/gallery/01.webp');
+    assert.equal(
+      model.gallery[0]?.fallbackUrl,
+      '/house-packages/patrovy-5kk/media/gallery/01.webp',
+    );
   });
 });

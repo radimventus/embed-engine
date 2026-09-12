@@ -70,6 +70,7 @@ export type MediaStudioModel = {
   readonly areas: readonly MediaAreaCard[];
   readonly heroPath: string;
   readonly heroUrl: string | null;
+  readonly heroFallbackUrl: string | null;
   readonly heroMeta: MediaPresentationMeta;
   readonly gallery: readonly GalleryMediaItem[];
   readonly videos: readonly VideoMediaItem[];
@@ -86,6 +87,8 @@ export function buildMediaStudioModel(input: {
 }): MediaStudioModel {
   const { projectId, houseId = null, snapshot } = input;
   const pkg = snapshot?.validation.builderImport ?? null;
+  const packageUrlRoot =
+    snapshot?.packageRootLabel ?? HOUSE_PACKAGE_URL_ROOT;
   const heroPath = snapshot?.working.heroRelativePath ?? '';
   const galleryRows = snapshot
     ? parseCsv(snapshot.working.galleryCsv).rows
@@ -110,7 +113,7 @@ export function buildMediaStudioModel(input: {
         houseId === null
           ? `${HOUSE_PACKAGE_URL_ROOT}/${path}`
           : platformHousePackageMediaUrl(houseId, path),
-      fallbackUrl: `${HOUSE_PACKAGE_URL_ROOT}/${path}`,
+      fallbackUrl: `${packageUrlRoot}/${path}`,
       meta: getMediaPresentationMeta(projectId, key, file),
     };
   });
@@ -206,9 +209,11 @@ export function buildMediaStudioModel(input: {
     heroUrl:
       heroPath.length > 0
         ? houseId === null
-          ? `${HOUSE_PACKAGE_URL_ROOT}/${heroPath}`
+          ? `${packageUrlRoot}/${heroPath}`
           : platformHousePackageMediaUrl(houseId, heroPath)
         : null,
+    heroFallbackUrl:
+      heroPath.length > 0 ? `${packageUrlRoot}/${heroPath}` : null,
     heroMeta: getMediaPresentationMeta(projectId, 'hero', 'Hero'),
     gallery,
     videos,

@@ -43,14 +43,14 @@ function galleryMediaPaths(galleryCsv: string | undefined): readonly string[] {
 async function readAuthenticatedImageUrl(
   url: string,
   signal: AbortSignal | undefined,
-): Promise<string> {
+): Promise<string | null> {
   const response = await fetch(url, {
     credentials: 'include',
     signal,
   });
   const contentType = response.headers.get('content-type') ?? '';
   if (!response.ok || !contentType.toLowerCase().startsWith('image/')) {
-    return url;
+    return null;
   }
   return URL.createObjectURL(await response.blob());
 }
@@ -61,14 +61,17 @@ async function materializeAuthenticatedGalleryMedia(input: {
   readonly signal: AbortSignal | undefined;
 }): Promise<Readonly<Record<string, string>>> {
   const paths = galleryMediaPaths(input.galleryCsv);
-  const materialized = await Promise.all(
-    paths.map(async (path) => [
+  const resolved = await Promise.all(
+    paths.map(async (path) => ({
       path,
-      await readAuthenticatedImageUrl(
+      url: await readAuthenticatedImageUrl(
         mediaEndpoint(input.houseId, path),
         input.signal,
       ),
-    ] as const),
+    })),
+  );
+  const materialized = resolved.flatMap(({ path, url }) =>
+    url === null ? [] : [[path, url] as const],
   );
   return Object.freeze(Object.fromEntries(materialized));
 }

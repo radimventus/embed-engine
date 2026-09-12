@@ -138,26 +138,27 @@ describe('durable VPD House Package overlay', () => {
     }
   });
 
-  it('maps persisted state to its per-house stable media endpoint', async () => {
+  it('does not override seed media when the durable image is absent', async () => {
     const originalFetch = globalThis.fetch;
-    globalThis.fetch = async () =>
-      new Response(
-        JSON.stringify({
-          houseId: 'vpd-house',
-          updatedAt: '2026-08-18T08:00:00.000Z',
-          files: { galleryCsv },
-        }),
-        { status: 200 },
-      );
+    globalThis.fetch = async (input) => {
+      const url = String(input);
+      if (url.endsWith('/state')) {
+        return new Response(
+          JSON.stringify({
+            houseId: 'vpd-house',
+            updatedAt: '2026-08-18T08:00:00.000Z',
+            files: { galleryCsv },
+          }),
+          { status: 200 },
+        );
+      }
+      return new Response(null, { status: 404 });
+    };
 
     try {
       const overlay = await loadDurableHousePackageOverlay('vpd-house');
       assert.deepEqual(overlay, {
         files: { galleryCsv },
-        mediaUrls: {
-          'media/gallery/persisted.png':
-            `${stableMediaRoot}/media/gallery/persisted.png`,
-        },
       });
     } finally {
       globalThis.fetch = originalFetch;
@@ -208,7 +209,7 @@ describe('durable VPD House Package overlay', () => {
     }
   });
 
-  it('keeps a deleted durable gallery item deleted rather than restoring a seed URL', async () => {
+  it('leaves missing durable media unmapped so the seed URL remains authoritative', async () => {
     const originalFetch = globalThis.fetch;
     globalThis.fetch = async (input) => {
       const url = String(input);
@@ -228,10 +229,8 @@ describe('durable VPD House Package overlay', () => {
     try {
       const overlay = await loadDurableHousePackageOverlay('vpd-house');
       assert.equal(
-        overlay?.mediaUrls?.[
-          'media/gallery/persisted.png'
-        ],
-        `${stableMediaRoot}/media/gallery/persisted.png`,
+        overlay?.mediaUrls?.['media/gallery/persisted.png'],
+        undefined,
       );
     } finally {
       globalThis.fetch = originalFetch;
