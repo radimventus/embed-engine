@@ -256,6 +256,22 @@ body:has(.workspace-shell[data-workspace-surface='client']),
   overflow: visible !important;
 }
 
+
+/* PILOT JOURNEY FIX — commercial journey must override Client document-scroll
+   rules when journey=pilot is open. The iframe owns its own viewport. */
+.workspace-shell:has(.workspace-partner-journey)
+  .workspace-partner-journey
+  [data-testid='workspace-partner-commercial-journey'] {
+  position: static !important;
+  inset: auto !important;
+  display: block !important;
+  width: 100% !important;
+  height: calc(100dvh - 102px) !important;
+  min-height: calc(100dvh - 102px) !important;
+  max-height: none !important;
+  overflow: auto !important;
+}
+
 /* TASK 74 FIX-03 — Workspace-hosted Client Studio sidebar must span the
    complete Client Experience document.
 
