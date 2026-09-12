@@ -76,3 +76,11 @@ it('edits Canonical Project identity, removes slug and exposes archive state', (
   assert.match(dialog, /id: 'archived'/);
   assert.match(dialog, /saveCanonicalProjectMetadata\(projectId/);
 });
+
+ it('archiving does not depend on privacy loading and never clears an unedited URL', () => {
+  assert.doesNotMatch(dialog, /if \(!configLoaded\) \{/);
+  assert.match(dialog, /privacyChanged && parsed.ok/);
+  assert.match(dialog, /: Promise.resolve\(\)/);
+  assert.match(dialog, /disabled=\{!configLoaded \|\| saving\}/);
+  assert.match(dialog, /setPrivacyChanged\(true\)/);
+});

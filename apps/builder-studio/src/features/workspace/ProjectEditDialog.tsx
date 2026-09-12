@@ -57,6 +57,7 @@ export function ProjectEditDialog({
   const [privacyError, setPrivacyError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const [configLoaded, setConfigLoaded] = useState(false);
+  const [privacyChanged, setPrivacyChanged] = useState(false);
 
   useEffect(() => {
     if (!open) return;
@@ -71,6 +72,7 @@ export function ProjectEditDialog({
     }
     setPrivacyUrl('');
     setConfigLoaded(false);
+    setPrivacyChanged(false);
     setPrivacyError(null);
     setSaving(false);
     const projectId = canonicalProjectId ?? '';
@@ -84,7 +86,7 @@ export function ProjectEditDialog({
       })
       .catch(() => {
         if (controller.signal.aborted) return;
-        setPrivacyError('Aktuální zásady ochrany osobních údajů se nepodařilo načíst.');
+        setPrivacyError('Zásady se nepodařilo načíst. Název a stav projektu můžete uložit; zásady zůstanou beze změny.');
       });
     return () => {
       controller.abort();
@@ -107,13 +109,9 @@ export function ProjectEditDialog({
       onClose={onClose}
       onPrimary={() => {
         if (saving) return;
-        if (!configLoaded) {
-          setPrivacyError('Před uložením je potřeba načíst současné nastavení projektu. Zavřete a znovu otevřete dialog.');
-          return;
-        }
         const projectId = canonicalProjectId ?? '';
         const parsed = parseProjectPrivacyUrlInput(privacyUrl);
-        if (!parsed.ok) {
+        if (privacyChanged && !parsed.ok) {
           setPrivacyError(parsed.error);
           return;
         }
@@ -123,10 +121,9 @@ export function ProjectEditDialog({
         }
         setPrivacyError(null);
         setSaving(true);
-        void saveProjectConfig({
-          projectId,
-          privacyUrl: parsed.privacyUrl,
-        })
+        void (privacyChanged && parsed.ok
+          ? saveProjectConfig({projectId, privacyUrl: parsed.privacyUrl})
+          : Promise.resolve())
           .then(() => saveCanonicalProjectMetadata(projectId, {name, description, status, metadata}))
           .then(() => {
             onSubmit();
@@ -200,10 +197,12 @@ export function ProjectEditDialog({
       >
         <input
           type="url"
+          disabled={!configLoaded || saving}
           value={privacyUrl}
           placeholder="https://"
           data-testid="project-privacy-url"
           onChange={(event) => {
+            setPrivacyChanged(true);
             setPrivacyUrl(event.target.value);
             setPrivacyError(null);
           }}

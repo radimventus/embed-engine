@@ -1419,8 +1419,12 @@ export function createPlatformApiServer(
         const projectId = decodeURIComponent(
           projectConfigMatch[1] ?? "",
         ).trim();
-        const canonical =
-          projectId.length === 0 ? null : getCanonicalProject(projectId);
+        const authority = projectId.length === 0 ? null
+          : await canonicalRegistryAuthorityRepository.resolveProjectAuthority(projectId);
+        const canonical = authority === null ? null : {
+          project: {projectId: authority.projectId},
+          partner: {companyId: authority.companyId},
+        };
         if (canonical === null || canonical.project.projectId !== projectId) {
           return respond(response, 404, { error: "Projekt neexistuje." });
         }

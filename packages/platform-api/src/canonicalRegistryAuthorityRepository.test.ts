@@ -314,6 +314,11 @@ it('metadata HTTP write requires admin and persists the same Project id', async 
     const address = server.address();
     assert.ok(address && typeof address !== 'string');
     const url = `http://127.0.0.1:${address.port}/public/auth/canonical-project-authority`;
+    const configResponse = await fetch(`http://127.0.0.1:${address.port}/public/projects/project-x/config`);
+    assert.equal(configResponse.status, 200);
+    assert.equal((await configResponse.json() as {projectId: string}).projectId, 'project-x');
+    const missing = await fetch(`http://127.0.0.1:${address.port}/public/projects/missing/config`);
+    assert.equal(missing.status, 404);
     const body = JSON.stringify({projectId: 'project-x', name: 'Projekt X upravený', description: '', status: 'archived', metadata: '', companyId: 'forged'});
     for (const [token, expected] of [['missing', 401], ['manager', 403], ['admin', 200]] as const) {
       const response = await fetch(url, {method: 'PATCH', body, headers: {'content-type': 'application/json', cookie: `__Host-conis_partner_session=${token}`}});
