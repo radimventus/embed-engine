@@ -274,3 +274,56 @@ describe('FileCanonicalRegistryAuthorityRepository', () => {
   });
 
 });
+
+it('archives and restores Project metadata durably without changing identity or Houses', async () => {
+  const dir = await mkdtemp(join(tmpdir(), 'conis-project-edit-'));
+  const path = join(dir, 'registry.json');
+  try {
+    const repo = new FileCanonicalRegistryAuthorityRepository(path);
+    await repo.upsertAuthorityBundle(partnerX());
+    const before = await repo.readAuthoritySnapshot();
+    const input = {name: 'Nový název projektu', description: 'Popis', status: 'archived', metadata: 'Poznámka'};
+    const updated = await repo.updateProjectMetadata('project-x', input);
+    assert.equal(updated.status, 'archived');
+    assert.equal(updated.name, input.name);
+    assert.equal(updated.slug, partnerX().project.slug);
+    assert.equal(updated.companyId, partnerX().project.companyId);
+    const after = await new FileCanonicalRegistryAuthorityRepository(path).readAuthoritySnapshot();
+    assert.equal(after.projects.find(x => x.id === 'project-x')!.status, 'archived');
+    assert.deepEqual(after.houses, before.houses);
+    assert.deepEqual(after.companies, before.companies);
+    await repo.updateProjectMetadata('project-x', {...input, status: 'ready'});
+    assert.equal((await repo.readAuthoritySnapshot()).projects.find(x => x.id === 'project-x')!.status, 'ready');
+    await assert.rejects(repo.updateProjectMetadata('project-x', {...input, status: 'deleted'}));
+    await assert.rejects(repo.updateProjectMetadata('project-x', {...input, name: ' '}));
+    await assert.rejects(repo.updateProjectMetadata('missing', input));
+  } finally { await rm(dir, {recursive: true, force: true}); }
+});
+
+it('metadata HTTP write requires admin and persists the same Project id', async () => {
+  const {createPlatformApiServer} = await import('./index');
+  const dir = await mkdtemp(join(tmpdir(), 'conis-project-http-'));
+  const repo = new FileCanonicalRegistryAuthorityRepository(join(dir, 'registry.json'));
+  await repo.upsertAuthorityBundle(partnerX());
+  const sessions = {resolve: async (token: string) => token === 'admin'
+    ? {user: {roles: ['conis-admin']}} : token === 'manager' ? {user: {roles: ['manager']}} : null};
+  const server = createPlatformApiServer(undefined, undefined, undefined, undefined, undefined, sessions as never,
+    undefined, undefined, undefined, undefined, undefined, undefined, undefined, repo);
+  try {
+    await new Promise<void>(resolve => server.listen(0, '127.0.0.1', resolve));
+    const address = server.address();
+    assert.ok(address && typeof address !== 'string');
+    const url = `http://127.0.0.1:${address.port}/public/auth/canonical-project-authority`;
+    const body = JSON.stringify({projectId: 'project-x', name: 'Projekt X upravený', description: '', status: 'archived', metadata: '', companyId: 'forged'});
+    for (const [token, expected] of [['missing', 401], ['manager', 403], ['admin', 200]] as const) {
+      const response = await fetch(url, {method: 'PATCH', body, headers: {'content-type': 'application/json', cookie: `__Host-conis_partner_session=${token}`}});
+      assert.equal(response.status, expected);
+    }
+    const saved = (await repo.readAuthoritySnapshot()).projects.find(x => x.id === 'project-x')!;
+    assert.equal(saved.status, 'archived');
+    assert.equal(saved.companyId, 'company-x');
+  } finally {
+    await new Promise<void>(resolve => server.close(() => resolve()));
+    await rm(dir, {recursive: true, force: true});
+  }
+});

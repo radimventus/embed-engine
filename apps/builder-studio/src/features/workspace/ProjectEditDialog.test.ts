@@ -69,3 +69,10 @@ describe('Builder Project privacy authoring', () => {
     assert.match(app, /canonicalProjectId=/);
   });
 });
+
+it('edits Canonical Project identity, removes slug and exposes archive state', () => {
+  assert.match(dialog, /setName\(canonical.name\)/);
+  assert.doesNotMatch(dialog, /setName\(project.name\)|label="Slug"|value=\{slug\}/);
+  assert.match(dialog, /id: 'archived'/);
+  assert.match(dialog, /saveCanonicalProjectMetadata\(projectId/);
+});

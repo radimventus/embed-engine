@@ -31,6 +31,9 @@ export type CanonicalPartnerProjection = {
 
 /** CAP-PLAT-04d — Project only (no House fields). */
 export type CanonicalProjectIdentity = {
+  readonly status?: 'draft' | 'ready' | 'published' | 'archived';
+  readonly createdAt?: string;
+  readonly metadata?: string;
   readonly projectId: string;
   readonly name: string;
   readonly slug: string;

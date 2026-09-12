@@ -1,3 +1,5 @@
+import { getCanonicalProject, type PlatformCanonicalProject } from '@embed-engine/platform-access';
+import { saveCanonicalProjectMetadata } from './saveCanonicalProjectMetadata';
 import { useEffect, useState } from 'react';
 
 import {
@@ -10,30 +12,28 @@ import {
   requestProjectConfig,
   saveProjectConfig,
 } from './requestProjectConfig';
-import type { UpdateWorkspaceProjectInput } from './useWorkspaceController';
+
 import type {
   WorkspaceCompany,
-  WorkspaceProject,
-  WorkspaceProjectStatus,
 } from './workspaceRegistry';
 
 type ProjectEditDialogProps = {
   readonly open: boolean;
-  readonly project: WorkspaceProject | null;
   readonly canonicalProjectId: string | null;
   readonly canonicalProjectName: string | null;
   readonly companies: readonly WorkspaceCompany[];
   readonly onClose: () => void;
-  readonly onSubmit: (input: UpdateWorkspaceProjectInput) => void;
+  readonly onSubmit: () => void;
 };
 
 const STATUS_OPTIONS: readonly {
-  readonly id: WorkspaceProjectStatus;
+  readonly id: NonNullable<PlatformCanonicalProject['status']>;
   readonly label: string;
 }[] = [
   { id: 'draft', label: 'Koncept' },
   { id: 'ready', label: 'Připraveno' },
   { id: 'published', label: 'Publikováno' },
+  { id: 'archived', label: 'Archivovat' },
 ];
 
 /**
@@ -42,7 +42,6 @@ const STATUS_OPTIONS: readonly {
  */
 export function ProjectEditDialog({
   open,
-  project,
   canonicalProjectId,
   canonicalProjectName,
   companies,
@@ -52,33 +51,36 @@ export function ProjectEditDialog({
   const [name, setName] = useState('');
   const [companyId, setCompanyId] = useState('');
   const [description, setDescription] = useState('');
-  const [status, setStatus] = useState<WorkspaceProjectStatus>('draft');
-  const [slug, setSlug] = useState('');
+  const [status, setStatus] = useState<NonNullable<PlatformCanonicalProject['status']>>('draft');
   const [metadata, setMetadata] = useState('');
   const [privacyUrl, setPrivacyUrl] = useState('');
   const [privacyError, setPrivacyError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
+  const [configLoaded, setConfigLoaded] = useState(false);
 
   useEffect(() => {
     if (!open) return;
-    if (project !== null) {
-      setName(project.name);
-      setCompanyId(project.companyId);
-      setDescription(project.description);
-      setStatus(project.status);
-      setSlug(project.slug);
-      setMetadata(project.metadata);
+    const projection = canonicalProjectId ? getCanonicalProject(canonicalProjectId) : null;
+    const canonical = projection?.project;
+    if (canonical !== undefined) {
+      setName(canonical.name);
+      setCompanyId(projection!.partner.companyId);
+      setDescription(canonical.description);
+      setStatus(canonical.status ?? 'draft');
+      setMetadata(canonical.metadata ?? '');
     }
     setPrivacyUrl('');
+    setConfigLoaded(false);
     setPrivacyError(null);
     setSaving(false);
-    const projectId = canonicalProjectId ?? project?.folderId ?? '';
+    const projectId = canonicalProjectId ?? '';
     if (projectId.length === 0) return;
     const controller = new AbortController();
     void requestProjectConfig(projectId, controller.signal)
       .then((config) => {
         if (controller.signal.aborted) return;
         setPrivacyUrl(config.privacyUrl ?? '');
+        setConfigLoaded(true);
       })
       .catch(() => {
         if (controller.signal.aborted) return;
@@ -87,18 +89,17 @@ export function ProjectEditDialog({
     return () => {
       controller.abort();
     };
-  }, [open, project, canonicalProjectId]);
+  }, [open, canonicalProjectId]);
 
   const canOpen =
     open &&
-    (project !== null ||
-      (canonicalProjectId !== null && canonicalProjectId.length > 0));
+    canonicalProjectId !== null && canonicalProjectId.length > 0;
 
   return (
     <PlatformDialog
       open={canOpen}
       title="Upravit projekt"
-      description="Pouze metadata projektu — obsah se upravuje v produktových modulech."
+      description="Název a stav projektu. Obsah jednotlivých domů se upravuje samostatně."
       primaryLabel={saving ? 'Ukládám…' : 'Uložit změny'}
       secondaryLabel="Zrušit"
       asForm
@@ -106,7 +107,11 @@ export function ProjectEditDialog({
       onClose={onClose}
       onPrimary={() => {
         if (saving) return;
-        const projectId = canonicalProjectId ?? project?.folderId ?? '';
+        if (!configLoaded) {
+          setPrivacyError('Před uložením je potřeba načíst současné nastavení projektu. Zavřete a znovu otevřete dialog.');
+          return;
+        }
+        const projectId = canonicalProjectId ?? '';
         const parsed = parseProjectPrivacyUrlInput(privacyUrl);
         if (!parsed.ok) {
           setPrivacyError(parsed.error);
@@ -122,17 +127,9 @@ export function ProjectEditDialog({
           projectId,
           privacyUrl: parsed.privacyUrl,
         })
+          .then(() => saveCanonicalProjectMetadata(projectId, {name, description, status, metadata}))
           .then(() => {
-            if (project !== null) {
-              onSubmit({
-                name,
-                companyId,
-                description,
-                status,
-                slug,
-                metadata,
-              });
-            }
+            onSubmit();
             setSaving(false);
             onClose();
           })
@@ -151,7 +148,7 @@ export function ProjectEditDialog({
           {canonicalProjectName}
         </p>
       ) : null}
-      {project !== null ? (
+      {canonicalProjectId !== null ? (
         <>
           <PlatformField label="Název">
             <input
@@ -163,6 +160,7 @@ export function ProjectEditDialog({
           <PlatformField label="Firma">
             <select
               value={companyId}
+              disabled
               onChange={(event) => setCompanyId(event.target.value)}
             >
               {companies.map((company) => (
@@ -183,7 +181,7 @@ export function ProjectEditDialog({
             <select
               value={status}
               onChange={(event) =>
-                setStatus(event.target.value as WorkspaceProjectStatus)
+                setStatus(event.target.value as NonNullable<PlatformCanonicalProject['status']>)
               }
             >
               {STATUS_OPTIONS.map((option) => (
@@ -193,13 +191,7 @@ export function ProjectEditDialog({
               ))}
             </select>
           </PlatformField>
-          <PlatformField label="Slug" helper="URL identifikátor projektu.">
-            <input
-              required
-              value={slug}
-              onChange={(event) => setSlug(event.target.value)}
-            />
-          </PlatformField>
+
         </>
       ) : null}
       <PlatformField
@@ -222,7 +214,7 @@ export function ProjectEditDialog({
           {privacyError}
         </p>
       ) : null}
-      {project !== null ? (
+      {canonicalProjectId !== null ? (
         <PlatformField label="Metadata">
           <textarea
             value={metadata}

@@ -249,6 +249,21 @@ export class FileCanonicalRegistryAuthorityRepository {
     };
   }
 
+  async updateProjectMetadata(projectId: string, input: {
+    readonly name: unknown; readonly description: unknown; readonly status: unknown; readonly metadata: unknown;
+  }): Promise<PlatformCanonicalProject> {
+    const extras = await this.readExtras();
+    const current = findById(extras.canonicalProjects, projectId) ?? findById(DEFAULT_CANONICAL_PROJECTS, projectId);
+    if (!current) throw new Error('Projekt neexistuje.');
+    if (typeof input.name !== 'string' || !input.name.trim()) throw new Error('Vyplňte název projektu.');
+    if (!['draft', 'ready', 'published', 'archived'].includes(String(input.status))) throw new Error('Neplatný stav projektu.');
+    if (typeof input.description !== 'string' || typeof input.metadata !== 'string') throw new Error('Neplatné údaje projektu.');
+    const project: PlatformCanonicalProject = {...current, name: input.name.trim(), description: input.description.trim(),
+      status: input.status as PlatformCanonicalProject['status'], metadata: input.metadata.trim()};
+    await this.writeExtras({...extras, canonicalProjects: upsertById(extras.canonicalProjects, project)});
+    return project;
+  }
+
   async upsertAuthorityBundle(
     input: CanonicalRegistryAuthorityBundle,
   ): Promise<PlatformCanonicalProjectRuntimeAuthority> {

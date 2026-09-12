@@ -87,6 +87,9 @@ function projectIdentityFromRegistry(
       name: canonical.name,
       slug: canonical.slug,
       description: canonical.description,
+      status: canonical.status,
+      createdAt: canonical.createdAt,
+      metadata: canonical.metadata,
       ...(durableProjectBillingNumber(canonical.id) !== undefined
         ? {
             billingNumber:
@@ -212,6 +215,9 @@ function projectCanonicalFromDelivery(
       name: delivery.name,
       slug: delivery.slug,
       description: delivery.description,
+      status: delivery.status,
+      createdAt: delivery.createdAt,
+      metadata: delivery.metadata,
       ...(durableProjectBillingNumber(delivery.id) !== undefined
         ? {
             billingNumber:
@@ -445,6 +451,9 @@ function authorityHouseProjection(
       name: project.name,
       slug: project.slug,
       description: project.description,
+      status: project.status,
+      createdAt: project.createdAt,
+      metadata: project.metadata,
       ...(durableProjectBillingNumber(project.id) !== undefined
         ? {
             billingNumber:

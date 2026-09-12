@@ -686,7 +686,6 @@ export function BuilderStudioApp() {
 
       <ProjectEditDialog
         open={editOpen}
-        project={workspace.activeProject}
         canonicalProjectId={
           getActiveWorkspaceFolder(workspace.registry)?.id ??
           workspace.activeProject?.folderId ??
@@ -697,13 +696,7 @@ export function BuilderStudioApp() {
         }
         companies={workspace.registry.companies}
         onClose={() => setEditOpen(false)}
-        onSubmit={(input) => {
-          if (workspace.activeProject === null) {
-            return;
-          }
-          workspace.updateProject(workspace.activeProject.id, input);
-          setEditOpen(false);
-        }}
+        onSubmit={() => setEditOpen(false)}
       />
     </>
   );

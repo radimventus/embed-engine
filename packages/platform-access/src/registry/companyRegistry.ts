@@ -615,6 +615,7 @@ export function upsertBuilderCanonicalProject(
   ensureExtrasHydrated();
   const canonicalWorkspace = getCanonicalWorkspaceForCompany(project.companyId);
   const normalized: PlatformCanonicalProject = {
+    ...project,
     id: project.id.trim(),
     companyId: project.companyId.trim(),
     // Compatibility writers may predate a Workspace. When one exists, it is

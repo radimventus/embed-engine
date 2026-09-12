@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { PlatformDialog } from '@embed-engine/platform-shell';
 
 import type { DirtySwitchPrompt } from './useWorkspaceController';
@@ -38,6 +38,13 @@ export function getWorkspaceSidebarHouses(
   return activeFolder === null ? [] : housesForFolder(registry, activeFolder.id);
 }
 
+/** Newest first; archived projects can be restored from the same selector. */
+export function getWorkspaceSidebarFolders(registry: WorkspaceRegistryState, showArchived = false) {
+  return [...registry.folders].reverse().sort((a, b) =>
+    (b.createdAt ?? '').localeCompare(a.createdAt ?? ''),
+  ).filter(folder => showArchived || folder.status !== 'archived' || folder.id === registry.activeFolderId);
+}
+
 /**
  * PR-024 — Cream Light rail · object cards · unified ⊕.
  */
@@ -59,6 +66,8 @@ export function WorkspaceSidebar({
   onDirtyCancel,
 }: WorkspaceSidebarProps) {
   void _activeProject;
+  const [showArchived, setShowArchived] = useState(false);
+  const folders = getWorkspaceSidebarFolders(registry, showArchived);
 
   const activeFolder = useMemo(
     () => getActiveWorkspaceFolder(registry),
@@ -90,15 +99,19 @@ export function WorkspaceSidebar({
           {registry.folders.length === 0 ? (
             <option value="">Žádné projekty</option>
           ) : (
-            registry.folders.map((folder) => (
+            folders.map((folder) => (
               <option key={folder.id} value={folder.id}>
-                {folder.name}
+                {folder.name}{folder.status === 'archived' ? ' (Archivováno)' : ''}
               </option>
             ))
           )}
         </select>
       </label>
 
+      <label className="mt-3 flex items-center gap-2 text-xs text-builder-ink">
+        <input type="checkbox" checked={showArchived} onChange={event => setShowArchived(event.target.checked)} />
+        Zobrazit archivované projekty
+      </label>
       <div className="mt-3 flex w-full justify-center">
         <button
           type="button"

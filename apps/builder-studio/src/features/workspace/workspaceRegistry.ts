@@ -41,6 +41,8 @@ export type WorkspaceCompany = {
 
 /** UI „Projekt“ — presentation folder (not Shared Project identity). */
 export type WorkspaceProjectFolder = {
+  readonly status?: 'draft' | 'ready' | 'published' | 'archived';
+  readonly createdAt?: string;
   readonly id: string;
   readonly name: string;
   readonly companyId: string;
@@ -357,6 +359,8 @@ export function composeWorkspaceRegistry(input: {
     );
     if (index >= 0) {
       folders[index] = {
+        status: projection.project.status ?? 'draft',
+        createdAt: projection.project.createdAt,
         id: projection.project.projectId,
         name: projection.project.name,
         companyId: projection.partner.companyId,
@@ -919,6 +923,8 @@ export function createWorkspaceProjectFromInput(
     companyId,
     workspaceId: workspaceIdFromCanonical(companyId),
     name: projectName,
+    status: 'draft',
+    createdAt: new Date().toISOString(),
     slug: folderSlug,
     description: input.description.trim(),
   });

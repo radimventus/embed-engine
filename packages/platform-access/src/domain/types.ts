@@ -69,6 +69,9 @@ export type ReferenceHouseProvenance = {
  * No House Package fields — Houses reference this via {@link PlatformProject.canonicalProjectId}.
  */
 export type PlatformCanonicalProject = {
+  readonly status?: 'draft' | 'ready' | 'published' | 'archived';
+  readonly createdAt?: string;
+  readonly metadata?: string;
   readonly id: string;
   readonly companyId: string;
   readonly workspaceId: string;

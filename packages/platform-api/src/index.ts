@@ -776,7 +776,7 @@ export function createPlatformApiServer(
       response.setHeader("vary", "origin");
       response.setHeader(
         "access-control-allow-methods",
-        "GET,POST,PUT,DELETE,OPTIONS",
+        "GET,POST,PUT,PATCH,DELETE,OPTIONS",
       );
       response.setHeader(
         "access-control-allow-headers",
@@ -2466,7 +2466,7 @@ export function createPlatformApiServer(
       }
 
       if (
-        request.method === "POST" &&
+        (request.method === "POST" || request.method === "PATCH") &&
         path === "/public/auth/canonical-project-authority"
       ) {
         const token = requestCookie(request, PARTNER_SESSION_COOKIE);
@@ -2483,6 +2483,17 @@ export function createPlatformApiServer(
           return respond(response, 403, {
             error: "Canonical Project může registrovat pouze CONIS Admin.",
           });
+        }
+
+        if (request.method === "PATCH") {
+          const patch = await requestBody(request) as {projectId?: string; name: unknown; description: unknown; status: unknown; metadata: unknown};
+          try {
+            if (typeof patch.projectId !== 'string') throw new Error('Neplatný projekt.');
+            const project = await canonicalRegistryAuthorityRepository.updateProjectMetadata(patch.projectId, patch);
+            return respond(response, 200, {ok: true, project});
+          } catch (error) {
+            return respond(response, 400, {error: error instanceof Error ? error.message : 'Projekt se nepodařilo uložit.'});
+          }
         }
 
         const body = (await requestBody(
