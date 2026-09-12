@@ -60,13 +60,33 @@ describe('AUTHORING_DRAFT package bootstrap', () => {
     };
 
     try {
-      await ensureBuilderPackageBootstrapped(packagePublicRoot, {
-        identity: {
-          id: 'patrovy-5kk',
-          title: 'PATROVÝ 5KK',
-          reference: 'patrovy-5kk',
+      await ensureBuilderPackageBootstrapped(
+        packagePublicRoot,
+        {
+          identity: {
+            id: 'patrovy-5kk',
+            title: 'PATROVÝ 5KK',
+            reference: 'patrovy-5kk',
+          },
         },
-      });
+        {
+          files: {
+            manifestJson: JSON.stringify({
+              format: 'HP-002',
+              heroCopy: {
+                eyebrow: 'NOVÝ DŮM',
+                headline: 'Rozpoznatelný headline',
+                metrics: [
+                  { value: '100 m²', label: 'Plocha' },
+                  { value: 'A', label: 'Energie' },
+                  { value: 'Zděná', label: 'Konstrukce' },
+                ],
+              },
+              heroRelativePath: 'media/gallery/interior.svg',
+            }),
+          },
+        },
+      );
       const house = getBuilderRuntimeHousePackage();
 
       assert.equal(house.identity.id, 'patrovy-5kk');

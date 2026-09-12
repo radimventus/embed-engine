@@ -272,13 +272,13 @@ body:has(.workspace-shell[data-workspace-surface='client']),
   overflow: auto !important;
 }
 
-/* TASK 74 FIX-03 — Workspace-hosted Client Studio sidebar must span the
-   complete Client Experience document.
+/* TASK 74 FIX-06 — Workspace Client sidebar keeps its native viewport
+   interaction model, but begins below the Workspace header/breadcrumb.
+   Do not stretch it to document height and do not paint a second fixed rail. */
 
-   The shared Client Studio AppShell intentionally uses sticky + h-screen for
-   standalone delivery. In Workspace document-scroll mode that viewport-bound
-   slot truncates the navy navigation column before the Client Experience
-   ends. Override it only inside the Workspace client surface. */
+.workspace-shell[data-workspace-surface='client'] {
+  --workspace-client-top-offset: 102px;
+}
 
 .workspace-shell[data-workspace-surface='client']
   [data-studio-shell='app'] {
@@ -287,48 +287,21 @@ body:has(.workspace-shell[data-workspace-surface='client']),
   height: auto !important;
 }
 
-.workspace-shell[data-workspace-surface='client']
-  [data-studio-shell='sidebar-slot'] {
-  position: relative !important;
-  top: auto !important;
-  height: auto !important;
-  min-height: 100% !important;
-  align-self: stretch !important;
-  overflow: visible !important;
-}
-
-.workspace-shell[data-workspace-surface='client']
-  [data-studio-shell='sidebar'] {
-  height: 100% !important;
-  min-height: 100dvh !important;
-  align-self: stretch !important;
-}
-
-
-/* TASK 74 FIX-05 — Workspace Client rail is a continuous desktop viewport layer.
-   The document background can be covered by Workspace child surfaces near the
-   footer. A fixed, non-interactive rail guarantees visual continuity while the
-   real Client sidebar remains the interaction authority above it at z-60. */
-html:has(.workspace-shell[data-workspace-surface='client']),
-body:has(.workspace-shell[data-workspace-surface='client']),
-#root:has(.workspace-shell[data-workspace-surface='client']) {
-  background-color: #F7F6F4;
-}
-
-.workspace-shell[data-workspace-surface='client'] {
-  background: transparent !important;
-}
-
 @media (min-width: 1280px) {
-  body:has(.workspace-shell[data-workspace-surface='client'])::before {
-    content: "";
-    position: fixed;
-    z-index: 50;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    width: 48px;
-    background: #001930;
-    pointer-events: none;
+  .workspace-shell[data-workspace-surface='client']
+    [data-studio-shell='sidebar-slot'] {
+    position: sticky !important;
+    top: var(--workspace-client-top-offset) !important;
+    height: calc(100dvh - var(--workspace-client-top-offset)) !important;
+    min-height: calc(100dvh - var(--workspace-client-top-offset)) !important;
+    align-self: flex-start !important;
+    overflow: visible !important;
+  }
+
+  .workspace-shell[data-workspace-surface='client']
+    [data-studio-shell='sidebar'] {
+    height: calc(100dvh - var(--workspace-client-top-offset)) !important;
+    min-height: calc(100dvh - var(--workspace-client-top-offset)) !important;
+    align-self: stretch !important;
   }
 }

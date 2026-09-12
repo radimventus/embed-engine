@@ -161,18 +161,57 @@ async function loadAuthoringDraftManifest(
   readonly heroCopy: ReturnType<typeof readHeroCopyFromManifest>;
   readonly heroRelativePath: ReturnType<typeof readHeroRelativePathFromManifest>;
 }> {
+  const manifestPath =
+    `${packagePublicRoot.replace(/\/+$/, '')}/manifest.json`;
+
   try {
-    const text =
-      typeof manifestJson === 'string'
-        ? manifestJson
-        : await fetchText(
-            `${packagePublicRoot.replace(/\/+$/, '')}/manifest.json`,
-          );
-    const parsed: unknown = JSON.parse(text);
+    const durableText =
+      typeof manifestJson === 'string' ? manifestJson : null;
+
+    const staticText =
+      durableText === null
+        ? await fetchText(manifestPath)
+        : await fetchText(manifestPath).catch(() => null);
+
+    const primaryText = durableText ?? staticText;
+    if (primaryText === null) {
+      return {
+        authoringDraft: null,
+        heroCopy: null,
+        heroRelativePath: null,
+      };
+    }
+
+    const primaryParsed: unknown = JSON.parse(primaryText);
+
+    let staticAuthoringDraft: AuthoringDraftManifest | null = null;
+    if (staticText !== null && staticText !== primaryText) {
+      try {
+        const staticParsed: unknown = JSON.parse(staticText);
+        staticAuthoringDraft = isAuthoringDraftManifest(staticParsed)
+          ? staticParsed
+          : null;
+      } catch {
+        staticAuthoringDraft = null;
+      }
+    }
+
+    const authoringDraft = isAuthoringDraftManifest(primaryParsed)
+      ? primaryParsed
+      : staticAuthoringDraft;
+
     return {
-      authoringDraft: isAuthoringDraftManifest(parsed) ? parsed : null,
-      heroCopy: readHeroCopyFromManifest(text),
-      heroRelativePath: readHeroRelativePathFromManifest(text),
+      authoringDraft,
+      heroCopy:
+        readHeroCopyFromManifest(primaryText) ??
+        (staticText !== null
+          ? readHeroCopyFromManifest(staticText)
+          : null),
+      heroRelativePath:
+        readHeroRelativePathFromManifest(primaryText) ??
+        (staticText !== null
+          ? readHeroRelativePathFromManifest(staticText)
+          : null),
     };
   } catch {
     return {
