@@ -1,3 +1,4 @@
+import {FileFeedbackRepository, type FeedbackRepository} from './feedbackRepository';
 import { createHash, randomBytes } from "node:crypto";
 import {
   createInviteTiming,
@@ -760,6 +761,7 @@ export function createPlatformApiServer(
     platformApiStatePath("partner-password-resets.json"),
   ),
   passwordResetDelivery: PartnerPasswordResetDelivery = createEnvPartnerPasswordResetDelivery(),
+  feedback: FeedbackRepository = new FileFeedbackRepository(),
 ): Server {
   const partnerSessions =
     partnerSessionsParam ??
@@ -1410,6 +1412,43 @@ export function createPlatformApiServer(
         }
 
         return respond(response, 405, { error: "Method not allowed." });
+      }
+
+      const feedbackMatch = path.match(/^\/public\/auth\/manager-feedback(?:\/([a-f0-9-]{36}))?$/);
+      if (feedbackMatch) {
+        const token = requestCookie(request, PARTNER_SESSION_COOKIE);
+        const session = token === null ? null : await partnerSessions.resolve(token);
+        if (!session) return respond(response, 401, {error: "Neplatná relace."});
+        if (request.method === 'POST' && !feedbackMatch[1]) {
+          if (!canAccessStudio(session.user.roles, 'manager')) return respond(response, 403, {error: 'Přístup není povolen.'});
+          const body = await requestBody(request) as {message?: unknown; currentUrl?: unknown} | null;
+          if (!body || typeof body.message !== 'string' || !body.message.trim() || body.message.trim().length > 5000) {
+            return respond(response, 400, {error: 'Zpráva musí mít 1–5000 znaků.'});
+          }
+          let currentUrl: string | null = null;
+          if (typeof body.currentUrl === 'string' && body.currentUrl.length <= 2000) {
+            try {
+              const url = new URL(body.currentUrl);
+              if (url.protocol === 'https:' || url.protocol === 'http:') currentUrl = url.origin + url.pathname;
+            } catch { /* Invalid optional route is omitted. */ }
+          }
+          try {
+            const entry = await feedback.create({message: body.message, currentUrl, userId: session.user.id ?? null,
+              companyId: session.companyId ?? null, projectId: session.projectId ?? null});
+            return respond(response, 201, {feedbackId: entry.feedbackId, createdAt: entry.createdAt, status: entry.status});
+          } catch { return respond(response, 503, {error: 'Zpětnou vazbu se nepodařilo uložit.'}); }
+        }
+        if (request.method === 'GET') {
+          if (!isPlatformAdmin(session.user.roles)) return respond(response, 403, {error: 'Přístup není povolen.'});
+          try {
+            if (feedbackMatch[1]) {
+              const entry = await feedback.get(feedbackMatch[1]);
+              return entry ? respond(response, 200, entry) : respond(response, 404, {error: 'Záznam neexistuje.'});
+            }
+            return respond(response, 200, {entries: await feedback.list()});
+          } catch { return respond(response, 503, {error: 'Zpětnou vazbu se nepodařilo načíst.'}); }
+        }
+        return respond(response, 405, {error: 'Method not allowed.'});
       }
 
       const projectConfigMatch = path.match(

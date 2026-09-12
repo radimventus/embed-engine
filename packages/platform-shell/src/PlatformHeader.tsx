@@ -1,3 +1,4 @@
+import {ManagerFeedbackButton} from './ManagerFeedbackButton';
 import type { PlatformStudioId } from './platformStudios';
 import { CLOUD_PLATFORM_ORIGIN } from './platformStudios';
 import { FeedbackButton } from './FeedbackButton';
@@ -20,7 +21,7 @@ export type PlatformHeaderProps = {
   readonly onLogout?: () => void;
   readonly onOpenLanding?: () => void;
   readonly onSelectStudio?: (studioId: PlatformStudioId) => void;
-  readonly onSubmitFeedback?: (message: string) => void;
+  readonly onSubmitFeedback?: (message: string) => void | Promise<unknown>;
   /** OF-13 / VR-005 — hide when a host already owns chrome (rare); default shows PlatformShell switcher. */
   readonly hideStudioSwitcher?: boolean;
 };
@@ -86,6 +87,10 @@ export function PlatformHeader({
 
       <div className="platform-header__actions">
         <div className="platform-user-badge">
+          {activeStudioId === 'manager' ? <>
+            <ManagerFeedbackButton onSubmitFeedback={onSubmitFeedback} />
+            <button type="button" className="platform-feedback__trigger" onClick={onLogout} disabled={!onLogout}>Odhlásit</button>
+          </> : <>
           <FeedbackButton onSubmitFeedback={onSubmitFeedback} />
           <NotificationsBell count={notificationCount} />
           <UserMenu
@@ -94,6 +99,7 @@ export function PlatformHeader({
             onLogout={onLogout}
             onOpenLanding={onOpenLanding}
           />
+          </>}
         </div>
       </div>
     </header>

@@ -4,8 +4,7 @@ import { useMemo } from 'react';
 import {
   PLATFORM_ROLE_LABELS,
   primaryRole,
-  recordPlatformActivity,
-  submitPlatformFeedback,
+  submitManagerFeedback,
   usePlatformSession,
   usePilotWorkspace,
   useStudioBrandProjection,
@@ -127,18 +126,7 @@ export function AppShell({ sidebar, children }: AppShellProps) {
       onLogout={logout}
       onOpenLanding={clearStudio}
       onSelectStudio={selectStudio}
-      onSubmitFeedback={(message) => {
-        submitPlatformFeedback({
-          message,
-          email: session?.user.email ?? null,
-          studioId: 'manager',
-          companyId: session?.companyId ?? null,
-        });
-        recordPlatformActivity({
-          label: 'Zpětná vazba',
-          detail: message.slice(0, 80),
-        });
-      }}
+      onSubmitFeedback={submitManagerFeedback}
     >
       {body}
     </PlatformShell>

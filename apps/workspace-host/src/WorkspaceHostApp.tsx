@@ -1,3 +1,4 @@
+import {submitManagerFeedback} from '@embed-engine/platform-access';
 /**
  * VR-04 / VR-005 / PT-VR-06 — Canonical CONIS Workspace Shell.
  * Chrome = PlatformShell only (no duplicated WorkspaceHeader).
@@ -1049,9 +1050,7 @@ export function WorkspaceHostApp() {
         onLogout={handleLogout}
         onOpenLanding={() => selectSurface('client')}
         onSelectStudio={(studioId) => selectSurface(studioId)}
-        onSubmitFeedback={() => {
-          // Feedback stays available; Workspace Host has no separate store.
-        }}
+        onSubmitFeedback={surface === 'manager' ? submitManagerFeedback : () => undefined}
       >
         <main className="workspace-shell__main" data-testid="workspace-shell-main">
           {partnerJourneyOpen ? (

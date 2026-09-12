@@ -685,3 +685,5 @@ export {
   type ManagerMediaInsight,
   type ManagerTrajectory,
 } from './operations/managerIntelligence';
+
+export { submitManagerFeedback } from './api/managerFeedback';
