@@ -234,24 +234,9 @@ function stripBrowserPrivacyUrl(
   project: PlatformCanonicalProject,
 ): PlatformCanonicalProject {
   const privacyUrl = durableProjectPrivacyUrl(project.id);
-  return privacyUrl === undefined
-    ? {
-        id: project.id,
-        companyId: project.companyId,
-        workspaceId: project.workspaceId,
-        name: project.name,
-        slug: project.slug,
-        description: project.description,
-      }
-    : {
-        id: project.id,
-        companyId: project.companyId,
-        workspaceId: project.workspaceId,
-        name: project.name,
-        slug: project.slug,
-        description: project.description,
-        privacyUrl,
-      };
+  // Only privacy is server-config-owned; preserve all canonical Project metadata.
+  const { privacyUrl: _browserPrivacyUrl, ...canonical } = project;
+  return privacyUrl === undefined ? canonical : {...canonical, privacyUrl};
 }
 
 export function getDefaultCompanyRegistry(): CompanyRegistryState {

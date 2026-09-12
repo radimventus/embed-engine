@@ -290,6 +290,20 @@ it('archives and restores Project metadata durably without changing identity or 
     assert.equal(updated.companyId, partnerX().project.companyId);
     const after = await new FileCanonicalRegistryAuthorityRepository(path).readAuthoritySnapshot();
     assert.equal(after.projects.find(x => x.id === 'project-x')!.status, 'archived');
+    const {hydrateCanonicalRegistryFromAuthority, getCanonicalProject, resetCompanyRegistryExtras, applyDurableProjectConfigs} = await import('@embed-engine/platform-access');
+    try {
+      for (const privacyUrl of [null, 'https://example.com/privacy']) {
+        resetCompanyRegistryExtras();
+        applyDurableProjectConfigs([{projectId: 'project-x', privacyUrl}]);
+        hydrateCanonicalRegistryFromAuthority(after);
+        const dialogProject = getCanonicalProject('project-x')!.project;
+        assert.equal(dialogProject.status, 'archived');
+        assert.equal(dialogProject.name, input.name);
+        assert.equal(dialogProject.metadata, input.metadata);
+        assert.equal(dialogProject.privacyUrl, privacyUrl ?? undefined);
+      }
+    } finally { resetCompanyRegistryExtras(); }
+
     assert.deepEqual(after.houses, before.houses);
     assert.deepEqual(after.companies, before.companies);
     await repo.updateProjectMetadata('project-x', {...input, status: 'ready'});
