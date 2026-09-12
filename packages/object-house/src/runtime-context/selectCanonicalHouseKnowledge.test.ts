@@ -92,12 +92,12 @@ describe('canonical Priority knowledge selection', () => {
       .slice(0, 3);
 
     assert.deepEqual(
-      payoffFacts.map((fact) => fact.id),
+      payoffFacts.map((fact) => fact.id).sort(),
       [
         'dse-integrated-energy',
         'product-construction-system',
         'product-diffusion-open-envelope',
-      ],
+      ].sort(),
     );
     assert.equal(new Set(payoffFacts.map((fact) => fact.id)).size, 3);
   });

@@ -173,7 +173,10 @@ export function AIAdvisor() {
               : {
                   objectId: chatHouseKnowledge.canonicalHouseId,
                   knowledge: {
-                    entries: canonicalHouseKnowledgeEntries(chatHouseKnowledge),
+                    entries: canonicalHouseKnowledgeEntries(chatHouseKnowledge,
+                      text.split(/\s+/).length <= 6
+                        ? `${text} ${messages.filter(message => message.role === 'user').at(-1)?.text ?? ''}`
+                        : text),
                   },
                 },
         });

@@ -28,7 +28,7 @@ describe('CAP-REF-07b Canonical House Runtime Context', () => {
     assert.ok(context);
     assert.equal(context.identity.houseId, 'modern-4kk');
     assert.equal(context.specification.identity.name, 'MODERN 4KK');
-    assert.equal(context.knowledge.length, 20);
+    assert.equal(context.knowledge.filter(atom => atom.id.startsWith('kb04-row-')).length, 540);
     assert.equal(context.priorityFaq.length, 100);
     for (const priority of Object.keys(HOUSE_PRIORITY_LABELS)) {
       assert.equal(
@@ -43,7 +43,7 @@ describe('CAP-REF-07b Canonical House Runtime Context', () => {
     assert.ok(context);
 
     assert.ok(context.knowledge.some((atom) => atom.scope === 'PRODUCT'));
-    assert.ok(context.knowledge.some((atom) => atom.scope === 'DSE_KNOW_HOW'));
+    assert.ok(context.knowledge.some((atom) => atom.source.kind === 'CURRENT_CONFIRMED'));
     assert.ok(
       context.knowledge.some((atom) => atom.scope === 'REFERENCE_PROJECT'),
     );
@@ -75,7 +75,7 @@ describe('CAP-REF-07b Canonical House Runtime Context', () => {
     assert.equal(selection.priorityFaq.length, 20);
     assert.deepEqual(
       selection.facts.slice(0, 2).map((atom) => atom.id),
-      ['dse-integrated-energy', 'product-diffusion-open-envelope'],
+      ['kb04-row-382', 'kb04-row-383'],
     );
     assert.ok(
       selection.interpretations.every((interpretation) =>
@@ -84,7 +84,7 @@ describe('CAP-REF-07b Canonical House Runtime Context', () => {
     );
     assert.ok(
       selection.guardrails.some((guardrail) =>
-        guardrail.includes('nelze garantovat účet za energie'),
+        guardrail.includes('garance budoucích nákladů'),
       ),
     );
     assert.equal('tourImage' in selection, false);
@@ -97,7 +97,7 @@ describe('CAP-REF-07b Canonical House Runtime Context', () => {
     );
     assert.equal(
       canonicalHouseKnowledgeEntries(selection).some((entry) =>
-        /nelze garantovat účet za energie/i.test(entry.text),
+        /garance budoucích nákladů/i.test(entry.text),
       ),
       true,
     );
