@@ -186,15 +186,11 @@ body:has(.workspace-shell[data-workspace-surface='client']),
 
 .workspace-partner-journey
   [data-testid='workspace-partner-commercial-journey'] {
-  position: static;
-  inset: auto;
   width: 100%;
-  min-height: 0 !important;
-  height: auto;
-  max-height: none;
+  min-height: 100vh !important;
+  height: 100vh !important;
   border: 0;
   display: block;
-  overflow: hidden;
 }
 
 /* UX65F — Workspace vertical reachability.
@@ -210,36 +206,6 @@ body:has(.workspace-shell[data-workspace-surface='client']),
   box-sizing: border-box;
   overflow-y: auto;
   padding-bottom: max(96px, env(safe-area-inset-bottom));
-}
-
-/* TASK 89 FIX-03 — journey iframe document-scroll contract.
-   Commercial Journey iframe grows to its content height.
-   Workspace Host owns the only vertical document scroll. */
-html:has(.workspace-partner-journey),
-body:has(.workspace-partner-journey),
-#root:has(.workspace-partner-journey) {
-  height: auto !important;
-  min-height: 100dvh;
-  max-height: none !important;
-  overflow-y: visible !important;
-}
-
-.workspace-shell:has(.workspace-partner-journey),
-.workspace-shell:has(.workspace-partner-journey) [data-platform-shell],
-.workspace-shell:has(.workspace-partner-journey) .platform-body,
-.workspace-shell:has(.workspace-partner-journey) .workspace-shell__main,
-.workspace-partner-journey {
-  height: auto !important;
-  min-height: 0 !important;
-  max-height: none !important;
-  overflow-y: visible !important;
-}
-
-.workspace-shell:has(.workspace-partner-journey)
-  .workspace-shell__main {
-  position: relative;
-  overflow-x: hidden !important;
-  padding-bottom: max(32px, env(safe-area-inset-bottom));
 }
 
 /* TASK 74 FIX-02 — Client Studio hosted in Workspace must behave as one
