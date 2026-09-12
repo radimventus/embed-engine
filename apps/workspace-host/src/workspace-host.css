@@ -272,12 +272,13 @@ body:has(.workspace-shell[data-workspace-surface='client']),
   overflow: auto !important;
 }
 
-/* TASK 74 FIX-06 — Workspace Client sidebar keeps its native viewport
-   interaction model, but begins below the Workspace header/breadcrumb.
-   Do not stretch it to document height and do not paint a second fixed rail. */
+/* Workspace Client sidebar and ClientStudioHeader share the same sticky top.
+   Normal document flow places both below the Workspace breadcrumb initially;
+   after the outer chrome scrolls away both stop at the viewport top.
+   A permanent 102px inset here leaves the rail detached from the CS header. */
 
 .workspace-shell[data-workspace-surface='client'] {
-  --workspace-client-top-offset: 102px;
+  --workspace-client-top-offset: 0px;
 }
 
 .workspace-shell[data-workspace-surface='client']
