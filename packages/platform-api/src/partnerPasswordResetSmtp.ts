@@ -20,7 +20,7 @@ export type PartnerPasswordResetSmtpConfig = {
   readonly resetUrl: string;
 };
 
-type PasswordResetMailTransport = {
+export type ConisMailTransport = {
   sendMail(input: SendMailOptions): Promise<unknown>;
 };
 
@@ -79,9 +79,9 @@ function readResetUrl(value: string | undefined): string {
   return url.toString();
 }
 
-export function readPartnerPasswordResetSmtpConfig(
+export function readConisSmtpConfig(
   environment: NodeJS.ProcessEnv = process.env,
-): PartnerPasswordResetSmtpConfig | null {
+): Omit<PartnerPasswordResetSmtpConfig, 'resetUrl'> | null {
   const host = nonEmpty(environment.SMTP_HOST);
   const user = nonEmpty(environment.SMTP_USER);
   const password = nonEmpty(
@@ -99,10 +99,21 @@ export function readPartnerPasswordResetSmtpConfig(
     user,
     password,
     from: nonEmpty(environment.SMTP_FROM) ?? user,
-    resetUrl: readResetUrl(
-      environment.PARTNER_PASSWORD_RESET_URL,
-    ),
   };
+}
+
+export function readPartnerPasswordResetSmtpConfig(environment: NodeJS.ProcessEnv = process.env): PartnerPasswordResetSmtpConfig | null {
+  const smtp = readConisSmtpConfig(environment);
+  return smtp === null ? null : {...smtp, resetUrl: readResetUrl(environment.PARTNER_PASSWORD_RESET_URL)};
+}
+
+/** Shared Platform API SMTP transport, also used for secondary internal notifications. */
+export function createConisMailTransport(
+  config: Omit<PartnerPasswordResetSmtpConfig, 'resetUrl'>,
+  timeouts: {connectionTimeout?: number; greetingTimeout?: number; socketTimeout?: number} = {},
+): ConisMailTransport {
+  return nodemailer.createTransport({host: config.host, port: config.port, secure: config.secure,
+    auth: {user: config.user, pass: config.password}, ...timeouts});
 }
 
 export function createPartnerPasswordResetMail(
@@ -141,23 +152,15 @@ export function createPartnerPasswordResetMail(
 export class SmtpPartnerPasswordResetDelivery
   implements PartnerPasswordResetDelivery
 {
-  private readonly transport: PasswordResetMailTransport;
+  private readonly transport: ConisMailTransport;
 
   constructor(
     private readonly config: PartnerPasswordResetSmtpConfig,
-    transport?: PasswordResetMailTransport,
+    transport?: ConisMailTransport,
   ) {
     this.transport =
       transport ??
-      nodemailer.createTransport({
-        host: config.host,
-        port: config.port,
-        secure: config.secure,
-        auth: {
-          user: config.user,
-          pass: config.password,
-        },
-      });
+      createConisMailTransport(config);
   }
 
   async sendPasswordReset(

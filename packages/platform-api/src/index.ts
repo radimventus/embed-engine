@@ -1,3 +1,4 @@
+import {createManagerFeedbackNotifier, type FeedbackNotifier} from './managerFeedbackNotification';
 import {FileFeedbackRepository, type FeedbackRepository} from './feedbackRepository';
 import { createHash, randomBytes } from "node:crypto";
 import {
@@ -762,6 +763,7 @@ export function createPlatformApiServer(
   ),
   passwordResetDelivery: PartnerPasswordResetDelivery = createEnvPartnerPasswordResetDelivery(),
   feedback: FeedbackRepository = new FileFeedbackRepository(),
+  notifyFeedback: FeedbackNotifier = createManagerFeedbackNotifier(),
 ): Server {
   const partnerSessions =
     partnerSessionsParam ??
@@ -1435,6 +1437,8 @@ export function createPlatformApiServer(
           try {
             const entry = await feedback.create({message: body.message, currentUrl, userId: session.user.id ?? null,
               companyId: session.companyId ?? null, projectId: session.projectId ?? null});
+            try { await notifyFeedback(entry); }
+            catch { console.warn(JSON.stringify({event: 'manager_feedback_notification', feedbackId: entry.feedbackId, status: 'FAILED', reason: 'DELIVERY_ERROR'})); }
             return respond(response, 201, {feedbackId: entry.feedbackId, createdAt: entry.createdAt, status: entry.status});
           } catch { return respond(response, 503, {error: 'Zpětnou vazbu se nepodařilo uložit.'}); }
         }
