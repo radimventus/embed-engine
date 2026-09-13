@@ -25,9 +25,9 @@ test('HTTP persists before SMTP, includes context, and email failures do not und
     for (const part of [stored.createdAt, id, 'user-1','project-1','company-1','surface: MANAGER','https://conis.cz/studio/manager/','Test zprávy']) assert.ok(text.includes(part),part);
     assert.ok(!text.includes(environment.SMTP_PASSWORD));
     if(mailFails) throw new Error('SMTP secret-containing error must not be logged');
-    return {};
+    return {messageId:'provider-message-1'};
   }}, event=>logs.push(event));
-  const repository={create:(input:Parameters<typeof files.create>[0])=>storageFails ? Promise.reject(new Error('disk')) : files.create(input), get:(id:string)=>files.get(id), list:()=>files.list()};
+  const repository={create:(input:Parameters<typeof files.create>[0])=>storageFails ? Promise.reject(new Error('disk')) : files.create(input), get:(id:string)=>files.get(id), list:()=>files.list(), updateNotification:(id:string,input:Parameters<typeof files.updateNotification>[1])=>files.updateNotification(id,input)};
   const sessions={resolve:async()=>({user:{id:'user-1',roles:['manager']},companyId:'company-1',projectId:'project-1'})};
   const server=createPlatformApiServer(undefined,undefined,undefined,undefined,undefined,sessions as never,undefined,undefined,undefined,undefined,undefined,undefined,undefined,undefined,undefined,undefined,repository,notify);
   try {
@@ -36,11 +36,15 @@ test('HTTP persists before SMTP, includes context, and email failures do not und
     const send=()=>fetch(`http://127.0.0.1:${addr.port}/public/auth/manager-feedback`,{method:'POST',headers:{cookie:'__Host-conis_partner_session=test','content-type':'application/json'},body:JSON.stringify({message:'Test zprávy',currentUrl:'https://conis.cz/studio/manager/'})});
     assert.equal((await send()).status,201);
     assert.equal(calls,1); assert.equal(logs[0]!.status,'SENT');
+    assert.equal((await files.list())[0]!.notificationStatus,'SENT');
+    assert.equal((await files.list())[0]!.notificationProviderId,'provider-message-1');
     mailFails=true;
     assert.equal((await send()).status,201);
     assert.equal(calls,2); assert.equal(logs[1]!.status,'FAILED');
     assert.equal(logs[1]!.reason,'SMTP_ERROR');
-    assert.equal((await new FileFeedbackRepository(directory).list()).length,2);
+    const records=await new FileFeedbackRepository(directory).list();
+    assert.equal(records.length,2); assert.equal(records[0]!.notificationStatus,'FAILED');
+    assert.match(records[0]!.notificationError!,/secret-containing/);
     storageFails=true;
     assert.equal((await send()).status,503);
     assert.equal(calls,2); assert.equal(logs.length,2);

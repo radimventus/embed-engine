@@ -11,7 +11,7 @@ test('Manager feedback is durable, scoped by session, retrievable by admin and f
   const files = new FileFeedbackRepository(dir);
   let fail = false;
   const repository = {create: (input: Parameters<typeof files.create>[0]) => fail ? Promise.reject(new Error('disk')) : files.create(input),
-    list: () => files.list(), get: (id: string) => files.get(id)};
+    list: () => files.list(), get: (id: string) => files.get(id), updateNotification: (id:string,input:Parameters<typeof files.updateNotification>[1])=>files.updateNotification(id,input)};
   const sessions = {resolve: async (token: string) => token === 'missing' ? null : {
     user: {id: 'user-1', roles: [token === 'admin' ? 'conis-admin' : 'manager']}, companyId: 'company-1', projectId: 'project-1'}};
   const server = createPlatformApiServer(undefined,undefined,undefined,undefined,undefined,sessions as never,
@@ -30,6 +30,7 @@ test('Manager feedback is durable, scoped by session, retrievable by admin and f
     assert.equal(restored!.message,'Prosím upravit přehled.');
     assert.equal(restored!.userId,'user-1'); assert.equal(restored!.projectId,'project-1');
     assert.equal(restored!.surface,'MANAGER'); assert.equal(restored!.status,'NEW');
+    assert.equal(restored!.notificationStatus,'NOT_CONFIGURED');
     assert.equal(restored!.currentUrl,'https://conis.cz/studio/workspace/');
     assert.ok(restored!.createdAt);
     assert.equal((await fetch(url,{headers:{cookie:'__Host-conis_partner_session=manager'}})).status,403);

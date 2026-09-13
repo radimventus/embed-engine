@@ -686,6 +686,6 @@ export {
   type ManagerTrajectory,
 } from './operations/managerIntelligence';
 
-export { submitManagerFeedback } from './api/managerFeedback';
+export { submitManagerFeedback, listManagerFeedback, getManagerFeedback, type ManagerFeedbackRecord } from './api/managerFeedback';
 
 export {managerWorkspaceStudio} from './domain/managerWorkspaceNavigation';

@@ -11,6 +11,7 @@ export type OfficeRouteId =
   | 'documents'
   | 'implementation'
   | 'activity'
+  | 'feedback'
   | 'settings'
   | 'commercial-journey';
 
@@ -37,6 +38,7 @@ export const OFFICE_NAV_ITEMS: readonly OfficeNavItem[] = Object.freeze([
   { id: 'documents', label: 'Dokumenty', path: 'documents' },
   { id: 'implementation', label: 'Implementace', path: 'implementation' },
   { id: 'activity', label: 'Aktivita', path: 'activity' },
+  { id: 'feedback', label: 'Feedback', path: 'feedback' },
   { id: 'settings', label: 'Nastavení', path: 'settings' },
   {
     id: 'commercial-journey',

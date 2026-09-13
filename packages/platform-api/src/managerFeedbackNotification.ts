@@ -5,8 +5,10 @@ import {createConisMailTransport, readConisSmtpConfig, type ConisMailTransport} 
 export type FeedbackNotificationEvent = {
   event: 'manager_feedback_notification'; feedbackId: string;
   status: 'SENT' | 'FAILED' | 'NOT_CONFIGURED'; reason?: 'RECIPIENT_MISSING' | 'SMTP_MISSING' | 'INVALID_CONFIG' | 'SMTP_ERROR';
+  providerId?: string; error?: string;
 };
-export type FeedbackNotifier = (entry: ManagerFeedback) => Promise<void>;
+export type FeedbackNotificationOutcome = Omit<FeedbackNotificationEvent, 'event' | 'feedbackId'>;
+export type FeedbackNotifier = (entry: ManagerFeedback) => Promise<FeedbackNotificationOutcome>;
 export type FeedbackNotificationLogger = (event: FeedbackNotificationEvent) => void;
 
 export function managerFeedbackMail(entry: ManagerFeedback, from: string, recipient: string): SendMailOptions {
@@ -40,15 +42,26 @@ export function createManagerFeedbackNotifier(
     }
   } catch { unavailable = {status: 'FAILED', reason: 'INVALID_CONFIG'}; }
   return async entry => {
-    let outcome = unavailable;
+    let outcome: FeedbackNotificationOutcome | undefined = unavailable;
     if (!outcome) {
       try {
-        await transport!.sendMail(managerFeedbackMail(entry, smtp!.from, recipient));
-        outcome = {status: 'SENT'};
-      } catch { outcome = {status: 'FAILED', reason: 'SMTP_ERROR'}; }
+        const result = await transport!.sendMail(managerFeedbackMail(entry, smtp!.from, recipient));
+        const providerId = typeof result === 'object' && result !== null && 'messageId' in result && typeof result.messageId === 'string'
+          ? result.messageId : undefined;
+        outcome = {status: 'SENT', ...(providerId ? {providerId} : {})};
+      } catch (error) {
+        const value = error as {code?: unknown; command?: unknown; message?: unknown};
+        let detail = [value.code, value.command, value.message].filter(part => typeof part === 'string' && part.length > 0).join(' · ');
+        for (const secret of [environment.SMTP_PASSWORD, environment.SMTP_PASS, environment.SMTP_USER]) {
+          if (secret?.trim()) detail = detail.split(secret).join('[REDACTED]');
+        }
+        detail = detail.slice(0, 500);
+        outcome = {status: 'FAILED', reason: 'SMTP_ERROR', ...(detail ? {error: detail} : {})};
+      }
     }
     // Log only identifiers/outcome: never SMTP credentials or feedback text.
     try { logger({event: 'manager_feedback_notification', feedbackId: entry.feedbackId, ...outcome}); }
     catch { /* A logging failure must not turn a durable submission into a failed one. */ }
+    return outcome;
   };
 }

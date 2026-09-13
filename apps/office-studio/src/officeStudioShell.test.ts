@@ -24,6 +24,7 @@ describe('officeStudioShell (OF-01 / OF-02 / CAP-OP-10A)', () => {
         'Dokumenty',
         'Implementace',
         'Aktivita',
+        'Feedback',
         'Nastavení',
         'Partner Commercial Journey',
       ],
@@ -52,6 +53,7 @@ describe('officeStudioShell (OF-01 / OF-02 / CAP-OP-10A)', () => {
       parseOfficeRoute('/studio/office/implementation', '/studio/office/'),
       'implementation',
     );
+    assert.equal(parseOfficeRoute('/studio/office/feedback', '/studio/office/'), 'feedback');
     assert.equal(
       parseOfficeRoute('/studio/office/pilot-workspace', '/studio/office/'),
       'work',

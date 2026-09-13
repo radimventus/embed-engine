@@ -29,6 +29,7 @@ import { OfficeSidebar } from './components/OfficeSidebar';
 import { DocumentsWorkspacePage } from './features/documents/DocumentsWorkspacePage';
 import { ImplementationWorkspacePage } from './features/implementation/ImplementationWorkspacePage';
 import { OfficeDashboardPage } from './features/OfficeDashboardPage';
+import { OfficeFeedbackPage } from './features/feedback/OfficeFeedbackPage';
 import { OfficeSectionPage } from './features/OfficeSectionPage';
 import { PartnersWorkspacePage } from './features/partners/PartnersWorkspacePage';
 import { PilotRuntimePage } from './features/pilot/PilotRuntimePage';
@@ -196,6 +197,8 @@ function OfficeStudioAppInner() {
           openPartnerScoped('partners', partnerId)
         }
       />
+    ) : location.routeId === 'feedback' ? (
+      <OfficeFeedbackPage />
     ) : (
       <OfficeSectionPage routeId={location.routeId} />
     );
