@@ -45,6 +45,8 @@ import {
   clearPlatformSession,
   savePlatformSession,
 } from '../session/sessionStore';
+import { resolveWorkspaceHostHref } from '../cloud/cloudConfig';
+import { managerWorkspaceStudio } from '../domain/managerWorkspaceNavigation';
 import { urlWithoutInviteParam } from './inviteRouting';
 import { touchUserLastStudio } from '../registry/userRegistry';
 import { isWorkspaceShellEmbed } from '../domain/workspaceShellEmbed';
@@ -106,6 +108,15 @@ export function SessionProvider({
   const [isRestoring, setIsRestoring] = useState(true);
   const applySession = useCallback((restored: PlatformSession) => {
     savePlatformSession(restored);
+    if (primaryRole(restored.user.roles) === 'manager') {
+      const activeStudioId = managerWorkspaceStudio(restored.workspaceContext?.activeStudio ?? restored.activeStudioId);
+      const next = updateSession({
+        activeStudioId,
+        ...(restored.workspaceContext ? {workspaceContext: {...restored.workspaceContext, activeStudio: activeStudioId}} : {}),
+      });
+      setSession(next ?? restored);
+      return;
+    }
     // VR-04 — nested Workspace Shell views must not rewrite activeStudio.
     if (isWorkspaceShellEmbed()) {
       setSession(restored);
@@ -210,6 +221,18 @@ export function SessionProvider({
     refreshRegistry();
     savePlatformSession(result.session);
     setSession(result.session);
+    if (primaryRole(result.session.user.roles) === 'manager') {
+      switchOperatorPartnerStudio('manager', {navigate: false, retainWorkspace: true});
+      const current = getSharedWorkspaceContext();
+      const next = updateSession({activeStudioId: 'manager', ...(current ? {workspaceContext: {...current, activeStudio: 'manager'}} : {})});
+      setSession(next ?? result.session);
+      if (typeof window !== 'undefined') {
+        const href = new URL(resolveWorkspaceHostHref());
+        href.searchParams.set('studio', 'manager');
+        window.location.assign(href.toString());
+      }
+      return {ok: true as const};
+    }
     // CAP-GOV-06 / RC-002 — prefer the Studio host that mounted SessionProvider
     // (bindStudioId). Deep-link login on Office must not teleport to Manager/Sales
     // when that host is down (white screen / endless navigation).
@@ -248,6 +271,11 @@ export function SessionProvider({
   }, []);
 
   const selectStudio = useCallback((studioId: PlatformStudioId) => {
+    if (session && primaryRole(session.user.roles) === 'manager') {
+      if (!canAccessStudio(session.user.roles, studioId)) return;
+      switchOperatorPartnerStudio(studioId, {retainWorkspace: true});
+      return;
+    }
     const workspaceContext = getSharedWorkspaceContext();
     if (workspaceContext !== null) {
       // VR-04 / PT-OS-02 — PE mode stays on Workspace Host; switch in-shell surface.
@@ -274,7 +302,7 @@ export function SessionProvider({
         window.location.assign(href);
       }
     }
-  }, []);
+  }, [session]);
 
   const clearStudio = useCallback(() => {
     if (getSharedWorkspaceContext() !== null) {

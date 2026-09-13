@@ -2,6 +2,8 @@ import type { ReactNode } from 'react';
 import { useState } from 'react';
 
 import { resolveWorkspaceHostHref } from '../cloud/cloudConfig';
+import {shouldRedirectManagerToWorkspace} from '../domain/managerWorkspaceNavigation';
+import {switchOperatorPartnerStudio} from '../pilot/operatorPartnerEnvironment';
 import type { PlatformStudioId } from '../domain/types';
 import {
   isOnWorkspaceHost,
@@ -26,6 +28,7 @@ import {
 } from './inviteRouting';
 
 type AccessGateProps = {
+  readonly studioId: PlatformStudioId;
   readonly children: ReactNode;
   readonly renderWorkspaceEntry?: (
     stage: WorkspaceEntryStage,
@@ -87,7 +90,7 @@ function hydratePilotFromUrlOnce(): void {
  * Auth → Invite → Landing → Studio.
  * VR-04 — operator Workspace is a single host; nested embeds skip outer chrome.
  */
-function AccessGateInner({ children, renderWorkspaceEntry }: AccessGateProps) {
+function AccessGateInner({ children, renderWorkspaceEntry, studioId }: AccessGateProps) {
   const { session, isRestoring } = usePlatformSession();
   hydratePilotFromUrlOnce();
   const urlToken = readInviteTokenFromUrl();
@@ -173,6 +176,16 @@ function AccessGateInner({ children, renderWorkspaceEntry }: AccessGateProps) {
     return <AuthShell onOpenInvite={() => setInviteMode(true)} />;
   }
 
+  // Manager uses the Workspace host. Never render forbidden standalone or embedded surfaces.
+  if (shouldRedirectManagerToWorkspace({
+    roles: session.user.roles, studioId, onWorkspaceHost: isOnWorkspaceHost(),
+    nestedWorkspaceView: shellEmbed && typeof window !== 'undefined' && window.self !== window.top,
+  })) {
+    switchOperatorPartnerStudio('manager', {navigate: false, retainWorkspace: true});
+    window.location.replace(resolveWorkspaceHostHref());
+    return null;
+  }
+
   // TASK-81 — first successful partner activation enters START before
   // any Studio surface. The pending Welcome Journey is the lifecycle
   // authority prepared by InviteShell during activation.
@@ -250,7 +263,7 @@ export function PlatformAccessRoot({
 }: PlatformAccessRootProps) {
   return (
     <SessionProvider bindStudioId={studioId}>
-      <AccessGateInner renderWorkspaceEntry={renderWorkspaceEntry}>
+      <AccessGateInner studioId={studioId} renderWorkspaceEntry={renderWorkspaceEntry}>
         {children}
       </AccessGateInner>
     </SessionProvider>

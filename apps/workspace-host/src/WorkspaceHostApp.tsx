@@ -23,6 +23,7 @@ import {
   getCanonicalProject,
   isCanonicalProjectId,
   loadPlatformSession,
+  managerWorkspaceStudio,
   logout as platformLogout,
   PLATFORM_ROLE_LABELS,
   primaryRole,
@@ -414,6 +415,11 @@ export function WorkspaceHostApp() {
         ? null
         : new URLSearchParams(window.location.search).get('studio');
 
+    if (initialSessionRef.current && primaryRole(initialSessionRef.current.user.roles) === 'manager') {
+      const candidate = requestedStudio ?? initialSessionRef.current.workspaceContext?.activeStudio ?? initialSessionRef.current.activeStudioId;
+      return managerWorkspaceStudio(candidate);
+    }
+
     if (
       requestedStudio === 'client' ||
       requestedStudio === 'sales' ||
@@ -635,6 +641,11 @@ export function WorkspaceHostApp() {
       // succeeded. Reflect the selected Studio immediately; authoritative
       // persistence must not block the visible Workspace surface transition.
       setSurface(next);
+      if (nextSession && primaryRole(nextSession.user.roles) === 'manager' && typeof window !== 'undefined') {
+        const url = new URL(window.location.href);
+        url.searchParams.set('studio', next);
+        window.history.replaceState({}, '', url.toString());
+      }
 
       task42Trace('surface-select:applied', {
         from: surface,

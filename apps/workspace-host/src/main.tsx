@@ -12,6 +12,9 @@ import {
   enterOperatorPartnerEnvironmentAuthoritatively,
   getSharedWorkspaceContext,
   loadPlatformSession,
+  primaryRole,
+  managerWorkspaceStudio,
+  switchOperatorPartnerStudio,
   PlatformAccessRoot,
   resolveCloudStudioHref,
   resolveWorkspaceHostHref,
@@ -110,6 +113,13 @@ async function bootstrapWorkspaceHost(): Promise<void> {
       if (normalizedSession !== null) {
         savePlatformSession(normalizedSession);
       }
+    }
+
+    if (primaryRole(session.user.roles) === 'manager') {
+      switchOperatorPartnerStudio(
+        managerWorkspaceStudio(session.workspaceContext?.activeStudio ?? session.activeStudioId),
+        {navigate: false, retainWorkspace: true},
+      );
     }
 
     if (isConisAdmin && requiresAuthoritativePartnerEnvironment) {

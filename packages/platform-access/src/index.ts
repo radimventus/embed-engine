@@ -687,3 +687,5 @@ export {
 } from './operations/managerIntelligence';
 
 export { submitManagerFeedback } from './api/managerFeedback';
+
+export {managerWorkspaceStudio} from './domain/managerWorkspaceNavigation';
