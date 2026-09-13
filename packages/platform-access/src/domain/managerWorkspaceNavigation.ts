@@ -1,9 +1,11 @@
-import {primaryRole, canAccessStudio} from './roles';
+import {authorizedStudioForRoles, primaryRole, canAccessStudio} from './roles';
 import type {PlatformRole, PlatformStudioId} from './types';
 
 /** Manager's existing Workspace surfaces; stale standalone state must not select Office/Builder. */
 export function managerWorkspaceStudio(studio: string | null | undefined): PlatformStudioId {
-  return studio === 'client' || studio === 'sales' ? studio : 'manager';
+  const candidate = studio === 'client' || studio === 'sales' || studio === 'manager' ||
+    studio === 'builder' || studio === 'office' ? studio : null;
+  return authorizedStudioForRoles(['manager'], candidate);
 }
 
 export function shouldRedirectManagerToWorkspace(input: {

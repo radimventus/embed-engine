@@ -81,6 +81,7 @@ export {
   canAccessStudio,
   studiosForRoles,
   defaultStudioForRoles,
+  authorizedStudioForRoles,
   isPlatformAdmin,
 } from './domain/roles';
 

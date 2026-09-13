@@ -82,16 +82,24 @@ describe('VR-04 Canonical Workspace Shell', () => {
     assert.doesNotMatch(html, /Reference House/);
   });
 
-  it('defaults to Client Studio and keeps Office as a switchable view', () => {
+  it('defaults to the authorized role Studio and keeps Office as an authorized switchable view', () => {
     const app = read('src/WorkspaceHostApp.tsx');
     assert.match(
       app,
-      /initialContextRef\.current\?\.activeStudio \?\? 'client'/,
+      /defaultStudioForRoles\(roles\)/,
     );
     assert.match(
       app,
       /studioFrameSrc\('office'\)|surface === 'office'|WORKSPACE_STUDIO_LABELS\[surface\]/,
     );
+  });
+
+  it('sanitizes URL and persisted Workspace surfaces through canonical role access', () => {
+    const app = read('src/WorkspaceHostApp.tsx');
+    assert.match(app, /canAccessStudio\(roles, requestedStudio/);
+    assert.match(app, /canAccessStudio\(roles, sessionStudio/);
+    assert.match(app, /canAccessStudio\(roles, contextStudio/);
+    assert.match(app, /defaultStudioForRoles\(roles\)/);
   });
 
   it('VR-05 / TASK-42 — Workspace entry does not require Partner Environment activation', () => {

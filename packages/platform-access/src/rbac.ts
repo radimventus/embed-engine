@@ -2,6 +2,7 @@ export {
   PLATFORM_ROLE_LABELS,
   canAccessStudio,
   defaultStudioForRoles,
+  authorizedStudioForRoles,
   hasRole,
   isPlatformAdmin,
   primaryRole,

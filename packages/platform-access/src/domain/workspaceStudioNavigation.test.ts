@@ -9,7 +9,7 @@ import {
   WORKSPACE_STUDIO_SWITCH_ORDER,
   workspaceStudiosForRoles,
 } from './workspaceStudioNavigation';
-import { canAccessStudio } from './roles';
+import { authorizedStudioForRoles, canAccessStudio } from './roles';
 
 describe('PT-VR-07 workspaceStudiosForRoles', () => {
   it('keeps canonical five-studio order', () => {
@@ -47,6 +47,16 @@ describe('PT-VR-07 workspaceStudiosForRoles', () => {
     assert.equal(canAccessStudio(['manager'], 'sales'), true);
     assert.equal(canAccessStudio(['manager'], 'office'), false);
     assert.equal(canAccessStudio(['manager'], 'builder'), false);
+  });
+
+  it('sanitizes URL, persisted and host selections to the role default', () => {
+    assert.equal(authorizedStudioForRoles(['manager'], 'office'), 'manager');
+    assert.equal(authorizedStudioForRoles(['manager'], 'builder'), 'manager');
+    assert.equal(authorizedStudioForRoles(['salesman'], 'manager'), 'sales');
+    assert.equal(authorizedStudioForRoles(['salesman'], 'office'), 'sales');
+    assert.equal(authorizedStudioForRoles(['builder'], 'sales'), 'builder');
+    assert.equal(authorizedStudioForRoles(['builder'], 'manager'), 'builder');
+    assert.equal(authorizedStudioForRoles(['builder'], 'builder'), 'builder');
   });
 
   it('salesman sees Client · Sales only', () => {

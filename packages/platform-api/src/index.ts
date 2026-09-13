@@ -2259,6 +2259,11 @@ export function createPlatformApiServer(
         if (session === null) {
           return respond(response, 401, { error: "Neplatná relace." });
         }
+        if (!canAccessStudio(sessionRoles(session), 'builder')) {
+          return respond(response, 403, {
+            error: "Builder Studio není pro tuto relaci povoleno.",
+          });
+        }
 
         const houseId = decodeURIComponent(
           (housePackageMatch ?? housePackageMediaMatch)![1]!,

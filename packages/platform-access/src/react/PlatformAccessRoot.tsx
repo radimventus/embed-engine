@@ -2,6 +2,8 @@ import type { ReactNode } from 'react';
 import { useState } from 'react';
 
 import { resolveWorkspaceHostHref } from '../cloud/cloudConfig';
+import { resolveStudioHref } from '../bootstrap/workspaceBootstrap';
+import { canAccessStudio, defaultStudioForRoles } from '../domain/roles';
 import {shouldRedirectManagerToWorkspace} from '../domain/managerWorkspaceNavigation';
 import {switchOperatorPartnerStudio} from '../pilot/operatorPartnerEnvironment';
 import type { PlatformStudioId } from '../domain/types';
@@ -183,6 +185,16 @@ function AccessGateInner({ children, renderWorkspaceEntry, studioId }: AccessGat
   })) {
     switchOperatorPartnerStudio('manager', {navigate: false, retainWorkspace: true});
     window.location.replace(resolveWorkspaceHostHref());
+    return null;
+  }
+
+  // TASK 39 — evaluate the canonical role policy before Studio children render.
+  if (!canAccessStudio(session.user.roles, studioId)) {
+    if (!shellEmbed && typeof window !== 'undefined') {
+      window.location.replace(
+        resolveStudioHref(defaultStudioForRoles(session.user.roles)),
+      );
+    }
     return null;
   }
 

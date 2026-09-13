@@ -16,6 +16,7 @@ import {
   resolveStudioHref,
 } from '../bootstrap/workspaceBootstrap';
 import {
+  authorizedStudioForRoles,
   canAccessStudio,
   defaultStudioForRoles,
   primaryRole,
@@ -117,57 +118,94 @@ export function SessionProvider({
       setSession(next ?? restored);
       return;
     }
+    const fallbackStudioId = defaultStudioForRoles(restored.user.roles);
+    const restoredStudioId = restored.activeStudioId === null
+      ? null
+      : authorizedStudioForRoles(restored.user.roles, restored.activeStudioId);
+    const restoredWorkspaceStudio = restored.workspaceContext
+      ? authorizedStudioForRoles(
+          restored.user.roles,
+          restored.workspaceContext.activeStudio,
+        )
+      : null;
+    if (
+      restoredStudioId !== restored.activeStudioId ||
+      (restored.workspaceContext !== null &&
+        restoredWorkspaceStudio !== restored.workspaceContext.activeStudio)
+    ) {
+      const sanitized = {
+        ...restored,
+        activeStudioId: restoredStudioId ?? fallbackStudioId,
+        ...(restored.workspaceContext
+          ? {workspaceContext: {
+              ...restored.workspaceContext,
+              activeStudio: restoredWorkspaceStudio ?? fallbackStudioId,
+            }}
+          : {}),
+      };
+      const next = updateSession({
+        activeStudioId: sanitized.activeStudioId,
+        ...(sanitized.workspaceContext
+          ? {workspaceContext: sanitized.workspaceContext}
+          : {}),
+      });
+      restored = next ?? sanitized;
+    }
     // VR-04 — nested Workspace Shell views must not rewrite activeStudio.
     if (isWorkspaceShellEmbed()) {
       setSession(restored);
       return;
     }
-    if (bindStudioId !== undefined && restored.activeStudioId === null) {
+    const authorizedBindStudioId =
+      bindStudioId !== undefined && canAccessStudio(restored.user.roles, bindStudioId)
+        ? bindStudioId
+        : undefined;
+    if (authorizedBindStudioId !== undefined && restored.activeStudioId === null) {
       // The server session has no app-local activeStudioId. Adopt the mounted
       // Studio in the in-memory projection so valid restores open its shell.
-      const next = updateSession({ activeStudioId: bindStudioId });
+      const next = updateSession({ activeStudioId: authorizedBindStudioId });
       if (next !== null) {
-        touchUserLastStudio(next.user.id, bindStudioId);
+        touchUserLastStudio(next.user.id, authorizedBindStudioId);
       }
       setSession(next ?? restored);
       return;
     }
     const workspaceContext = getSharedWorkspaceContext();
     if (
-      bindStudioId !== undefined &&
+      authorizedBindStudioId !== undefined &&
       workspaceContext !== null &&
-      (restored.activeStudioId !== bindStudioId ||
-        workspaceContext.activeStudio !== bindStudioId)
+      (restored.activeStudioId !== authorizedBindStudioId ||
+        workspaceContext.activeStudio !== authorizedBindStudioId)
     ) {
       // OF-14 — adopt this studio host; keep partner Workspace Context.
       const next = updateSession({
-        activeStudioId: bindStudioId,
+        activeStudioId: authorizedBindStudioId,
         workspaceContext: {
           ...workspaceContext,
-          activeStudio: bindStudioId,
+          activeStudio: authorizedBindStudioId,
         },
       });
       if (next !== null) {
-        touchUserLastStudio(next.user.id, bindStudioId);
+        touchUserLastStudio(next.user.id, authorizedBindStudioId);
       }
       setSession(next ?? restored);
       return;
     }
     if (
-      bindStudioId !== undefined &&
+      authorizedBindStudioId !== undefined &&
       restored.activeStudioId !== null &&
-      restored.activeStudioId !== bindStudioId
+      restored.activeStudioId !== authorizedBindStudioId
     ) {
       // Arrived via Studio Switcher — adopt this studio while keeping context.
-      const next = updateSession({ activeStudioId: bindStudioId });
+      const next = updateSession({ activeStudioId: authorizedBindStudioId });
       if (next !== null) {
-        touchUserLastStudio(next.user.id, bindStudioId);
+        touchUserLastStudio(next.user.id, authorizedBindStudioId);
       }
       setSession(next ?? restored);
       return;
     }
-    if (bindStudioId !== undefined && restored.activeStudioId === bindStudioId) {
-      touchUserLastStudio(restored.user.id, bindStudioId);
+    if (authorizedBindStudioId !== undefined && restored.activeStudioId === authorizedBindStudioId) {
+      touchUserLastStudio(restored.user.id, authorizedBindStudioId);
     }
     setSession(restored);
   }, [bindStudioId]);
@@ -233,11 +271,11 @@ export function SessionProvider({
       }
       return {ok: true as const};
     }
-    // CAP-GOV-06 / RC-002 — prefer the Studio host that mounted SessionProvider
-    // (bindStudioId). Deep-link login on Office must not teleport to Manager/Sales
-    // when that host is down (white screen / endless navigation).
-    const studioId =
-      bindStudioId ?? defaultStudioForRoles(result.session.user.roles);
+    // TASK 39 — a host binding may select only a Studio allowed by the role.
+    const studioId = authorizedStudioForRoles(
+      result.session.user.roles,
+      bindStudioId,
+    );
     const next = updateSession({ activeStudioId: studioId });
     if (next !== null) {
       setSession(next);
@@ -271,8 +309,8 @@ export function SessionProvider({
   }, []);
 
   const selectStudio = useCallback((studioId: PlatformStudioId) => {
+    if (session && !canAccessStudio(session.user.roles, studioId)) return;
     if (session && primaryRole(session.user.roles) === 'manager') {
-      if (!canAccessStudio(session.user.roles, studioId)) return;
       switchOperatorPartnerStudio(studioId, {retainWorkspace: true});
       return;
     }

@@ -1604,16 +1604,28 @@ describe('Durable House Package API', () => {
     const housePackages = new FileHousePackageRepository(join(directory, 'house-packages'));
     const identities = new Map([
       ['session-house-a', {
+        user: { roles: ['builder'] },
         activeHouseId: 'house-a',
         workspaceContext: {
           authoredHouseIdentities: [{ houseId: 'house-a' }],
         },
       }],
       ['session-house-b', {
+        user: { roles: ['builder'] },
         activeHouseId: 'house-b',
         workspaceContext: {
           authoredHouseIdentities: [{ houseId: 'house-b' }],
         },
+      }],
+      ['session-manager-house-a', {
+        user: { roles: ['manager'] },
+        activeHouseId: 'house-a',
+        workspaceContext: { authoredHouseIdentities: [{ houseId: 'house-a' }] },
+      }],
+      ['session-sales-house-a', {
+        user: { roles: ['salesman'] },
+        activeHouseId: 'house-a',
+        workspaceContext: { authoredHouseIdentities: [{ houseId: 'house-a' }] },
       }],
     ]);
     const partnerSessions = {
@@ -1639,6 +1651,28 @@ describe('Durable House Package API', () => {
       const unauthenticated = await fetch(`${baseUrl}/house-a/state`);
       assert.equal(unauthenticated.status, 401);
 
+      for (const token of ['session-manager-house-a', 'session-sales-house-a']) {
+        const cookie = {cookie: `__Host-conis_partner_session=${token}`};
+        for (const path of ['state', 'media/gallery/hero.png']) {
+          const deniedRead = await fetch(`${baseUrl}/house-a/${path}`, {headers: cookie});
+          assert.equal(deniedRead.status, 403);
+        }
+        for (const request of [
+          {path: 'initialize', method: 'POST'},
+          {path: 'persist', method: 'POST', headers: {'content-type': 'application/json'}, body: JSON.stringify({files: {roomsCsv: 'denied'}})},
+          {path: 'publish', method: 'POST'},
+          {path: 'media/gallery/hero.png', method: 'POST', headers: {'content-type': 'image/png'}, body: Buffer.from([1])},
+          {path: 'media/gallery/hero.png', method: 'DELETE'},
+        ]) {
+          const deniedWrite = await fetch(`${baseUrl}/house-a/${request.path}`, {
+            method: request.method,
+            headers: {...cookie, ...request.headers},
+            body: request.body,
+          });
+          assert.equal(deniedWrite.status, 403);
+        }
+      }
+
       const forbidden = await fetch(`${baseUrl}/house-b/persist`, {
         method: 'POST',
         headers: { ...cookieA, 'content-type': 'application/json' },
@@ -1652,6 +1686,8 @@ describe('Durable House Package API', () => {
         body: JSON.stringify({ files: { roomsCsv: 'id,name\nroom-a,A\n' } }),
       });
       assert.equal(persisted.status, 200);
+      const publicPublished = await fetch(`${baseUrl}/house-a/published`);
+      assert.equal(publicPublished.status, 200);
       assert.equal(
         (await new FileHousePackageRepository(join(directory, 'house-packages')).get('house-a'))
           ?.files.roomsCsv,

@@ -49,3 +49,55 @@ test('ordinary Office-host login and restored Manager session use Workspace, inc
     clearPlatformSession();resetOperatorPartnerEnvironmentForTests();
   }
 });
+
+test('canonical gate blocks unauthorized role/host bindings before children render', async () => {
+  resetUserRegistry();resetOperatorPartnerEnvironmentForTests();clearPlatformSession();
+  const window=new Window({url:'https://conis.cz/studio/office/deep-link'});
+  const destinations:string[]=[];
+  window.location.assign=(url:string|URL)=>{destinations.push(String(url));};
+  window.location.replace=(url:string|URL)=>{destinations.push(String(url));};
+  let serverSession:ReturnType<typeof loadPlatformSession>|null=null;
+  const globals={window,document:window.document,HTMLElement:window.HTMLElement,navigator:window.navigator,IS_REACT_ACT_ENVIRONMENT:true,
+    fetch:async (url:unknown)=>String(url).endsWith('/me')&&serverSession?Response.json(serverSession):Response.json({}, {status:401})};
+  const previous=new Map(Object.keys(globals).map(key=>[key,Object.getOwnPropertyDescriptor(globalThis,key)]));
+  for(const [key,value] of Object.entries(globals)) Object.defineProperty(globalThis,key,{value,configurable:true,writable:true});
+  const {act,useEffect}=await import('react');
+  const {createRoot}=await import('react-dom/client');
+  const {PlatformAccessRoot}=await import('./PlatformAccessRoot');
+  const host=window.document.createElement('div');window.document.body.append(host);
+  const root=createRoot(host as unknown as HTMLElement);
+  let childEffects=0;
+  function ProtectedChild(){useEffect(()=>{childEffects+=1;},[]);return <div data-protected="true"/>;}
+  try {
+    for (const scenario of [
+      {email:'sales@ac.local', denied:['manager','builder','office'] as const, fallback:'/studio/sales/', fallbackStudio:'sales' as const},
+      {email:'builder@ac.local', denied:['manager','sales','office'] as const, fallback:'/studio/builder/', fallbackStudio:'builder' as const},
+    ]) {
+      const authenticated=login({email:scenario.email,password:'demo',rememberMe:false});
+      assert.ok(authenticated.ok);
+      if(!authenticated.ok) continue;
+      serverSession={...authenticated.session,activeStudioId:scenario.denied[0]};
+      for(const studioId of scenario.denied) {
+        childEffects=0; destinations.length=0;
+        await act(async()=>root.render(<PlatformAccessRoot key={`${scenario.email}-${studioId}`} studioId={studioId}><ProtectedChild/></PlatformAccessRoot>));
+        assert.equal(host.querySelector('[data-protected]'),null);
+        assert.equal(childEffects,0,'unauthorized child effect must not run');
+        assert.equal(new URL(destinations.at(-1)!).pathname,scenario.fallback);
+        assert.equal(loadPlatformSession()?.activeStudioId,scenario.fallbackStudio);
+      }
+    }
+    const builder=login({email:'builder@ac.local',password:'demo',rememberMe:false});
+    assert.ok(builder.ok);
+    if(builder.ok) {
+      serverSession={...builder.session,activeStudioId:'builder'};
+      childEffects=0;
+      await act(async()=>root.render(<PlatformAccessRoot key="authorized-builder" studioId="builder"><ProtectedChild/></PlatformAccessRoot>));
+      assert.ok(host.querySelector('[data-protected]'));
+      assert.equal(childEffects,1);
+    }
+  } finally {
+    await act(async()=>root.unmount());await window.happyDOM.abort();
+    for(const [key,descriptor] of previous) {if(descriptor)Object.defineProperty(globalThis,key,descriptor);else Reflect.deleteProperty(globalThis,key);}
+    clearPlatformSession();resetOperatorPartnerEnvironmentForTests();
+  }
+});

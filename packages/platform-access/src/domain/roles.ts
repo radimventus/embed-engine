@@ -82,6 +82,18 @@ export function defaultStudioForRoles(
   return available[0]!;
 }
 
+/** Select a Studio only when the account may access it; otherwise use its role default. */
+export function authorizedStudioForRoles(
+  roles: readonly PlatformRole[],
+  candidate: PlatformStudioId | null | undefined,
+): PlatformStudioId {
+  return candidate !== null &&
+    candidate !== undefined &&
+    canAccessStudio(roles, candidate)
+    ? candidate
+    : defaultStudioForRoles(roles);
+}
+
 /** Soft admin gate for Platform Landing ops (invite, provision, GM). */
 export function isPlatformAdmin(roles: readonly PlatformRole[]): boolean {
   return roles.includes('conis-admin') || roles.includes('project-admin');

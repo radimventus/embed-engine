@@ -13,17 +13,19 @@ import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode} from
 
 import { Embed, registerClientStudioCss } from '@embed-engine/embed';
 import {
+  canAccessStudio,
   clearOperatorPartnerEnvironment,
   createPlatformAccessAuthClient,
+  defaultStudioForRoles,
   isHouseInProject,
   isWorkspaceHouseChangeMessage,
   isWorkspaceHouseScopeRequestMessage,
   isWorkspaceProjectChangeMessage,
+  isWorkspaceStudioSurface,
   getSharedWorkspaceContext,
   getCanonicalProject,
   isCanonicalProjectId,
   loadPlatformSession,
-  managerWorkspaceStudio,
   logout as platformLogout,
   PLATFORM_ROLE_LABELS,
   primaryRole,
@@ -415,19 +417,12 @@ export function WorkspaceHostApp() {
         ? null
         : new URLSearchParams(window.location.search).get('studio');
 
-    if (initialSessionRef.current && primaryRole(initialSessionRef.current.user.roles) === 'manager') {
-      const candidate = requestedStudio ?? initialSessionRef.current.workspaceContext?.activeStudio ?? initialSessionRef.current.activeStudioId;
-      return managerWorkspaceStudio(candidate);
-    }
-
+    const roles = initialSessionRef.current?.user.roles ?? [];
     if (
-      requestedStudio === 'client' ||
-      requestedStudio === 'sales' ||
-      requestedStudio === 'manager' ||
-      requestedStudio === 'builder' ||
-      requestedStudio === 'office'
+      isWorkspaceStudioSurface(requestedStudio ?? '') &&
+      canAccessStudio(roles, requestedStudio as WorkspaceStudioSurface)
     ) {
-      return requestedStudio;
+      return requestedStudio as WorkspaceStudioSurface;
     }
 
     const sessionStudio =
@@ -436,16 +431,20 @@ export function WorkspaceHostApp() {
       null;
 
     if (
-      sessionStudio === 'client' ||
-      sessionStudio === 'sales' ||
-      sessionStudio === 'manager' ||
-      sessionStudio === 'builder' ||
-      sessionStudio === 'office'
+      isWorkspaceStudioSurface(sessionStudio ?? '') &&
+      canAccessStudio(roles, sessionStudio as WorkspaceStudioSurface)
     ) {
-      return sessionStudio;
+      return sessionStudio as WorkspaceStudioSurface;
     }
 
-    return initialContextRef.current?.activeStudio ?? 'client';
+    const contextStudio = initialContextRef.current?.activeStudio;
+    if (
+      isWorkspaceStudioSurface(contextStudio ?? '') &&
+      canAccessStudio(roles, contextStudio as WorkspaceStudioSurface)
+    ) {
+      return contextStudio as WorkspaceStudioSurface;
+    }
+    return defaultStudioForRoles(roles);
   });
   const [partnerJourneyOpen, setPartnerJourneyOpen] = useState(
     () =>
