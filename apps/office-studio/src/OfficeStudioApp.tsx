@@ -1,3 +1,4 @@
+import {submitManagerFeedback} from '@embed-engine/platform-access';
 /**
  * OF-01 — Office Studio application shell.
  * OF-02 Partner · OF-03 Sales · OF-04 Documents · OF-05 Handoff · OF-06 Pilot Runtime.
@@ -235,6 +236,7 @@ function OfficeStudioAppInner() {
       activeStudioId="office"
         availableStudioIds={workspaceStudiosForRoles(session?.user.roles ?? [])}
       userLabel={session?.user.displayName ?? 'Host'}
+      accountRole={session ? primaryRole(session.user.roles) : undefined}
       roleLabel={
         session !== null
           ? PLATFORM_ROLE_LABELS[primaryRole(session.user.roles)]
@@ -247,6 +249,7 @@ function OfficeStudioAppInner() {
       onOpenLanding={clearStudio}
       onSelectStudio={selectStudio}
       onSubmitFeedback={(message) => {
+        if (session && primaryRole(session.user.roles) === 'manager') return submitManagerFeedback(message);
         submitPlatformFeedback({
           message,
           email: session?.user.email ?? null,

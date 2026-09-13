@@ -12,6 +12,7 @@ export type PlatformHeaderProps = {
   readonly availableStudioIds?: readonly PlatformStudioId[];
   readonly userLabel?: string;
   readonly roleLabel?: string;
+  readonly accountRole?: string;
   /** @deprecated PR-006 — header no longer shows project/house. Kept for API compat. */
   readonly workspace?: PlatformWorkspaceState | null;
   readonly notificationCount?: number;
@@ -36,6 +37,7 @@ export function PlatformHeader({
   availableStudioIds,
   userLabel = 'Radim',
   roleLabel,
+  accountRole,
   workspace: _workspace = null,
   notificationCount = 3,
   partnerBrandLabel = null,
@@ -87,9 +89,9 @@ export function PlatformHeader({
 
       <div className="platform-header__actions">
         <div className="platform-user-badge">
-          {activeStudioId === 'manager' ? <>
+          {accountRole === 'manager' ? <>
             <ManagerFeedbackButton onSubmitFeedback={onSubmitFeedback} />
-            <button type="button" className="platform-feedback__trigger" onClick={onLogout} disabled={!onLogout}>Odhlásit</button>
+            <UserMenu userLabel={userLabel} roleLabel={roleLabel} onLogout={onLogout} logoutOnly />
           </> : <>
           <FeedbackButton onSubmitFeedback={onSubmitFeedback} />
           <NotificationsBell count={notificationCount} />

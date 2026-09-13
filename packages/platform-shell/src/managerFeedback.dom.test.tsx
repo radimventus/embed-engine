@@ -2,14 +2,14 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import {Window} from 'happy-dom';
 
-test('Manager dialog preserves typing, focus, paste, and durable submission semantics', async () => {
+for (const surface of ['office', 'manager', 'client', 'sales'] as const) test('Manager '+surface+' dialog preserves typing, focus, paste, and durable submission semantics', async () => {
   const window = new Window();
   const globals = {window, document: window.document, HTMLElement: window.HTMLElement, navigator: window.navigator, IS_REACT_ACT_ENVIRONMENT: true};
   const previous = new Map(Object.keys(globals).map(key => [key, Object.getOwnPropertyDescriptor(globalThis, key)]));
   for (const [key,value] of Object.entries(globals)) Object.defineProperty(globalThis,key,{value,configurable:true,writable:true});
   const {act} = await import('react');
   const {createRoot} = await import('react-dom/client');
-  const {ManagerFeedbackButton} = await import('./ManagerFeedbackButton');
+  const {PlatformHeader} = await import('./PlatformHeader');
   const host = window.document.createElement('div');window.document.body.append(host);
   const root = createRoot(host as unknown as HTMLElement);
   let calls = 0;
@@ -17,10 +17,11 @@ test('Manager dialog preserves typing, focus, paste, and durable submission sema
   let reject!: (error:Error) => void;
   let sent = '';
   try {
-    await act(async () => root.render(<ManagerFeedbackButton onSubmitFeedback={message => {
+    await act(async () => root.render(<PlatformHeader activeStudioId={surface} accountRole="manager" roleLabel="Manager" onLogout={() => undefined} onSubmitFeedback={message => {
       calls++;sent=message;return new Promise((yes,no) => {resolve=yes;reject=no;});
     }}/>));
-    await act(async () => host.querySelector('button')!.click());
+    await act(async () => (host.querySelector('[aria-label="Poslat zpětnou vazbu"]') as unknown as HTMLButtonElement).click());
+    assert.equal(host.querySelector('.platform-notify'),null);
     const textarea = window.document.querySelector('textarea')!;
     textarea.focus();
     const input = async (text:string, inputType='insertText') => {
@@ -52,6 +53,8 @@ test('Manager dialog preserves typing, focus, paste, and durable submission sema
     await act(async () => resolve({feedbackId:'durable-record'}));
     assert.equal(calls,2);assert.equal(window.document.querySelector('[role="dialog"]'),null);
     assert.match(host.querySelector('[role="status"]')!.textContent,/uložena/);
+    await act(async () => (host.querySelector('[aria-label="Uživatelské menu"]') as unknown as HTMLButtonElement).click());
+    assert.deepEqual(Array.from(window.document.querySelectorAll('[role="menuitem"]')).map(item => item.textContent),['Odhlásit']);
   } finally {
     await act(async () => root.unmount());window.happyDOM.abort();
     for(const [key,descriptor] of previous) {if(descriptor) Object.defineProperty(globalThis,key,descriptor);else Reflect.deleteProperty(globalThis,key);}

@@ -27,6 +27,7 @@ export function PlatformShell({
   availableStudioIds,
   userLabel,
   roleLabel,
+  accountRole,
   workspace,
   notificationCount,
   searchPlaceholder,
@@ -69,6 +70,7 @@ export function PlatformShell({
         availableStudioIds={availableStudioIds}
         userLabel={userLabel}
         roleLabel={roleLabel}
+        accountRole={accountRole}
         workspace={workspace}
         notificationCount={notificationCount}
         searchPlaceholder={searchPlaceholder}

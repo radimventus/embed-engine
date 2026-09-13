@@ -376,7 +376,8 @@ export function WorkspaceHostEntryShell({
           session?.user.displayName ??
           (stage === 'heslo' ? 'Aktivace účtu' : 'Partner')
         }
-        roleLabel={
+        accountRole={session ? primaryRole(session.user.roles) : undefined}
+      roleLabel={
           session !== null
             ? PLATFORM_ROLE_LABELS[primaryRole(session.user.roles)]
             : 'Partner'
@@ -390,7 +391,7 @@ export function WorkspaceHostEntryShell({
         onSelectStudio={(studioId) => {
           void handleEntryStudioSelect(studioId);
         }}
-        onSubmitFeedback={() => undefined}
+        onSubmitFeedback={session && primaryRole(session.user.roles) === 'manager' ? submitManagerFeedback : () => undefined}
       >
         <main
           className="workspace-shell__main"
@@ -1042,7 +1043,8 @@ export function WorkspaceHostApp() {
             : workspaceStudiosForRoles(session.user.roles)
         }
         userLabel={session.user.displayName}
-        roleLabel={PLATFORM_ROLE_LABELS[primaryRole(session.user.roles)]}
+        accountRole={session ? primaryRole(session.user.roles) : undefined}
+      roleLabel={PLATFORM_ROLE_LABELS[primaryRole(session.user.roles)]}
         workspace={workspaceState}
         partnerBrandLabel={brand.personalized ? brand.logoLabel : null}
         breadcrumb={breadcrumb}
@@ -1050,7 +1052,7 @@ export function WorkspaceHostApp() {
         onLogout={handleLogout}
         onOpenLanding={() => selectSurface('client')}
         onSelectStudio={(studioId) => selectSurface(studioId)}
-        onSubmitFeedback={surface === 'manager' ? submitManagerFeedback : () => undefined}
+        onSubmitFeedback={primaryRole(session.user.roles) === 'manager' ? submitManagerFeedback : () => undefined}
       >
         <main className="workspace-shell__main" data-testid="workspace-shell-main">
           {partnerJourneyOpen ? (

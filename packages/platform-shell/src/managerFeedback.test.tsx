@@ -5,12 +5,12 @@ import {PlatformHeader} from './PlatformHeader';
 import {createFeedbackSubmission, type FeedbackSubmissionState} from './feedbackSubmission';
 
 test('Manager actions retain feedback/logout and remove demo or unused items only in Manager', () => {
-  const manager = renderToStaticMarkup(<PlatformHeader activeStudioId="manager" onLogout={() => undefined} />);
+  const manager = renderToStaticMarkup(<PlatformHeader activeStudioId="manager" accountRole="manager" onLogout={() => undefined} />);
   assert.match(manager, /Zpětná vazba/);
-  assert.match(manager, /Odhlásit/);
-  assert.doesNotMatch(manager, /Oznámení|oznámění|oznámení|Profil|Nastavení|Vstupní stránka|Uživatelské menu/);
-  for (const surface of ['client','builder','sales','office'] as const) {
-    const other = renderToStaticMarkup(<PlatformHeader activeStudioId={surface} onLogout={() => undefined} />);
+  assert.match(manager, /Uživatelské menu/);
+  assert.doesNotMatch(manager, /Oznámení|oznámění|oznámení|Profil|Nastavení|Vstupní stránka/);
+  for (const role of ['conis-admin','project-admin','builder','salesman']) for (const surface of ['client','builder','sales','office','manager'] as const) {
+    const other = renderToStaticMarkup(<PlatformHeader activeStudioId={surface} accountRole={role} onLogout={() => undefined} />);
     assert.match(other, /Zpětná vazba/);
     assert.match(other, /Oznámení/);
     assert.match(other, /Uživatelské menu/);

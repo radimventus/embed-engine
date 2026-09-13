@@ -3,6 +3,7 @@ import { PlatformDropdown } from './PlatformDropdown';
 type UserMenuProps = {
   readonly userLabel: string;
   readonly roleLabel?: string;
+  readonly logoutOnly?: boolean;
   readonly onLogout?: () => void;
   readonly onOpenLanding?: () => void;
 };
@@ -13,6 +14,7 @@ type UserMenuProps = {
 export function UserMenu({
   userLabel,
   roleLabel,
+  logoutOnly = false,
   onLogout,
   onOpenLanding,
 }: UserMenuProps) {
@@ -36,6 +38,7 @@ export function UserMenu({
         </>
       }
     >
+      {!logoutOnly && <>
       <span className="platform-menu-item platform-menu-item--disabled">
         {userLabel}
       </span>
@@ -55,6 +58,7 @@ export function UserMenu({
           Vstupní stránka
         </button>
       )}
+      </>}
       <button
         type="button"
         role="menuitem"

@@ -1,3 +1,4 @@
+import {submitManagerFeedback} from '@embed-engine/platform-access';
 /**
  * SR-001 / SR-002 — Sales Studio: jedna pracovní obrazovka.
  * IA: Sales = zájemce · titulek = aktivní dům · breadcrumb bez názvu domu.
@@ -687,6 +688,7 @@ export function SalesStudioApp() {
       activeStudioId="sales"
         availableStudioIds={workspaceStudiosForRoles(session?.user.roles ?? [])}
       userLabel={session?.user.displayName ?? 'Host'}
+      accountRole={session ? primaryRole(session.user.roles) : undefined}
       roleLabel={
         session !== null
           ? PLATFORM_ROLE_LABELS[primaryRole(session.user.roles)]
@@ -701,6 +703,7 @@ export function SalesStudioApp() {
       onSelectStudio={selectStudio}
       contentOnly={isWorkspaceShellEmbed()}
       onSubmitFeedback={(message) => {
+        if (session && primaryRole(session.user.roles) === 'manager') return submitManagerFeedback(message);
         submitPlatformFeedback({
           message,
           email: session?.user.email ?? null,

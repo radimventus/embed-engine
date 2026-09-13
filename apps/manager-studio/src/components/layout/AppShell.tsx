@@ -113,6 +113,7 @@ export function AppShell({ sidebar, children }: AppShellProps) {
       activeStudioId="manager"
         availableStudioIds={workspaceStudiosForRoles(session?.user.roles ?? [])}
       userLabel={session?.user.displayName ?? 'Host'}
+      accountRole={session ? primaryRole(session.user.roles) : undefined}
       roleLabel={
         session !== null
           ? PLATFORM_ROLE_LABELS[primaryRole(session.user.roles)]
