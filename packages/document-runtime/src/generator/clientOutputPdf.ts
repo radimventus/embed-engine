@@ -1,5 +1,6 @@
 import { readFileSync } from 'node:fs';
 import fontkit from '@pdf-lib/fontkit';
+import sharp from 'sharp';
 import { PDFDocument, rgb, type PDFImage, type PDFPage, type PDFFont } from 'pdf-lib';
 import type { ClientOutputMedia, ClientOutputNarrative, ClientOutputSnapshot } from '../client-output/types';
 
@@ -36,10 +37,13 @@ function title(page: PDFPage, bold: PDFFont, eyebrow: string, heading: string): 
   page.drawText(heading, { x: 42, y: 516, size: 25, font: bold, color: NAVY });
 }
 
-async function embedImage(pdf: PDFDocument, media: ClientOutputMedia, load: ClientOutputAssetLoader): Promise<PDFImage | null> {
+async function embedImage(pdf: PDFDocument, media: ClientOutputMedia, load: ClientOutputAssetLoader, ratio: number): Promise<PDFImage | null> {
   try {
     const bytes = await load(media.url);
-    return /\.png(?:\?|$)/i.test(media.url) ? await pdf.embedPng(bytes) : await pdf.embedJpg(bytes);
+    const width = 1400;
+    const height = Math.round(width / ratio);
+    const normalized = await sharp(bytes).resize({ width, height, fit: ratio === 4 / 3 ? 'contain' : 'cover', background: '#ffffff' }).png().toBuffer();
+    return await pdf.embedPng(normalized);
   } catch { return null; }
 }
 
@@ -58,7 +62,7 @@ async function mediaPage(pdf: PDFDocument, regular: PDFFont, bold: PDFFont, head
     const item = items[index]!; const frameW = 350; const frameH = frameW / ratio;
     const x = index === 0 ? 42 : 449; const y = 276;
     page.drawRectangle({ x, y, width: frameW, height: frameH, color: rgb(.94,.94,.93) });
-    const image = await embedImage(pdf, item, load);
+    const image = await embedImage(pdf, item, load, ratio);
     if (image) {
       const scale = Math.max(frameW / image.width, frameH / image.height);
       const width = image.width * scale; const height = image.height * scale;

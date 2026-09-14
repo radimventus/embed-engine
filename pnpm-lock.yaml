@@ -609,6 +609,9 @@ importers:
       qrcode:
         specifier: ^1.5.4
         version: 1.5.4
+      sharp:
+        specifier: ^0.35.3
+        version: 0.35.3(@types/node@22.20.1)
     devDependencies:
       '@types/node':
         specifier: ^22.20.1

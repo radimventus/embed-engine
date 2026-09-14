@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import { PDFDocument } from 'pdf-lib';
+import sharp from 'sharp';
 import { renderClientOutputPdf } from './generator/clientOutputPdf';
 import type { ClientOutputSnapshot } from './client-output/types';
 
@@ -13,4 +14,12 @@ test('client output is a deterministic landscape PDF with the complete dramaturg
   const pdf=await PDFDocument.load(first);
   assert.equal(pdf.getPageCount(),9);
   const {width,height}=pdf.getPage(0).getSize(); assert.ok(width>height);
+});
+
+test('normalizes WebP House media into printable 16:9 and 4:3 frames', async () => {
+  const webp = new Uint8Array(await sharp({ create: { width: 320, height: 240, channels: 3, background: '#b8922d' } }).webp().toBuffer());
+  const bytes = await renderClientOutputPdf(snapshot, async () => webp);
+  const pdf = await PDFDocument.load(bytes);
+  assert.equal(pdf.getPageCount(), 9);
+  assert.ok(bytes.length > 20_000);
 });
