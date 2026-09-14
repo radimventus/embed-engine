@@ -87,3 +87,10 @@ test('TASK 114 follow-up — Office selection waits for canonical durable contex
   assert.match(context, /switchAuthoritativeProjectContext\(projectId, 'client'\)/);
   assert.doesNotMatch(context, /function syncSessionSharedProject[\s\S]{0,300}updateSession/);
 });
+
+
+test('TASK 114 VR — Office has one explicit durable switch and no state-mirroring write-back', async () => {
+  const context = await read('apps/office-studio/src/office/PilotWorkspaceContext.tsx');
+  assert.match(context, /if \(caseId !== null && !\(await syncSessionSharedProject\(caseId\)\)\) return/);
+  assert.doesNotMatch(context, /useEffect\(\(\) => \{\s*if \(activeCaseId !== null\) \{\s*void syncSessionSharedProject\(activeCaseId\)/);
+});

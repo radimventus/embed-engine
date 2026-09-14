@@ -23,3 +23,12 @@ test('TASK 114 follow-up — Builder folder switch waits for canonical durable c
   assert.match(source, /switchAuthoritativeProjectContext\(folderId, 'builder'\)/);
   assert.match(source, /if \(!\(await authorize\(\)\)\) return null/);
 });
+
+
+test('TASK 114 VR — Builder commits the authorized folder before first-House activation', async () => {
+  const source = await readFile(new URL('./useWorkspaceController.ts', import.meta.url), 'utf8');
+  const authorize = source.indexOf("if (!(await authorize())) return null;", source.indexOf('const requestOpenFolder'));
+  const commit = source.indexOf('registryRef.current = opened.state;', authorize);
+  const house = source.indexOf('requestOpenProject(opened.houseId', authorize);
+  assert.ok(authorize >= 0 && commit > authorize && house > commit);
+});

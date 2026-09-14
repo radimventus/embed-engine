@@ -399,13 +399,6 @@ export function PilotWorkspaceProvider({
     writeStoredActiveCaseId(activeCaseId);
   }, [activeCaseId]);
 
-  /** PT-OS-02 / VR03 — keep Platform session projectId aligned with Office Select. */
-  useEffect(() => {
-    if (activeCaseId !== null) {
-      void syncSessionSharedProject(activeCaseId);
-    }
-  }, [activeCaseId]);
-
   /**
    * R-001 / PT-VR-01A — Select Project activates the full working environment.
    * Never leaves an empty surface when cases exist (fallback → first case + Inbox).

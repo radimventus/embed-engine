@@ -692,6 +692,9 @@ export function useWorkspaceController(): WorkspaceController {
       }
 
       if (!(await authorize())) return null;
+      // The durable Project switch must be visible before first-House activation.
+      setRegistry(opened.state);
+      registryRef.current = opened.state;
       publishBuilderHouseScope(folderId, null);
       publishWorkspaceProjectChange(folderId);
       const ok = await requestOpenProject(opened.houseId, { dirty: false });
