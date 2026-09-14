@@ -106,17 +106,21 @@ function RelationshipDialog({
               <section>
                 <h4 className="m-0 text-[14px] font-bold uppercase tracking-[0.02em]">{SECTION_LABELS.relationship}</h4>
                 <p className="mb-0 mt-2">{output.narrative.relationship}</p>
+                {output.narrative.bullets?.length ? (
+                  <ul className="mb-0 mt-4 flex list-none flex-col gap-2 p-0">
+                    {output.narrative.bullets.map((bullet) => (
+                      <li key={bullet} className="relative pl-4 font-bold before:absolute before:left-0 before:top-[0.72em] before:h-1.5 before:w-1.5 before:-translate-y-1/2 before:rounded-full before:bg-[#B8922D]">
+                        {bullet}
+                      </li>
+                    ))}
+                  </ul>
+                ) : null}
               </section>
               <section className="border-l border-solid border-[#D9CDAF] pl-8 tabletMin:pl-6 mobile:border-l-0 mobile:border-t mobile:pl-0 mobile:pt-5">
                 <h4 className="m-0 text-[14px] font-bold uppercase tracking-[0.02em]">{SECTION_LABELS.remember}</h4>
                 <p className="mb-0 mt-2">{output.narrative.remember}</p>
               </section>
             </div>
-            {output.narrative.bullets?.length ? (
-              <ul className="mb-0 mt-6 list-disc pl-6">
-                {output.narrative.bullets.map((bullet) => <li key={bullet}>{bullet}</li>)}
-              </ul>
-            ) : null}
             <section className="mt-8 border-t-2 border-solid border-[#B8922D] pt-5">
               <h4 className="m-0 text-[12px] font-bold uppercase tracking-[0.08em] text-[#B8922D]">{SECTION_LABELS.conclusion}</h4>
               <p className="mb-0 mt-2 text-[18px] font-bold leading-[1.5]">{output.narrative.conclusion}</p>
@@ -147,7 +151,7 @@ export function PriorityRelationships() {
       data-testid="priority-relationships"
       aria-label="Kontextové souvislosti priorit"
     >
-      <div className="grid grid-cols-3 gap-3 mobile:grid-cols-1 mobile:gap-2">
+      <div className="grid grid-cols-6 gap-3 tabletMin:grid-cols-3 mobile:grid-cols-1 mobile:gap-2">
         {connected.map((bundle) => (
           <button key={bundle.outputId} type="button" onClick={() => setActive(bundle)}
             className="min-h-11 rounded-[8px] border-0 bg-[#001930] px-3 py-2.5 text-[13px] font-medium leading-[1.3] text-white transition-colors hover:bg-[#B8922D] hover:text-[#001930]"

@@ -20,6 +20,7 @@ export type HouseRelationshipEvidenceBundle = {
   readonly title: string;
   readonly primaryFact: HouseKnowledgeAtom;
   readonly relatedFact?: HouseKnowledgeAtom;
+  readonly supportingFacts: readonly HouseKnowledgeAtom[];
   readonly evidence: readonly HouseRelationshipEvidenceRef[];
 };
 
@@ -35,7 +36,7 @@ export type HouseRelationshipNarrative = {
 /** Semantic Client Output shared by the popup and the later TASK 111 PDF. */
 export type HouseRelationshipOutput = Omit<
   HouseRelationshipEvidenceBundle,
-  'primaryFact' | 'relatedFact'
+  'primaryFact' | 'relatedFact' | 'supportingFacts'
 > & {
   readonly narrative: HouseRelationshipNarrative;
 };
@@ -79,12 +80,56 @@ function eligibleFacts(context: CanonicalHouseRuntimeContext): readonly HouseKno
   );
 }
 
+function evidenceFacts(context: CanonicalHouseRuntimeContext): readonly HouseKnowledgeAtom[] {
+  return context.knowledge.filter((fact) =>
+    fact.houseId === context.identity.houseId &&
+    fact.temporalStatus === 'CURRENT' &&
+    fact.category !== 'guardrail' &&
+    (fact.scope === 'PRODUCT' || fact.scope === 'DSE_KNOW_HOW' ||
+      (context.specification.identity.role === 'reference' && fact.scope === 'REFERENCE_PROJECT')),
+  );
+}
+
 export function houseKnowledgeVersion(context: CanonicalHouseRuntimeContext): string {
-  const signature = eligibleFacts(context)
+  const signature = evidenceFacts(context)
     .map((fact) => `${fact.id}|${fact.source.sourceId}|${fact.statement}|${fact.safeInterpretation ?? ''}`)
     .sort()
     .join('\n');
   return `hk-${hash(signature)}`;
+}
+
+const SUPPORT_STOP_WORDS = new Set([
+  'a', 'ani', 'do', 'dům', 'domu', 'je', 'jsou', 'k', 'má', 'na', 'nebo', 'pro',
+  'se', 's', 'tento', 'to', 'u', 'v', 've', 'z', 'ze', 'že', 'jako', 'lze', 'při',
+]);
+
+function supportTokens(fact: HouseKnowledgeAtom): ReadonlySet<string> {
+  const text = [fact.subject, fact.category, fact.statement, fact.safeInterpretation ?? '',
+    ...fact.constraints].join(' ').toLocaleLowerCase('cs-CZ').normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]+/g, ' ');
+  return new Set(text.split(' ').filter((token) => token.length >= 4 && !SUPPORT_STOP_WORDS.has(token)));
+}
+
+function selectSupportingFacts(
+  context: CanonicalHouseRuntimeContext,
+  primaryFact: HouseKnowledgeAtom,
+  relatedFact?: HouseKnowledgeAtom,
+): readonly HouseKnowledgeAtom[] {
+  const primaryTokens = supportTokens(primaryFact);
+  const excluded = new Set([primaryFact.id, relatedFact?.id]);
+  return evidenceFacts(context)
+    .filter((fact) => !excluded.has(fact.id) &&
+      fact.relatedTopics.some((topic) => primaryFact.relatedTopics.includes(topic)))
+    .map((fact) => {
+      const overlap = [...supportTokens(fact)].filter((token) => primaryTokens.has(token)).length;
+      const sharedTopics = fact.relatedTopics.filter((topic) => primaryFact.relatedTopics.includes(topic)).length;
+      const sourceWeight = fact.source.kind === 'CURRENT_CONFIRMED' ? 2 :
+        fact.source.kind === 'PRODUCT_DOCUMENTATION' ? 1 : 0;
+      return { fact, score: sharedTopics * 10 + overlap * 3 + sourceWeight };
+    })
+    .sort((left, right) => right.score - left.score || left.fact.id.localeCompare(right.fact.id))
+    .slice(0, 6)
+    .map(({ fact }) => fact);
 }
 
 function evidenceRef(fact: HouseKnowledgeAtom): HouseRelationshipEvidenceRef {
@@ -118,9 +163,10 @@ function makeBundle(input: {
   primaryFact: HouseKnowledgeAtom;
   relatedFact?: HouseKnowledgeAtom;
 }): HouseRelationshipEvidenceBundle {
-  const evidenceFacts = input.relatedFact === undefined
-    ? [input.primaryFact]
-    : [input.primaryFact, input.relatedFact];
+  const supportingFacts = selectSupportingFacts(input.context, input.primaryFact, input.relatedFact);
+  const selectedEvidence = input.relatedFact === undefined
+    ? [input.primaryFact, ...supportingFacts]
+    : [input.primaryFact, input.relatedFact, ...supportingFacts];
   return {
     houseId: input.context.identity.houseId,
     knowledgeVersion: input.knowledgeVersion,
@@ -131,7 +177,8 @@ function makeBundle(input: {
     title: clientTitle(input.primaryFact),
     primaryFact: input.primaryFact,
     ...(input.relatedFact === undefined ? {} : { relatedFact: input.relatedFact }),
-    evidence: evidenceFacts.map(evidenceRef),
+    supportingFacts,
+    evidence: selectedEvidence.map(evidenceRef),
   };
 }
 
@@ -213,6 +260,11 @@ export function evidenceBoundNarrative(
     remember: fact.constraints[0] ?? fact.clientQualifications?.[0] ??
       'Při rozhodování porovnejte tuto vlastnost s konkrétním způsobem užívání domu.',
     conclusion: fact.interpretationPoint ?? fact.safeInterpretation!,
+    bullets: [
+      fact.statement,
+      ...(related === undefined ? [] : [related.statement]),
+      ...bundle.supportingFacts.map((supporting) => supporting.statement),
+    ].filter((value, index, values) => values.indexOf(value) === index).slice(0, 4),
   };
 }
 
@@ -221,7 +273,7 @@ export async function generateHouseRelationshipOutput(
   generator: HouseRelationshipNarrativeGenerator = async (value) => evidenceBoundNarrative(value),
 ): Promise<HouseRelationshipOutput> {
   const narrative = await generator(bundle);
-  const { primaryFact: _primary, relatedFact: _related, ...identity } = bundle;
+  const { primaryFact: _primary, relatedFact: _related, supportingFacts: _supporting, ...identity } = bundle;
   return { ...identity, narrative };
 }
 

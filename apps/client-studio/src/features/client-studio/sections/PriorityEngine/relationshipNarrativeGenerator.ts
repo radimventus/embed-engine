@@ -13,12 +13,13 @@ export function parseRelationshipNarrative(content: string): HouseRelationshipNa
     const value = JSON.parse(candidate.trim()) as Partial<HouseRelationshipNarrative>;
     const keys = ['connection', 'houseSolution', 'relationship', 'remember', 'conclusion'] as const;
     if (!keys.every((key) => typeof value[key] === 'string' && value[key]!.trim().length > 0)) return null;
+    if (!Array.isArray(value.bullets) || value.bullets.length < 2 ||
+      !value.bullets.every((item) => typeof item === 'string' && item.trim().length > 0)) return null;
     return {
       connection: value.connection!.trim(), houseSolution: value.houseSolution!.trim(),
       relationship: value.relationship!.trim(), remember: value.remember!.trim(),
       conclusion: value.conclusion!.trim(),
-      ...(Array.isArray(value.bullets) && value.bullets.every((item) => typeof item === 'string')
-        ? { bullets: value.bullets.map((item) => item.trim()).filter(Boolean) } : {}),
+      bullets: value.bullets.map((item) => item.trim()),
     };
   } catch {
     return null;
@@ -31,7 +32,7 @@ export function createRelationshipNarrativeGenerator(
 ): HouseRelationshipNarrativeGenerator {
   return async (bundle: HouseRelationshipEvidenceBundle) => {
     const fallback = evidenceBoundNarrative(bundle);
-    const facts = [bundle.primaryFact, bundle.relatedFact].filter(
+    const facts = [bundle.primaryFact, bundle.relatedFact, ...bundle.supportingFacts].filter(
       (fact): fact is NonNullable<typeof fact> => fact !== undefined,
     );
     try {
@@ -43,9 +44,17 @@ export function createRelationshipNarrativeGenerator(
       }).sendMessage({
         message: [
           `Vysvětli pouze doložený výstup ${bundle.kind} pro zvolenou priority lens.`,
-          'Nevymýšlej vlastnost domu, číslo ani závěr mimo dodané knowledge entries.',
-          'Vrať jen JSON: connection, houseSolution, relationship, remember, conclusion a volitelné bullets.',
+          `Ústřední téma celého výstupu je „${bundle.title}“. Každá část se k němu musí výslovně vztahovat a nesmí přesunout hlavní pozornost na vedlejší fakt.`,
+          'PRIMARY FACT je autorita pro téma, řešení domu, praktickou hodnotu i závěr. RELATED FACT použij jen k vysvětlení jedné doložené souvislosti.',
+          'Piš pro zájemce o dům: konkrétně vysvětli, co vlastnost přináší v běžném životě, při rozhodování a při posouzení pozemku či užívání domu, pokud to evidence dokládá.',
+          'Pole relationship rozveď nejpodrobněji: vysvětli ústřední téma, jeho praktické důsledky a vazby doložené PRIMARY FACT; u témat pozemku zohledni světové strany, tvar nebo charakter pozemku pouze tehdy, jsou-li v evidenci.',
+          'Pole bullets musí obsahovat 2 až 4 krátké, ověřené faktické výroky vycházející přímo z evidence. Budou zobrazeny tučně.',
+          'Nevymýšlej vlastnost domu, číslo, orientaci, parametr pozemku ani závěr mimo dodané knowledge entries.',
+          'Vrať jen JSON: connection, houseSolution, relationship, remember, conclusion, bullets.',
           `Lens: ${bundle.selectedPriorityIds.join(', ')}. Název: ${bundle.title}.`,
+          `PRIMARY FACT: ${bundle.primaryFact.statement} ${bundle.primaryFact.safeInterpretation ?? ''}`,
+          `RELATED FACT: ${bundle.relatedFact === undefined ? 'není' : `${bundle.relatedFact.statement} ${bundle.relatedFact.safeInterpretation ?? ''}`}`,
+          `SUPPORTING FACTS: ${bundle.supportingFacts.map((fact) => fact.statement).join(' | ')}`,
         ].join(' '),
         decision,
         object: {

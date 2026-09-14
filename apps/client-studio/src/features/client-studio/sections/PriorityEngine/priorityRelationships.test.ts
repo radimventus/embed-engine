@@ -9,18 +9,22 @@ import { parseRelationshipNarrative } from './relationshipNarrativeGenerator';
 const here = dirname(fileURLToPath(import.meta.url));
 const read = (name: string) => readFileSync(join(here, name), 'utf8');
 
-test('parses only complete structured narrative for popup and future PDF', () => {
+test('parses only complete structured narrative with emphasized evidence facts', () => {
   const output = parseRelationshipNarrative(JSON.stringify({
     connection: 'Souvislost', houseSolution: 'Řešení domu',
     relationship: 'Vztah', remember: 'Limit', conclusion: 'Závěr',
-    bullets: ['Bod'],
+    bullets: ['Bod 1', 'Bod 2'],
   }));
   assert.deepEqual(output, {
     connection: 'Souvislost', houseSolution: 'Řešení domu',
     relationship: 'Vztah', remember: 'Limit', conclusion: 'Závěr',
-    bullets: ['Bod'],
+    bullets: ['Bod 1', 'Bod 2'],
   });
   assert.equal(parseRelationshipNarrative('{"connection":"bez evidence"}'), null);
+  assert.equal(parseRelationshipNarrative(JSON.stringify({
+    connection: 'Souvislost', houseSolution: 'Řešení domu', relationship: 'Vztah',
+    remember: 'Limit', conclusion: 'Závěr', bullets: ['Jediný bod'],
+  })), null);
 });
 
 test('wires six relationship labels to one lazy cached evidence output', () => {
@@ -35,7 +39,7 @@ test('wires six relationship labels to one lazy cached evidence output', () => {
   assert.match(component, /createPortal/);
   assert.match(component, /document\.body/);
   assert.match(component, /items-start/);
-  assert.match(component, /grid-cols-3/);
+  assert.match(component, /grid-cols-6/);
   assert.doesNotMatch(component, />Souvisí<\/span>/);
   assert.doesNotMatch(component, />Nepřehlédnout<\/span>/);
   assert.match(component, /priority-relationship-connected[\s\S]*priority-relationship-blindspot/);
@@ -58,7 +62,7 @@ test('places relationship controls immediately below the priority section title'
   const supportingCopy = bridge.indexOf('PRIORITY_PAYOFF_UPPER_LINES.map');
   const panels = bridge.indexOf('data-testid="priority-payoff-panels"');
   assert.ok(title >= 0 && relationships > title);
-  assert.ok(relationships < supportingCopy);
+  assert.ok(supportingCopy < relationships);
   assert.ok(relationships < panels);
   assert.equal(bridge.lastIndexOf('<PriorityRelationships />'), relationships);
 });

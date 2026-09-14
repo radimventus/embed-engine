@@ -19,6 +19,7 @@ test('selects exactly three CONNECTED and three BLINDSPOT outputs deterministica
   assert.equal(first.filter((item) => item.kind === 'BLINDSPOT').length, 3);
   assert.deepEqual(first.map((item) => item.outputId), second.map((item) => item.outputId));
   assert.ok(first.every((item) => item.evidence.length > 0));
+  assert.ok(first.every((item) => item.supportingFacts.length > 0));
   assert.ok(first.every((item) => item.evidence.every((ref) =>
     context.knowledge.some((fact) => fact.id === ref.factId && fact.houseId === context.identity.houseId),
   )));
@@ -73,6 +74,20 @@ test('generation is lazy, cached, evidence-bounded and isolated by House', async
   assert.equal(first.houseId, context.identity.houseId);
   assert.deepEqual(first.evidence, bundle.evidence);
   assert.equal('primaryFact' in first, false);
+  assert.equal('supportingFacts' in first, false);
+});
+
+test('garden relationship receives topical plot and orientation evidence without changing card selection', () => {
+  const bundles = selectHouseRelationshipEvidence({
+    context,
+    selectedPriorityIds: ['plot', 'layout', 'privacy'],
+  });
+  const garden = bundles.find((bundle) => bundle.title === 'Byt v zahradě');
+  assert.ok(garden);
+  const evidenceText = garden.supportingFacts.map((fact) => `${fact.subject} ${fact.statement}`).join(' ');
+  assert.match(evidenceText, /jihovýchod|světovým stranám|pozem/i);
+  assert.equal(bundles.filter((bundle) => bundle.kind === 'CONNECTED').length, 3);
+  assert.equal(bundles.filter((bundle) => bundle.kind === 'BLINDSPOT').length, 3);
 });
 
 test('missing evidence produces no hallucinated output', async () => {
