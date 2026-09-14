@@ -8,7 +8,12 @@ import {
 } from "./partnerInviteLifecycle";
 import {
   renderCanonicalCommercialProformaPdf,
+  renderClientOutputPdf,
 } from "@embed-engine/document-runtime/node";
+import type { ClientOutputSnapshot, ClientOutputTrigger } from '@embed-engine/document-runtime';
+import { FileClientOutputRepository, type ClientOutputRepository } from './clientOutputRepository';
+import { createClientOutputDelivery, type ClientOutputDelivery } from './clientOutputDelivery';
+import { issueClientOutput } from './clientOutputService';
 import { createServer, type IncomingMessage, type Server } from "node:http";
 import { mkdir, readFile, rename, writeFile } from "node:fs/promises";
 import { dirname } from "node:path";
@@ -141,6 +146,8 @@ export {
   LeadAlreadyExistsError,
   LeadNotFoundError,
 } from "./leadRepository";
+export { FileClientOutputRepository, type ClientOutputRepository, type DurableClientOutput } from './clientOutputRepository';
+export { createClientOutputDelivery, type ClientOutputDelivery } from './clientOutputDelivery';
 export {
   FileCaseProcessingRepository,
   CaseProcessingNotFoundError,
@@ -764,6 +771,9 @@ export function createPlatformApiServer(
   passwordResetDelivery: PartnerPasswordResetDelivery = createEnvPartnerPasswordResetDelivery(),
   feedback: FeedbackRepository = new FileFeedbackRepository(),
   notifyFeedback: FeedbackNotifier = createManagerFeedbackNotifier(),
+  clientOutputs: ClientOutputRepository = new FileClientOutputRepository(),
+  deliverClientOutput: ClientOutputDelivery = createClientOutputDelivery(),
+  clientOutputRenderer: typeof renderClientOutputPdf = renderClientOutputPdf,
 ): Server {
   const partnerSessions =
     partnerSessionsParam ??
@@ -1027,6 +1037,33 @@ export function createPlatformApiServer(
           }
           return respond(response, 400, { error: "Neplatná poptávka." });
         }
+      }
+      if (request.method === 'POST' && path === '/public/client-outputs') {
+        const candidate = await requestBody(request) as Record<string, unknown>;
+        const snapshot = candidate.snapshot as ClientOutputSnapshot | undefined;
+        const recipient = typeof candidate.recipient === 'string' ? candidate.recipient.trim().toLowerCase() : '';
+        const trigger = candidate.trigger as ClientOutputTrigger;
+        if (!snapshot || snapshot.schemaVersion !== 1 || !['HEADER', 'AUDIT'].includes(trigger) ||
+          !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(recipient) || !snapshot.project?.id?.trim() ||
+          !snapshot.house?.id?.trim() || !snapshot.knowledgeVersion?.trim()) {
+          return respond(response, 400, { error: 'Neplatný požadavek na klientský výstup.' });
+        }
+        applyDurableProjectConfigs(await projectConfigs.list());
+        let scope;
+        try { scope = resolvePublicHouseScope({ companyId: snapshot.company.id, projectId: snapshot.project.id, houseId: snapshot.house.id }); }
+        catch { return respond(response, 400, { error: 'Neplatný rozsah klientského výstupu.' }); }
+        const auditLeadId = typeof candidate.auditLeadId === 'string' && candidate.auditLeadId.trim() ? candidate.auditLeadId.trim() : null;
+        if (trigger === 'AUDIT') {
+          if (auditLeadId === null) return respond(response, 400, { error: 'Audit nebyl uložen.' });
+          const audit = (await leads.list({ companyId: scope.companyId, projectId: scope.projectId, houseId: scope.houseId })).find(item => item.leadId === auditLeadId);
+          if (!audit || audit.contact.email !== recipient) return respond(response, 409, { error: 'Audit musí být uložen před vytvořením výstupu.' });
+        }
+        const documentId = randomBytes(16).toString('hex');
+        const createdAt = new Date().toISOString();
+        const pdf = await clientOutputRenderer(snapshot);
+        const record = await issueClientOutput({ documentId, createdAt, projectId: scope.projectId, houseId: scope.houseId,
+          recipient, trigger, auditLeadId, snapshot, pdf }, clientOutputs, deliverClientOutput);
+        return respond(response, 201, { documentId: record.documentId, createdAt: record.createdAt, deliveryStatus: record.deliveryStatus, deliveryError: record.deliveryError });
       }
       if (request.method === "GET" && path === "/partner/leads") {
         const token = requestCookie(request, PARTNER_SESSION_COOKIE);
