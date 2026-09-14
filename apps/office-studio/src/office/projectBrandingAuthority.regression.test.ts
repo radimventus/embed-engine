@@ -24,6 +24,17 @@ test('TASK 86 — Office Project Detail owns Project-scoped logo editing', async
   assert.doesNotMatch(source, /partnerBrandingStore/);
 });
 
+test('TASK 114 — Office Project Detail exposes durable Project privacy URL editing', async () => {
+  const detail = await read('apps/office-studio/src/features/pilot-workspace/terminal/PilotTerminalDetail.tsx');
+  const client = await read('apps/office-studio/src/office/commercialProjectConfig.ts');
+  assert.match(detail, /project-privacy-url/);
+  assert.match(detail, /project-privacy-save/);
+  assert.match(detail, /saveCommercialProjectPrivacyUrl/);
+  assert.match(client, /method:\s*'PUT'/);
+  assert.match(client, /return hydrateCommercialProjectConfig\(input\.projectId\)/);
+  assert.doesNotMatch(detail, /localStorage/);
+});
+
 test('TASK 86 — Client Experience renders real Project logo without pseudo SVG', async () => {
   const mark = await read(
     'apps/client-studio/src/features/client-studio/PartnerBrandMark.tsx',

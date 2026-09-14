@@ -126,6 +126,19 @@ export async function hydrateCommercialProjectConfig(
   return config;
 }
 
+export async function saveCommercialProjectPrivacyUrl(input: {
+  readonly projectId: string;
+  readonly privacyUrl: string;
+}): Promise<CommercialProjectConfig> {
+  const response = await fetch(baseEndpoint(input.projectId), {
+    method: 'PUT', credentials: 'include',
+    headers: { 'content-type': 'application/json' },
+    body: JSON.stringify({ privacyUrl: input.privacyUrl }),
+  });
+  if (!response.ok) throw new Error(await responseError(response));
+  return hydrateCommercialProjectConfig(input.projectId);
+}
+
 export async function selectCommercialProjectProgram(input: {
   readonly projectId: string;
   readonly programId: CommercialPilotProgramId;

@@ -24,6 +24,10 @@ import type {
 import { ProjectDocumentViewer } from './ProjectDocumentViewer';
 import { ProjectOfficeTasks } from './ProjectOfficeTasks';
 import { resolveCaseWithWorkflowSync } from '../../../office/commercialWorkflowSync';
+import {
+  hydrateCommercialProjectConfig,
+  saveCommercialProjectPrivacyUrl,
+} from '../../../office/commercialProjectConfig';
 
 type PilotTerminalDetailProps = {
   readonly activeCase: PilotWorkspaceCase | null;
@@ -44,6 +48,10 @@ export function PilotTerminalDetail({
   const [logoAvailable, setLogoAvailable] = useState(false);
   const [logoBusy, setLogoBusy] = useState(false);
   const [logoError, setLogoError] = useState<string | null>(null);
+  const [privacyUrl, setPrivacyUrl] = useState('');
+  const [privacyBusy, setPrivacyBusy] = useState(false);
+  const [privacyError, setPrivacyError] = useState<string | null>(null);
+  const [privacySaved, setPrivacySaved] = useState(false);
   const [partnerRevision, setPartnerRevision] = useState(0);
   const [editPartner, setEditPartner] = useState<OfficePartner | null>(null);
   const [partnerBusy, setPartnerBusy] = useState(false);
@@ -94,6 +102,32 @@ export function PilotTerminalDetail({
       cancelled = true;
     };
   }, [projectId, logoRevision]);
+
+  useEffect(() => {
+    if (projectId === null) { setPrivacyUrl(''); return; }
+    let cancelled = false;
+    setPrivacyError(null);
+    setPrivacySaved(false);
+    void hydrateCommercialProjectConfig(projectId)
+      .then((config) => { if (!cancelled) setPrivacyUrl(config.privacyUrl ?? ''); })
+      .catch((error) => {
+        if (!cancelled) setPrivacyError(error instanceof Error
+          ? error.message : 'Zásady ochrany osobních údajů se nepodařilo načíst.');
+      });
+    return () => { cancelled = true; };
+  }, [projectId]);
+
+  async function savePrivacyUrl(): Promise<void> {
+    if (projectId === null) return;
+    setPrivacyBusy(true); setPrivacyError(null); setPrivacySaved(false);
+    try {
+      const config = await saveCommercialProjectPrivacyUrl({ projectId, privacyUrl });
+      setPrivacyUrl(config.privacyUrl ?? ''); setPrivacySaved(true);
+    } catch (error) {
+      setPrivacyError(error instanceof Error
+        ? error.message : 'Zásady ochrany osobních údajů se nepodařilo uložit.');
+    } finally { setPrivacyBusy(false); }
+  }
 
   async function uploadProjectLogo(file: File): Promise<void> {
     if (projectId === null) return;
@@ -334,6 +368,29 @@ export function PilotTerminalDetail({
           </p>
         </DetailBlock>
       </dl>
+
+      {projectId !== null ? (
+        <section className="office-pilot-ws__detail-section" data-testid="project-privacy-detail">
+          <h3>Zásady ochrany osobních údajů</h3>
+          <p className="office-dashboard__hint">Odkaz na stránku partnera, který se zobrazí klientům ve formulářích.</p>
+          <label>
+            URL zásad ochrany osobních údajů
+            <input type="url" className="office-partners__search-input"
+              value={privacyUrl} placeholder="https://partner.cz/ochrana-osobnich-udaju"
+              disabled={privacyBusy} data-testid="project-privacy-url"
+              onChange={(event) => { setPrivacyUrl(event.currentTarget.value); setPrivacySaved(false); }} />
+          </label>
+          <div className="office-partner-actions">
+            <button type="button" className="platform-btn platform-btn--sm"
+              disabled={privacyBusy} data-testid="project-privacy-save"
+              onClick={() => void savePrivacyUrl()}>
+              {privacyBusy ? 'Ukládám…' : 'Uložit URL'}
+            </button>
+          </div>
+          {privacySaved ? <p role="status">URL byla uložena.</p> : null}
+          {privacyError !== null ? <p role="alert">{privacyError}</p> : null}
+        </section>
+      ) : null}
 
       {projectId !== null ? (
         <section

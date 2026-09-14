@@ -102,7 +102,6 @@ import {
   applyDurableProjectConfigs,
   canonicalCompanyIdForOfficePartner,
   findCompany,
-  getCanonicalProject,
   getDefaultCompanyRegistry,
   parsePartnerEnvironmentScope,
   projectPublicCompanyContact,
@@ -1381,10 +1380,11 @@ export function createPlatformApiServer(
         const projectId = decodeURIComponent(
           projectLogoMatch[1] ?? "",
         ).trim();
-        const canonical =
-          projectId.length === 0 ? null : getCanonicalProject(projectId);
+        const authority = projectId.length === 0
+          ? null
+          : await canonicalRegistryAuthorityRepository.resolveProjectAuthority(projectId);
 
-        if (canonical === null || canonical.project.projectId !== projectId) {
+        if (authority === null || authority.projectId !== projectId) {
           return respond(response, 404, { error: "Projekt neexistuje." });
         }
 
@@ -1407,7 +1407,7 @@ export function createPlatformApiServer(
           session.workspaceContext?.companyId ?? session.companyId;
 
         if (
-          canonical.partner.companyId !== authorizedCompanyId &&
+          authority.companyId !== authorizedCompanyId &&
           !isPlatformAdmin(session.user.roles)
         ) {
           return respond(response, 403, {
