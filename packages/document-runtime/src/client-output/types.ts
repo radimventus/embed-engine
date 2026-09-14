@@ -14,7 +14,16 @@ export type ClientOutputMedia = {
 export type ClientOutputNarrative = {
   readonly title: string;
   readonly fact: string;
-  readonly userImpact: string;
+  /** Canonical practical meaning for this exact fact. Omitted when unavailable. */
+  readonly userImpact?: string;
+};
+
+export type ClientOutputPartnerIdentity = {
+  readonly companyName: string;
+  readonly email?: string;
+  readonly phone?: string;
+  readonly logoUrl?: string;
+  readonly websiteUrl?: string;
 };
 
 export type ClientOutputSnapshot = {
@@ -35,6 +44,12 @@ export type ClientOutputSnapshot = {
   readonly blindspots: readonly ClientOutputNarrative[];
   readonly faq: readonly { readonly question: string; readonly answer: string }[];
   readonly plotAndProcess: readonly string[];
+  /** Both canonical Audit paths captured for the Universal handoff. */
+  readonly landPaths?: {
+    readonly hasLand: readonly string[];
+    readonly seekingLand: readonly string[];
+  };
   readonly auditConclusion: string;
   readonly cta: string;
+  readonly partner?: ClientOutputPartnerIdentity;
 };

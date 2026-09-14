@@ -14,6 +14,14 @@ const SOFT = rgb(0.95, 0.95, 0.94);
 const WHITE = rgb(1, 1, 1);
 const A4_LANDSCAPE: [number, number] = [841.89, 595.28];
 
+export const CLIENT_OUTPUT_MEDIA_LAYOUT = {
+  titleSafeBottom: 486,
+  frameWidth: 390,
+  firstFrameY: 255,
+  secondFrameY: 24,
+  ratio: 16 / 9,
+} as const;
+
 export type ClientOutputAssetLoader = (url: string) => Promise<Uint8Array>;
 
 function wrap(font: PDFFont, text: string, size: number, width: number): string[] {
@@ -111,16 +119,19 @@ async function mediaPage(
   const items = media.slice(0, 2);
   for (let index = 0; index < items.length; index += 1) {
     const item = items[index]!;
-    const frameW = 430;
+    // Keep the complete image spread below the title safe-zone (heading baseline 516).
+    const frameW = CLIENT_OUTPUT_MEDIA_LAYOUT.frameWidth;
     const frameH = frameW / ratio;
     const x = 42;
-    const y = index === 0 ? 282 : 35;
+    const y = index === 0
+      ? CLIENT_OUTPUT_MEDIA_LAYOUT.firstFrameY
+      : CLIENT_OUTPUT_MEDIA_LAYOUT.secondFrameY;
     page.drawRectangle({ x, y, width: frameW, height: frameH, color: SOFT });
     await drawImageFrame(pdf, page, item, load, ratio, x, y, frameW, frameH);
     page.drawText(item.label ?? (item.role === 'interior' ? 'Interiér' : 'Exteriér'), {
-      x: 500, y: y + frameH - 18, size: 12, font: bold, color: NAVY, maxWidth: 290,
+      x: 458, y: y + frameH - 18, size: 12, font: bold, color: NAVY, maxWidth: 337,
     });
-    textBlock(page, regular, item.caption, 500, y + frameH - 44, 285, 10, MUTED);
+    textBlock(page, regular, item.caption, 458, y + frameH - 44, 337, 10, MUTED);
   }
   pageNumber(page, regular, number);
 }
@@ -172,8 +183,10 @@ function priorityPage(
     const y = top - 48 - index * 104;
     page.drawText(item.title, { x: 60, y, size: 11, font: bold, color: NAVY, maxWidth: 315 });
     textBlock(page, regular, item.fact, 60, y - 22, 315, 9.5, NAVY);
-    page.drawText(item.title, { x: 441, y, size: 11, font: bold, color: NAVY, maxWidth: 315 });
-    textBlock(page, regular, item.userImpact, 441, y - 22, 315, 9.5, NAVY);
+    if (item.userImpact !== undefined) {
+      page.drawText(item.title, { x: 441, y, size: 11, font: bold, color: NAVY, maxWidth: 315 });
+      textBlock(page, regular, item.userImpact, 441, y - 22, 315, 9.5, NAVY);
+    }
     if (index < 2) {
       page.drawLine({ start: { x: 60, y: y - 78 }, end: { x: 378, y: y - 78 }, thickness: 0.7, color: LINE });
       page.drawLine({ start: { x: 441, y: y - 78 }, end: { x: 759, y: y - 78 }, thickness: 0.7, color: LINE });
@@ -201,7 +214,9 @@ function relationshipPage(
     page.drawText('ŘEŠENÍ DOMU', { x: x + 16, y: 380, size: 8, font: bold, color: GOLD });
     const next = textBlock(page, regular, item.fact, x + 16, 360, 202, 9.5, NAVY);
     page.drawText('PROČ NA TOM ZÁLEŽÍ', { x: x + 16, y: next - 22, size: 8, font: bold, color: GOLD });
-    textBlock(page, regular, item.userImpact, x + 16, next - 42, 202, 9.5, NAVY);
+    if (item.userImpact !== undefined) {
+      textBlock(page, regular, item.userImpact, x + 16, next - 42, 202, 9.5, NAVY);
+    }
   });
   pageNumber(page, regular, number);
 }
@@ -220,7 +235,9 @@ function blindspotsAndFaqPage(
     const x = 42 + index * 254;
     page.drawLine({ start: { x, y: 470 }, end: { x: x + 230, y: 470 }, thickness: 3, color: GOLD });
     page.drawText(item.title, { x, y: 440, size: 11, font: bold, color: NAVY, maxWidth: 225 });
-    textBlock(page, regular, item.userImpact, x, 416, 225, 9, NAVY);
+    if (item.userImpact !== undefined) {
+      textBlock(page, regular, item.userImpact, x, 416, 225, 9, NAVY);
+    }
   });
   page.drawText('RELEVANTNÍ OTÁZKY', { x: 42, y: 280, size: 9, font: bold, color: GOLD });
   let y = 250;
@@ -239,6 +256,29 @@ function processPage(pdf: PDFDocument, regular: PDFFont, bold: PDFFont, snapshot
       ? ['Hledání pozemku', 'Vybírejte místo už s ohledem na tento dům.']
       : ['Pozemek', 'Dům a pozemek patří k sobě.'];
   title(page, bold, headings[0]!, headings[1]!);
+  if (snapshot.variant === 'UNIVERSAL' && snapshot.landPaths !== undefined) {
+    const paths = [
+      { title: 'MÁM POZEMEK', intro: 'Ověříme, jak dům funguje na konkrétním místě.', items: snapshot.landPaths.hasLand },
+      { title: 'HLEDÁM POZEMEK', intro: 'Vlastnosti domu proměníme ve vodítka pro výběr parcely.', items: snapshot.landPaths.seekingLand },
+    ] as const;
+    paths.forEach((path, row) => {
+      const y = row === 0 ? 320 : 105;
+      page.drawText(path.title, { x: 42, y: y + 126, size: 12, font: bold, color: GOLD });
+      page.drawText(path.intro, { x: 42, y: y + 102, size: 10, font: regular, color: NAVY });
+      path.items.slice(0, 4).forEach((item, index) => {
+        const x = 42 + index * 190;
+        const separator = item.indexOf(':');
+        const itemTitle = separator > 0 ? item.slice(0, separator) : item;
+        const copy = separator > 0 ? item.slice(separator + 1).trim() : '';
+        page.drawRectangle({ x, y, width: 172, height: 82, color: SOFT });
+        page.drawText(String(index + 1).padStart(2, '0'), { x: x + 12, y: y + 61, size: 8, font: bold, color: GOLD });
+        page.drawText(itemTitle, { x: x + 38, y: y + 59, size: 9.5, font: bold, color: NAVY, maxWidth: 120 });
+        textBlock(page, regular, copy, x + 12, y + 38, 148, 7.5, NAVY);
+      });
+    });
+    pageNumber(page, regular, number);
+    return;
+  }
   const items = snapshot.plotAndProcess.slice(0, 4);
   items.forEach((item, index) => {
     const x = 42 + index * (items.length === 4 ? 190 : 254);
@@ -254,14 +294,38 @@ function processPage(pdf: PDFDocument, regular: PDFFont, bold: PDFFont, snapshot
   pageNumber(page, regular, number);
 }
 
-function conclusionPage(pdf: PDFDocument, regular: PDFFont, bold: PDFFont, snapshot: ClientOutputSnapshot, number: number): void {
+async function conclusionPage(
+  pdf: PDFDocument,
+  regular: PDFFont,
+  bold: PDFFont,
+  snapshot: ClientOutputSnapshot,
+  load: ClientOutputAssetLoader,
+  number: number,
+): Promise<void> {
   const page = pdf.addPage(A4_LANDSCAPE);
   title(page, bold, 'Váš osobní závěr', 'Máte podklady pro další krok.');
-  page.drawRectangle({ x: 42, y: 270, width: 755, height: 190, color: SOFT });
-  textBlock(page, regular, snapshot.auditConclusion, 70, 405, 700, 16, NAVY);
-  page.drawLine({ start: { x: 42, y: 220 }, end: { x: 797, y: 220 }, thickness: 1, color: GOLD });
-  page.drawText('NAVAZUJÍCÍ KONZULTACE', { x: 42, y: 180, size: 9, font: bold, color: GOLD });
-  textBlock(page, bold, snapshot.cta, 42, 145, 755, 16, NAVY);
+  page.drawRectangle({ x: 42, y: 286, width: 755, height: 174, color: SOFT });
+  textBlock(page, regular, snapshot.auditConclusion, 70, 405, 700, 15, NAVY);
+  page.drawLine({ start: { x: 42, y: 240 }, end: { x: 797, y: 240 }, thickness: 1, color: GOLD });
+  page.drawText('VÁŠ DALŠÍ KROK', { x: 42, y: 205, size: 9, font: bold, color: GOLD });
+  const nextStep = snapshot.variant === 'HAS_LAND'
+    ? 'Navazující konzultace ověří vztah domu k vašemu pozemku.'
+    : snapshot.variant === 'SEEKING_LAND'
+      ? 'Navazující konzultace převede vlastnosti domu do kritérií pro hledaný pozemek.'
+      : 'Navazující konzultace pomůže zvolit další cestu podle vaší situace s pozemkem.';
+  textBlock(page, regular, nextStep, 42, 180, 500, 12, NAVY);
+  const partner = snapshot.partner;
+  if (partner?.logoUrl !== undefined) {
+    const logo = await embedImage(pdf, {
+      id: 'partner-logo', url: partner.logoUrl, caption: partner.companyName,
+    }, load, 16 / 9);
+    if (logo !== null) page.drawImage(logo, { x: 650, y: 158, width: 145, height: 70 });
+  }
+  page.drawText(partner?.companyName ?? snapshot.company.name, { x: 42, y: 117, size: 15, font: bold, color: NAVY });
+  const contact = [partner?.email, partner?.phone, partner?.websiteUrl].filter(
+    (value): value is string => Boolean(value?.trim()),
+  );
+  textBlock(page, regular, contact.length > 0 ? contact.join(' · ') : snapshot.cta, 42, 92, 755, 11, MUTED);
   pageNumber(page, regular, number);
 }
 
@@ -278,9 +342,8 @@ export async function renderClientOutputPdf(snapshot: ClientOutputSnapshot, load
   const coverPage = pdf.addPage(A4_LANDSCAPE);
   await drawCover(pdf, coverPage, bold, regular, snapshot, load);
   pageNumber(coverPage, regular, number++);
-  for (let index = 0; index < snapshot.exterior.length; index += 2) {
-    await mediaPage(pdf, regular, bold, 'Exteriér a první dojem', snapshot.exterior.slice(index, index + 2), 16 / 9, load, number++);
-  }
+  const exterior = snapshot.exterior.slice(0, 2);
+  if (exterior.length > 0) await mediaPage(pdf, regular, bold, 'Exteriér a první dojem', exterior, 16 / 9, load, number++);
   for (const floorPlan of snapshot.floorPlans) {
     await floorPlanPage(pdf, regular, bold, floorPlan, snapshot.house.storeys > 1 ? 'Půdorys podlaží' : 'Jak dům funguje jako celek.', load, number++);
   }
@@ -292,7 +355,7 @@ export async function renderClientOutputPdf(snapshot: ClientOutputSnapshot, load
   }
   blindspotsAndFaqPage(pdf, regular, bold, snapshot.blindspots, snapshot.faq, number++);
   processPage(pdf, regular, bold, snapshot, number++);
-  conclusionPage(pdf, regular, bold, snapshot, number++);
+  await conclusionPage(pdf, regular, bold, snapshot, load, number++);
   pdf.setTitle(`${snapshot.house.name} – osobní výstup CONIS`);
   pdf.setCreationDate(new Date(snapshot.capturedAt));
   pdf.setModificationDate(new Date(snapshot.capturedAt));

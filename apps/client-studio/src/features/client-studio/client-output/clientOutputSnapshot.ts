@@ -11,11 +11,12 @@ import {
   type HouseRelationshipEvidenceBundle,
 } from '@embed-engine/object-house';
 import { WORKFLOW_BY_LAND } from '../sections/AuditLeadCapture/audit-panel';
+import { resolveClientRuntimeBinding } from '../runtime/clientCanonicalBind';
 import type { ProjectedMediaAsset } from '../runtime/synchronizedExperience';
 import type { DecisionSessionRuntimeContextValue } from '../runtime/DecisionSessionRuntimeProvider';
 
-function narrative(title: string, fact: string, userImpact: string): ClientOutputNarrative {
-  return { title, fact, userImpact };
+function narrative(title: string, fact: string, userImpact?: string): ClientOutputNarrative {
+  return userImpact === undefined ? { title, fact } : { title, fact, userImpact };
 }
 
 export function clientOutputVariantForLandOption(value: 'owned' | 'seeking'): ClientOutputVariant {
@@ -31,11 +32,7 @@ function workflowCopy(mode: 'owned' | 'seeking'): readonly string[] {
 export function clientOutputPlotAndProcess(variant: ClientOutputVariant): readonly string[] {
   if (variant === 'HAS_LAND') return workflowCopy('owned');
   if (variant === 'SEEKING_LAND') return workflowCopy('seeking');
-  return [
-    'Máte pozemek: ověříme vztah vybraného domu ke konkrétnímu místu.',
-    'Hledáte pozemek: vlastnosti domu použijeme jako vodítko pro výběr vhodné parcely.',
-    'Další podklady doplníte až podle zvolené cesty a potřeb konkrétního posouzení.',
-  ];
+  return [];
 }
 
 type MediaRole = 'cover' | 'exterior' | 'floorplan' | 'interior';
@@ -63,6 +60,15 @@ const ROOM_LABELS: Readonly<Record<string, string>> = {
   'technical-room': 'Technická místnost',
 };
 
+const ROOM_EVIDENCE_TERMS: Readonly<Record<string, readonly string[]>> = {
+  terrace: ['terasa', 'zahrad'], kitchen: ['kuchyň', 'kuchyn'],
+  'living-room': ['obýv', 'společensk', 'obytn'], vestibule: ['zádveří', 'vstup'],
+  wardrobe: ['šatn', 'úlož', 'uklád'], bedroom: ['ložnic', 'soukrom'],
+  bathroom: ['koupeln'], toilet: ['toalet', 'wc'],
+  'children-room': ['dětsk', 'pokoj'], office: ['pracovn'],
+  'technical-room': ['technick'],
+};
+
 function relevantInterpretation(
   knowledge: CanonicalHouseKnowledgeSelection | null,
   topics: readonly string[],
@@ -75,6 +81,26 @@ function relevantInterpretation(
   );
   if (candidates.length === 0) return null;
   return candidates[position % candidates.length]?.safeInterpretation ?? null;
+}
+
+function subjectRelevantInterpretation(
+  knowledge: CanonicalHouseKnowledgeSelection | null,
+  roomId: string | null | undefined,
+  topics: readonly string[],
+  position = 0,
+): string | null {
+  if (knowledge === null || roomId == null) return null;
+  const terms = ROOM_EVIDENCE_TERMS[roomId];
+  if (terms === undefined) return relevantInterpretation(knowledge, topics, position);
+  const candidates = knowledge.facts.filter((item) => {
+    if (item.safeInterpretation === undefined) return false;
+    const searchable = normalizedText([
+      item.subject, item.category, item.statement, item.safeInterpretation,
+      ...item.relatedTopics,
+    ].join(' '));
+    return terms.some((term) => searchable.includes(normalizedText(term)));
+  });
+  return candidates[position % Math.max(candidates.length, 1)]?.safeInterpretation ?? null;
 }
 
 function semanticLead(role: MediaRole, label: string, position: number): string {
@@ -102,7 +128,9 @@ export function clientOutputMediaCaption(
   const position = options.position ?? 0;
   const topics = ROOM_TOPICS[media.roomId ?? ''] ?? [];
   const lead = semanticLead(role, label, position);
-  const interpretation = relevantInterpretation(knowledge, topics, position);
+  const interpretation = role === 'interior'
+    ? subjectRelevantInterpretation(knowledge, media.roomId, topics, position)
+    : relevantInterpretation(knowledge, topics, position);
   return interpretation === null || interpretation.trim() === lead.trim()
     ? lead
     : `${lead} ${interpretation}`;
@@ -112,31 +140,35 @@ function normalizedText(value: string): string {
   return value.toLocaleLowerCase('cs-CZ').replace(/[^a-zá-ž0-9]+/gi, ' ').trim();
 }
 
-function factNarrative(item: HouseKnowledgeAtom): ClientOutputNarrative {
-  const candidates = [item.safeInterpretation, item.interpretationPoint]
-    .filter((value): value is string => Boolean(value?.trim()));
-  const impact = candidates.find((value) => normalizedText(value) !== normalizedText(item.statement)) ??
-    'Při rozhodování je vhodné tuto doloženou vlastnost posoudit ve vztahu k vašemu způsobu užívání domu.';
+function factNarrative(
+  item: HouseKnowledgeAtom,
+  interpretationByFactId: ReadonlyMap<string, string>,
+): ClientOutputNarrative {
+  const canonicalMeaning = interpretationByFactId.get(item.id);
+  const impact = canonicalMeaning !== undefined &&
+    normalizedText(canonicalMeaning) !== normalizedText(item.statement)
+    ? canonicalMeaning
+    : undefined;
   return narrative(item.factPoint ?? item.subject, item.statement, impact);
 }
 
 function relationshipNarrative(bundle: HouseRelationshipEvidenceBundle): ClientOutputNarrative {
-  const primaryImpact = bundle.primaryFact.safeInterpretation ?? bundle.primaryFact.statement;
-  const relatedImpact = bundle.relatedFact?.safeInterpretation;
+  const primaryImpact = bundle.primaryFact.safeInterpretation;
   return narrative(
     bundle.title,
     bundle.primaryFact.statement,
-    relatedImpact === undefined || normalizedText(relatedImpact) === normalizedText(primaryImpact)
+    primaryImpact !== undefined && normalizedText(primaryImpact) !== normalizedText(bundle.primaryFact.statement)
       ? primaryImpact
-      : `${primaryImpact} ${relatedImpact}`,
+      : undefined,
   );
 }
 
 function fallbackNarratives(
   facts: readonly HouseKnowledgeAtom[],
+  interpretationByFactId: ReadonlyMap<string, string>,
   start: number,
 ): readonly ClientOutputNarrative[] {
-  return facts.slice(start, start + 3).map(factNarrative);
+  return facts.slice(start, start + 3).map((item) => factNarrative(item, interpretationByFactId));
 }
 
 export function clientOutputConclusion(
@@ -204,7 +236,7 @@ export function buildClientOutputSnapshot(
   const coverUrl = coverSource?.url;
   const exterior = exteriorGallery
     .filter((item) => item.url !== coverUrl)
-    .slice(0, 3)
+    .slice(0, 2)
     .map((item, index) => projectMedia(item, 'exterior', 'Exteriér', knowledge, index));
   const interiors = interiorGallery.slice(0, 15).map((item, index) => {
     const label = roomById.get(item.roomId ?? '')?.name ?? 'Interiér';
@@ -223,7 +255,11 @@ export function buildClientOutputSnapshot(
   }] : [];
 
   const facts = knowledge?.facts ?? [];
-  const priorityNarratives = facts.slice(0, 3).map(factNarrative);
+  const interpretationByFactId = new Map(
+    (knowledge?.interpretations ?? []).map((item) => [item.factId, item.text]),
+  );
+  const priorityNarratives = facts.slice(0, 3)
+    .map((item) => factNarrative(item, interpretationByFactId));
   const connected = relationshipEvidence
     .filter((item) => item.kind === 'CONNECTED')
     .slice(0, 3)
@@ -232,10 +268,14 @@ export function buildClientOutputSnapshot(
     .filter((item) => item.kind === 'BLINDSPOT')
     .slice(0, 3)
     .map(relationshipNarrative);
-  const connectedTopics = connected.length > 0 ? connected : fallbackNarratives(facts, 3);
-  const overlookedTopics = blindspots.length > 0 ? blindspots : fallbackNarratives(facts, 6);
+  const connectedTopics = connected.length > 0 ? connected : fallbackNarratives(facts, interpretationByFactId, 3);
+  const overlookedTopics = blindspots.length > 0 ? blindspots : fallbackNarratives(facts, interpretationByFactId, 6);
   const faqSource = priorities.length > 0 ? houseKnowledge : chatHouseKnowledge;
   const contactParts = [runtime.company.email, runtime.company.phone].filter(Boolean);
+  const projection = resolveClientRuntimeBinding().project;
+  const branding = projection?.project.projectId === runtime.project.projectId
+    ? projection.branding
+    : null;
 
   return {
     schemaVersion: 1,
@@ -262,9 +302,20 @@ export function buildClientOutputSnapshot(
       answer: item.answer,
     })) ?? [],
     plotAndProcess: clientOutputPlotAndProcess(variant),
+    landPaths: variant === 'UNIVERSAL' ? {
+      hasLand: workflowCopy('owned'),
+      seekingLand: workflowCopy('seeking'),
+    } : undefined,
     auditConclusion: clientOutputConclusion(variant, priorities.length > 0),
     cta: contactParts.length > 0
       ? `Navazující konzultaci domluvte s ${runtime.company.companyName}: ${contactParts.join(' · ')}.`
       : `Navazující konzultaci domluvte s ${runtime.company.companyName}.`,
+    partner: {
+      companyName: runtime.company.companyName,
+      ...(runtime.company.email ? { email: runtime.company.email } : {}),
+      ...(runtime.company.phone ? { phone: runtime.company.phone } : {}),
+      ...(branding?.logoUrl ? { logoUrl: branding.logoUrl } : {}),
+      ...(branding?.websiteUrl ? { websiteUrl: branding.websiteUrl } : {}),
+    },
   };
 }

@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import { PDFDocument } from 'pdf-lib';
 import sharp from 'sharp';
-import { renderClientOutputPdf } from './generator/clientOutputPdf';
+import { CLIENT_OUTPUT_MEDIA_LAYOUT, renderClientOutputPdf } from './generator/clientOutputPdf';
 import type { ClientOutputSnapshot } from './client-output/types';
 
 const snapshot: ClientOutputSnapshot = { schemaVersion:1,capturedAt:'2026-09-14T08:00:00.000Z',company:{id:'c',name:'Partner'},project:{id:'p',name:'Projekt'},house:{id:'h',name:'Bungalov 4KK',storeys:1},knowledgeVersion:'v04',variant:'UNIVERSAL',priorities:['Energie'],cover:[{id:'cover',url:'/house/cover.webp',role:'cover',label:'Exteriér',caption:'Úvodní pohled.'}],exterior:[{id:'e',url:'/house/exterior.webp',role:'exterior',label:'Exteriér',caption:'Exteriér ve vztahu k zahradě.'}],floorPlans:[{id:'f',url:'/house/floorplan.png',role:'floorplan',label:'1. NP',caption:'Jednopodlažní dispozice.'}],interiors:[{id:'i1',url:'/house/interior-1.jpg',role:'interior',label:'Kuchyně',caption:'Kuchyň a její každodenní využití.'},{id:'i2',url:'/house/interior-2.jpg',role:'interior',label:'Obývací pokoj',caption:'Společný obytný prostor.'},{id:'i3',url:'/house/interior-3.jpg',role:'interior',label:'Ložnice',caption:'Soukromá část domu.'}],priorityNarratives:[{title:'Energie',fact:'Doložený fakt.',userImpact:'Praktický dopad.'}],connectedTopics:[],blindspots:[],faq:[],plotAndProcess:['Pozemek: Ověřte orientaci na pozemku.'],auditConclusion:'Dům odpovídá vybraným prioritám.',cta:'Domluvte si další krok.'};
@@ -50,4 +50,33 @@ test('cover consumes its own canonical hero without duplicating it on the exteri
   assert.equal(new Set(snapshot.exterior.map((item) => item.url)).size, snapshot.exterior.length);
   assert.ok(snapshot.interiors.every((item) => item.role === 'interior'));
   assert.ok(snapshot.floorPlans.every((item) => item.role === 'floorplan'));
+});
+
+test('exterior pagination selects at most two distinct views after the cover', async () => {
+  const requested: string[] = [];
+  const threeExteriors: ClientOutputSnapshot = {
+    ...snapshot,
+    exterior: [
+      ...snapshot.exterior,
+      { id: 'e2', url: '/house/exterior-2.webp', role: 'exterior', label: 'Exteriér', caption: 'Druhý pohled.' },
+      { id: 'e3', url: '/house/exterior-3.webp', role: 'exterior', label: 'Exteriér', caption: 'Třetí pohled.' },
+    ],
+  };
+  await renderClientOutputPdf(threeExteriors, async (url) => {
+    requested.push(url);
+    return new Uint8Array(await sharp({ create: { width: 320, height: 180, channels: 3, background: '#001930' } }).png().toBuffer());
+  });
+  assert.ok(requested.includes('/house/exterior.webp'));
+  assert.ok(requested.includes('/house/exterior-2.webp'));
+  assert.ok(!requested.includes('/house/exterior-3.webp'));
+});
+
+test('image frames stay below the heading safe-zone and do not overlap each other', () => {
+  const frameHeight = CLIENT_OUTPUT_MEDIA_LAYOUT.frameWidth / CLIENT_OUTPUT_MEDIA_LAYOUT.ratio;
+  assert.ok(
+    CLIENT_OUTPUT_MEDIA_LAYOUT.firstFrameY + frameHeight <= CLIENT_OUTPUT_MEDIA_LAYOUT.titleSafeBottom,
+  );
+  assert.ok(
+    CLIENT_OUTPUT_MEDIA_LAYOUT.secondFrameY + frameHeight < CLIENT_OUTPUT_MEDIA_LAYOUT.firstFrameY,
+  );
 });

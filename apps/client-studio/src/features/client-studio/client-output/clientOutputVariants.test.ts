@@ -22,7 +22,9 @@ function fact(index: number): HouseKnowledgeAtom {
 
 const facts = Array.from({ length: 10 }, (_, index) => fact(index + 1));
 const knowledge: CanonicalHouseKnowledgeSelection = {
-  canonicalHouseId: 'house', facts, interpretations: [], guardrails: ['INTERNÍ OMEZENÍ'],
+  canonicalHouseId: 'house', facts,
+  interpretations: facts.map((item) => ({ factId: item.id, text: item.safeInterpretation! })),
+  guardrails: ['INTERNÍ OMEZENÍ'],
   priorityFaq: Array.from({ length: 4 }, (_, index) => ({
     id: `faq-${index}`, houseId: 'house', priority: 'LAYOUT', constraints: [],
     question: `Otázka ${index + 1}?`, answer: `Odpověď ${index + 1}.`, knowledgeAtomIds: [`fact-${index + 1}`],
@@ -98,9 +100,17 @@ test('Universal preserves media references and provides complete canonical House
 });
 
 test('captions are Czech client copy grounded in House knowledge, without raw media keys', () => {
-  const caption = clientOutputMediaCaption({ title: 'kitchen', roomId: 'kitchen' }, knowledge);
+  const relevantKnowledge: CanonicalHouseKnowledgeSelection = {
+    ...knowledge,
+    facts: [
+      { ...facts[0]!, subject: 'Kuchyň a společný prostor', statement: 'Kuchyň navazuje na obytnou část.', safeInterpretation: 'Kuchyň zůstává součástí společného provozu.' },
+      { ...facts[1]!, subject: 'Skladba obálky', statement: 'Stěna má difuzně otevřenou skladbu.', safeInterpretation: 'Obálka spojuje konstrukci a provoz.' },
+    ],
+  };
+  const caption = clientOutputMediaCaption({ title: 'kitchen', roomId: 'kitchen' }, relevantKnowledge);
   assert.match(caption, /Kuchyně/);
-  assert.match(caption, /Praktický přínos/);
+  assert.match(caption, /společného provozu/);
+  assert.doesNotMatch(caption, /Obálka spojuje/);
   assert.doesNotMatch(caption, /kitchen:|prostor posuzovaný/);
 });
 
@@ -113,6 +123,8 @@ test('personalized output uses Czech Priority labels and excludes constraints an
   assert.doesNotMatch(clientCopy, /INTERNÍ OMEZENÍ|CURRENT_CONFIRMED|sourceId|nevydávat za záruku/);
   assert.doesNotMatch(clientCopy, /Souvislost vede přes vlastnost/);
   output.priorityNarratives.forEach((item) => assert.notEqual(item.fact, item.userImpact));
+  assert.ok(output.priorityNarratives.every((item) => item.userImpact?.startsWith('Praktický přínos')));
+  assert.doesNotMatch(JSON.stringify(output.priorityNarratives), /Při rozhodování je vhodné tuto doloženou vlastnost/);
 });
 
 test('media selection uses canonical room semantics instead of filenames or array position', () => {
@@ -133,6 +145,16 @@ test('specific land variants reuse the canonical Audit workflow', () => {
     'Doporučení: Navrhneme dům, který sedí na váš pozemek.',
   ]);
   assert.equal(clientOutputPlotAndProcess('SEEKING_LAND')[1], 'Lokalita: Prověříme lokalitu a její možnosti.');
+});
+
+test('Universal captures both canonical four-step Audit paths without a synthetic third step', () => {
+  const output = buildClientOutputSnapshot(runtime(), 'UNIVERSAL');
+  assert.deepEqual(output.plotAndProcess, []);
+  assert.equal(output.landPaths?.hasLand.length, 4);
+  assert.equal(output.landPaths?.seekingLand.length, 4);
+  assert.deepEqual(output.landPaths?.hasLand, clientOutputPlotAndProcess('HAS_LAND'));
+  assert.deepEqual(output.landPaths?.seekingLand, clientOutputPlotAndProcess('SEEKING_LAND'));
+  assert.doesNotMatch(JSON.stringify(output.landPaths), /Krok 3/);
 });
 
 test('final copy is complete and variant-specific', () => {
