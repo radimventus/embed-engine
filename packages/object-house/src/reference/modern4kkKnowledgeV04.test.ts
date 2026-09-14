@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import { KNOWLEDGE_V04, FAQ_V04 } from './modern4kkKnowledgeV04';
 import { getCanonicalHouseRuntimeContext } from '../runtime-context/canonicalHouseRuntimeContext';
-import { canonicalHouseKnowledgeEntries, selectCanonicalChatHouseKnowledge } from '../runtime-context/selectCanonicalHouseKnowledge';
+import { canonicalHouseKnowledgeEntries, selectCanonicalChatHouseKnowledge, selectCanonicalHouseKnowledge } from '../runtime-context/selectCanonicalHouseKnowledge';
 
 const context = getCanonicalHouseRuntimeContext('modern-4kk')!;
 const selection = selectCanonicalChatHouseKnowledge(context);
@@ -53,4 +53,21 @@ test('reference technical values do not become facts of an unrelated authored ho
   assert.ok(!selectCanonicalChatHouseKnowledge(other).facts.some(x=>x.scope==='REFERENCE_PROJECT'));
   const fire=canonicalHouseKnowledgeEntries(selection,'Jakou má dům požární odolnost?');
   assert.ok(fire.some(x=>x.text.includes('REI 45') && /referenční realizac[ei]/.test(x.text)));
+});
+
+test('payoff FACT and USER IMPACT retain distinct source-backed meanings', () => {
+  const payoff = selectCanonicalHouseKnowledge(context, ['energy', 'quality', 'maintenance']);
+  const interpretationByFactId = new Map(
+    payoff.interpretations.map((item) => [item.factId, item.text]),
+  );
+  const rows = payoff.facts.filter(
+    (fact) => fact.factPoint !== undefined && fact.interpretationPoint !== undefined,
+  );
+  assert.ok(rows.length >= 3);
+  for (const fact of rows) {
+    const impact = interpretationByFactId.get(fact.id);
+    assert.ok(impact);
+    assert.notEqual(impact, fact.statement, fact.id);
+    assert.notEqual(fact.factPoint, fact.interpretationPoint, fact.id);
+  }
 });

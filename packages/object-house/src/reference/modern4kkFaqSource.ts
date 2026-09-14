@@ -572,7 +572,7 @@ export const MODERN_4KK_KNOWLEDGE: readonly HouseKnowledgeAtom[] = [
     const current = KNOWLEDGE_V04.find(row => row.id === `kb04-row-${PAYOFF_ROWS[atom.id]}`)!;
     return { ...current, id: atom.id, factPoint: atom.factPoint,
       interpretationPoint: atom.interpretationPoint,
-      safeInterpretation: current.statement, relatedTopics: atom.relatedTopics,
+      safeInterpretation: atom.safeInterpretation, relatedTopics: atom.relatedTopics,
       unsupportedConclusions: atom.unsupportedConclusions };
   }),
 ];
