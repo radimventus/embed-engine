@@ -11,6 +11,7 @@ import { promisify } from 'node:util';
 import { platformApiStatePath } from './platformApiConfig';
 import {
   canAccessStudio,
+  isPlatformAdmin,
   type PlatformRole,
 } from '@embed-engine/platform-access/rbac';
 import {
@@ -472,7 +473,7 @@ export class FilePartnerSessionRepository implements PartnerSessionRepository {
       );
       if (account === undefined) return null;
 
-      const isConisAdmin = account.roles.includes('conis-admin');
+      const isConisAdmin = isPlatformAdmin(account.roles);
 
       // TASK-42T — entering/leaving an operator Partner Environment remains
       // a CONIS-admin capability. A normal partner session may only switch
