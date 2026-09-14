@@ -89,6 +89,7 @@ describe('Audit GDPR consent UX', () => {
   it('shows pending and success copy only after durable acceptance', () => {
     assert.match(form, /ODESÍLÁM…/);
     assert.match(form, /submitDurableLead/);
+    assert.match(form, /submitClientOutput/);
     assert.match(form, /setPhase\('success'\)/);
 
     const tryBlock = form.slice(
@@ -96,6 +97,8 @@ describe('Audit GDPR consent UX', () => {
       form.indexOf('} catch'),
     );
     assert.ok(tryBlock.indexOf('submitDurableLead') < tryBlock.indexOf("setPhase('success')"));
+    assert.ok(tryBlock.indexOf('submitDurableLead') < tryBlock.indexOf('submitClientOutput'));
+    assert.ok(tryBlock.indexOf('submitClientOutput') < tryBlock.indexOf("setPhase('success')"));
     assert.match(payload, /if \(!response\.ok\)/);
   });
 });

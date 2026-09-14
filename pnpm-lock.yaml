@@ -117,6 +117,9 @@ importers:
       '@embed-engine/design-tokens':
         specifier: workspace:*
         version: link:../../packages/design-tokens
+      '@embed-engine/document-runtime':
+        specifier: workspace:*
+        version: link:../../packages/document-runtime
       '@embed-engine/embed':
         specifier: workspace:*
         version: link:../../packages/embed

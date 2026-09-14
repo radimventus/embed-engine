@@ -1,0 +1,19 @@
+import type { ClientOutputNarrative, ClientOutputSnapshot } from '@embed-engine/document-runtime';
+import { evidenceBoundNarrative, type CanonicalHouseKnowledgeSelection, type HouseRelationshipEvidenceBundle } from '@embed-engine/object-house';
+import type { DecisionSessionRuntimeContextValue } from '../runtime/DecisionSessionRuntimeProvider';
+import { decisionReportPreviewFromTerminal } from '../sections/DecisionReportPreview/DecisionReportPreviewViewModel';
+
+function narrative(title:string,fact:string,userImpact:string):ClientOutputNarrative{return{title,fact,userImpact};}
+export function buildClientOutputSnapshot(runtime:DecisionSessionRuntimeContextValue,now=new Date()):ClientOutputSnapshot{
+  if(runtime.analyticsScope===null||runtime.company===null||runtime.project===null)throw new Error('Client output scope is unavailable.');
+  const {experience,houseKnowledge,relationshipEvidence}=runtime;const gallery=experience.context.roomMedia.gallery;
+  const exteriorCandidates=[...(experience.context.hero.heroMedia?[experience.context.hero.heroMedia]:[]),...gallery.filter(item=>/ext|exteri|zahr|fas/i.test(`${item.title} ${item.roomId??''}`))];
+  const exterior=(exteriorCandidates.length?exteriorCandidates:gallery).slice(0,2).map(item=>({id:item.id,url:item.url,caption:`${item.title} ve vztahu k prioritám ${relationshipEvidence[0]?.selectedPriorityIds.join(', ')||'vašeho rozhodnutí'}.`}));
+  const exteriorIds=new Set(exterior.map(item=>item.id));const interiors=gallery.filter(item=>!exteriorIds.has(item.id)).slice(0,8).map(item=>({id:item.id,url:item.url,caption:`${item.title}: prostor posuzovaný v souvislosti s vašimi prioritami.`}));
+  const floorPlan=experience.context.floorPlan;const floorPlans=floorPlan.src?[{id:'floorplan-current',url:floorPlan.src,caption:`Dispozice a vazby místností pro priority ${relationshipEvidence[0]?.selectedPriorityIds.join(', ')||'návštěvníka'}.`}]:[];
+  const priorities=relationshipEvidence[0]?.selectedPriorityIds??[];const facts=(houseKnowledge?.facts??[]).slice(0,3);const interpretations=new Map((houseKnowledge?.interpretations??[]).map(item=>[item.factId,item.text]));
+  const priorityNarratives=facts.map(item=>narrative(item.subject,item.statement,interpretations.get(item.id)??item.safeInterpretation??item.interpretationPoint??item.statement));
+  const relationship=(bundle:HouseRelationshipEvidenceBundle)=>{const value=evidenceBoundNarrative(bundle);return narrative(bundle.title,value.houseSolution,`${value.relationship} ${value.remember}`);};
+  const report=decisionReportPreviewFromTerminal(experience.context.decision.terminal);
+  return{schemaVersion:1,capturedAt:now.toISOString(),company:{id:runtime.company.companyId,name:runtime.company.companyName},project:{id:runtime.project.projectId,name:runtime.project.projectId},house:{id:runtime.analyticsScope.houseId,name:experience.house.title,storeys:new Set(experience.context.floorPlan.rooms.map(room=>room.floor)).size||1},knowledgeVersion:relationshipEvidence[0]?.knowledgeVersion??'canonical-current',priorities,exterior,floorPlans,interiors,priorityNarratives,connectedTopics:relationshipEvidence.filter(item=>item.kind==='CONNECTED').slice(0,3).map(relationship),blindspots:relationshipEvidence.filter(item=>item.kind==='BLINDSPOT').slice(0,3).map(relationship),faq:(houseKnowledge as CanonicalHouseKnowledgeSelection|null)?.priorityFaq.slice(0,4).map(item=>({question:item.question,answer:item.answer}))??[],plotAndProcess:['Ověřte orientaci domu a návaznost obytných místností na pozemek.','Porovnejte rozsah přípravy pozemku, napojení a postup realizace.','Další krok potvrďte s partnerem nad konkrétním pozemkem.'],auditConclusion:`${report.title}. ${report.summary}`,cta:runtime.company.email?`Navazující konzultaci domluvte na ${runtime.company.email}.`:'Domluvte si s partnerem navazující konzultaci.'};
+}

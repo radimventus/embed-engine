@@ -18,6 +18,8 @@ import {
 import { UserIcon } from './AuditIcons';
 import { SuccessState } from './SuccessState';
 import { submitDurableLead } from './durableLeadSubmission';
+import { buildClientOutputSnapshot } from '../../client-output/clientOutputSnapshot';
+import { submitClientOutput } from '../../client-output/clientOutputClient';
 
 type LeadPhase = 'idle' | 'loading' | 'success' | 'error';
 
@@ -39,7 +41,8 @@ export function AuditContact({
   onPersistLandIntent,
 }: AuditContactProps) {
   const analytics = useOptionalDecisionAnalytics();
-  const { analyticsScope, company, project, decisionSessionId } = useDecisionSessionRuntime();
+  const runtime = useDecisionSessionRuntime();
+  const { analyticsScope, company, project, decisionSessionId } = runtime;
   const [phase, setPhase] = useState<LeadPhase>('idle');
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -100,7 +103,7 @@ export function AuditContact({
     idempotencyKeyRef.current = idempotencyKey;
 
     try {
-      await submitDurableLead({
+      const acceptedLead = await submitDurableLead({
         idempotencyKey,
         scope: {
           companyId: company.companyId,
@@ -116,6 +119,7 @@ export function AuditContact({
         acceptedAt: new Date().toISOString(),
         decisionSessionId,
       });
+      await submitClientOutput({snapshot:buildClientOutputSnapshot(runtime),recipient:trimmedEmail,trigger:'AUDIT',auditLeadId:acceptedLead.leadId});
       analytics?.conversionCompleted('audit-contact-form');
       idempotencyKeyRef.current = null;
       setPhase('success');
