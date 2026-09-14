@@ -44,4 +44,5 @@ export type {
   ClientOutputNarrative,
   ClientOutputSnapshot,
   ClientOutputTrigger,
+  ClientOutputVariant,
 } from './client-output/types';

@@ -6,7 +6,7 @@ import { platformApiStatePath } from './platformApiConfig';
 export type ClientOutputDeliveryStatus = 'PENDING' | 'SENT' | 'FAILED' | 'NOT_CONFIGURED';
 export type DurableClientOutput = {
   readonly documentId: string; readonly createdAt: string; readonly projectId: string; readonly houseId: string;
-  readonly knowledgeVersion: string; readonly recipient: string; readonly trigger: ClientOutputTrigger;
+  readonly knowledgeVersion: string; readonly recipient: string | null; readonly trigger: ClientOutputTrigger;
   readonly auditLeadId: string | null; readonly snapshot: ClientOutputSnapshot; readonly pdfBase64: string;
   readonly deliveryStatus: ClientOutputDeliveryStatus; readonly deliveryProviderId: string | null; readonly deliveryError: string | null;
 };

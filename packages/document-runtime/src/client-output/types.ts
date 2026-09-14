@@ -1,4 +1,5 @@
 export type ClientOutputTrigger = 'HEADER' | 'AUDIT';
+export type ClientOutputVariant = 'UNIVERSAL' | 'HAS_LAND' | 'SEEKING_LAND';
 
 export type ClientOutputMedia = {
   readonly id: string;
@@ -19,6 +20,7 @@ export type ClientOutputSnapshot = {
   readonly project: { readonly id: string; readonly name: string };
   readonly house: { readonly id: string; readonly name: string; readonly storeys: number };
   readonly knowledgeVersion: string;
+  readonly variant: ClientOutputVariant;
   readonly priorities: readonly string[];
   readonly exterior: readonly ClientOutputMedia[];
   readonly floorPlans: readonly ClientOutputMedia[];
@@ -31,4 +33,3 @@ export type ClientOutputSnapshot = {
   readonly auditConclusion: string;
   readonly cta: string;
 };
-

@@ -13,7 +13,7 @@ import {
 import type { ClientOutputSnapshot, ClientOutputTrigger } from '@embed-engine/document-runtime';
 import { FileClientOutputRepository, type ClientOutputRepository } from './clientOutputRepository';
 import { createClientOutputDelivery, type ClientOutputDelivery } from './clientOutputDelivery';
-import { issueClientOutput } from './clientOutputService';
+import { deliverPersistedClientOutput, persistClientOutput } from './clientOutputService';
 import { createServer, type IncomingMessage, type Server } from "node:http";
 import { mkdir, readFile, rename, writeFile } from "node:fs/promises";
 import { dirname } from "node:path";
@@ -1041,10 +1041,10 @@ export function createPlatformApiServer(
       if (request.method === 'POST' && path === '/public/client-outputs') {
         const candidate = await requestBody(request) as Record<string, unknown>;
         const snapshot = candidate.snapshot as ClientOutputSnapshot | undefined;
-        const recipient = typeof candidate.recipient === 'string' ? candidate.recipient.trim().toLowerCase() : '';
+        const recipient = typeof candidate.recipient === 'string' && candidate.recipient.trim() ? candidate.recipient.trim().toLowerCase() : null;
         const trigger = candidate.trigger as ClientOutputTrigger;
         if (!snapshot || snapshot.schemaVersion !== 1 || !['HEADER', 'AUDIT'].includes(trigger) ||
-          !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(recipient) || !snapshot.project?.id?.trim() ||
+          (recipient !== null && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(recipient)) || !snapshot.project?.id?.trim() ||
           !snapshot.house?.id?.trim() || !snapshot.knowledgeVersion?.trim()) {
           return respond(response, 400, { error: 'Neplatný požadavek na klientský výstup.' });
         }
@@ -1061,9 +1061,10 @@ export function createPlatformApiServer(
         const documentId = randomBytes(16).toString('hex');
         const createdAt = new Date().toISOString();
         const pdf = await clientOutputRenderer(snapshot);
-        const record = await issueClientOutput({ documentId, createdAt, projectId: scope.projectId, houseId: scope.houseId,
-          recipient, trigger, auditLeadId, snapshot, pdf }, clientOutputs, deliverClientOutput);
-        return respond(response, 201, { documentId: record.documentId, createdAt: record.createdAt, deliveryStatus: record.deliveryStatus, deliveryError: record.deliveryError });
+        const record = await persistClientOutput({ documentId, createdAt, projectId: scope.projectId, houseId: scope.houseId,
+          recipient, trigger, auditLeadId, snapshot, pdf }, clientOutputs);
+        if (recipient !== null) void deliverPersistedClientOutput(record, clientOutputs, deliverClientOutput).catch(error => console.error('client_output_delivery_update_failed', documentId, error instanceof Error ? error.message : 'unknown'));
+        return respond(response, 201, { documentId: record.documentId, createdAt: record.createdAt, deliveryStatus: record.deliveryStatus, deliveryError: null, pdfBase64: record.pdfBase64 });
       }
       if (request.method === "GET" && path === "/partner/leads") {
         const token = requestCookie(request, PARTNER_SESSION_COOKIE);

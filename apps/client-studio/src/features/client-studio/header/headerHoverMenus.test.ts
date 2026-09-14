@@ -32,10 +32,11 @@ describe('Header hover menus (CAP UX 57 / TASK 49G)', () => {
 
     assert.match(contact, /mailto:/);
     assert.match(contact, /tel:/);
-    assert.match(save, /Odeslat osobní PDF/);
+    assert.match(save, /Stáhnout osobní PDF/);
     assert.match(save, /submitClientOutput/);
     assert.match(save, /trigger:'HEADER'/);
-    assert.match(save, /Doporučujeme nejprve nastavit priority/);
+    assert.match(save, /downloadClientOutput/);
+    assert.match(save, /PDF vychází z aktuálního domu/);
     assert.equal(save.includes('window.print'), false);
     assert.match(menu, /onMouseEnter/);
     assert.match(menu, /onMouseLeave/);

@@ -18,8 +18,8 @@ import {
 import { UserIcon } from './AuditIcons';
 import { SuccessState } from './SuccessState';
 import { submitDurableLead } from './durableLeadSubmission';
-import { buildClientOutputSnapshot } from '../../client-output/clientOutputSnapshot';
-import { submitClientOutput } from '../../client-output/clientOutputClient';
+import { buildClientOutputSnapshot, clientOutputVariantForLandOption } from '../../client-output/clientOutputSnapshot';
+import { downloadClientOutput, submitClientOutput, type ClientOutputAccepted } from '../../client-output/clientOutputClient';
 
 type LeadPhase = 'idle' | 'loading' | 'success' | 'error';
 
@@ -49,6 +49,7 @@ export function AuditContact({
   const [phone, setPhone] = useState('');
   const [gdprConsent, setGdprConsent] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [clientOutput, setClientOutput] = useState<ClientOutputAccepted | null>(null);
   const [ctaHovered, setCtaHovered] = useState(false);
   const [guidancePinned, setGuidancePinned] = useState(false);
   const contactOpenedRef = useRef(false);
@@ -121,12 +122,9 @@ export function AuditContact({
         decisionSessionId,
       });
       auditPersisted = true;
-      const output = await submitClientOutput({snapshot:buildClientOutputSnapshot(runtime),recipient:trimmedEmail,trigger:'AUDIT',auditLeadId:acceptedLead.leadId});
-      if (output.deliveryStatus !== 'SENT') {
-        setPhase('error');
-        setErrorMessage('Poptávka byla bezpečně uložena, osobní PDF se však nepodařilo doručit. Zkuste odeslání znovu.');
-        return;
-      }
+      const variant = clientOutputVariantForLandOption(landOption);
+      const output = await submitClientOutput({snapshot:buildClientOutputSnapshot(runtime,variant),recipient:trimmedEmail,trigger:'AUDIT',auditLeadId:acceptedLead.leadId});
+      setClientOutput(output);
       analytics?.conversionCompleted('audit-contact-form');
       idempotencyKeyRef.current = null;
       setPhase('success');
@@ -155,7 +153,7 @@ export function AuditContact({
 
       {phase === 'success' ? (
         <div className="mt-5">
-          <SuccessState />
+          <SuccessState landOption={landOption} onDownload={clientOutput===null?undefined:()=>downloadClientOutput(clientOutput,runtime.experience.house.title)} />
         </div>
       ) : (
         <form className="mt-5" onSubmit={handleSubmit}>
