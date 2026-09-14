@@ -749,7 +749,7 @@ describe('workspaceRegistry (CAP-BLD-08 / EPIC-BX-01 / CAP-PLAT-02a / CAP-PLAT-0
 
     assert.match(
       folderSelection,
-      /publishBuilderHouseScope\(folderId, null\)[\s\S]*publishWorkspaceProjectChange\(folderId\)[\s\S]*requestOpenProject\(opened\.houseId/,
+      /publishBuilderHouseScope\(folderId, null\)[\s\S]*publishWorkspaceProjectChange\(folderId,\s*true\)[\s\S]*requestOpenProject\(opened\.houseId/,
     );
   });
 

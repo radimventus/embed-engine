@@ -813,6 +813,19 @@ export function WorkspaceHostApp() {
           origin: event.origin,
         });
         const requestedProjectId = event.data.projectId;
+
+        // Builder already switched durable Project authority before publishing
+        // this message. The Host must mirror that confirmed session only;
+        // a second mutation creates an async echo/race and may roll context back.
+        if (event.data.authoritative === true) {
+          const confirmedSession = loadPlatformSession();
+          if (confirmedSession?.projectId === requestedProjectId) {
+            setSharedProjectId(confirmedSession.projectId);
+            setSharedActiveHouseId(confirmedSession.activeHouseId);
+          }
+          return;
+        }
+
         const currentHouseId =
           loadPlatformSession()?.activeHouseId ??
           currentContext.activeHouseId ??

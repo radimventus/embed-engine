@@ -183,7 +183,10 @@ export function canUseLegacyWorkspaceActivation(
   return isDevelopment;
 }
 
-function publishWorkspaceProjectChange(projectId: string): void {
+function publishWorkspaceProjectChange(
+  projectId: string,
+  authoritative = false,
+): void {
   if (
     typeof window === "undefined" ||
     window.parent === window ||
@@ -193,7 +196,7 @@ function publishWorkspaceProjectChange(projectId: string): void {
   }
   const targetOrigin = new URL(resolveWorkspaceHostHref()).origin;
   window.parent.postMessage(
-    createWorkspaceProjectChangeMessage(projectId),
+    createWorkspaceProjectChangeMessage(projectId, authoritative),
     targetOrigin,
   );
 }
@@ -659,7 +662,7 @@ export function useWorkspaceController(): WorkspaceController {
         setRegistry(opened.state);
         registryRef.current = opened.state;
         publishBuilderHouseScope(folderId, null);
-        publishWorkspaceProjectChange(folderId);
+        publishWorkspaceProjectChange(folderId, true);
         setSwitchError(null);
         return null;
       }
@@ -672,7 +675,7 @@ export function useWorkspaceController(): WorkspaceController {
           current.projects.find((project) => project.id === opened.houseId) ??
             null,
         );
-        publishWorkspaceProjectChange(folderId);
+        publishWorkspaceProjectChange(folderId, true);
         return opened.houseId;
       }
 
@@ -696,7 +699,7 @@ export function useWorkspaceController(): WorkspaceController {
       setRegistry(opened.state);
       registryRef.current = opened.state;
       publishBuilderHouseScope(folderId, null);
-      publishWorkspaceProjectChange(folderId);
+      publishWorkspaceProjectChange(folderId, true);
       const ok = await requestOpenProject(opened.houseId, { dirty: false });
       return ok ? opened.houseId : null;
     },

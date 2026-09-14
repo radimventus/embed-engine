@@ -13,6 +13,8 @@ export const WORKSPACE_HOUSE_SCOPE_REQUEST_MESSAGE_TYPE =
 export type WorkspaceProjectChangeMessage = {
   readonly type: typeof WORKSPACE_PROJECT_CHANGE_MESSAGE_TYPE;
   readonly projectId: string;
+  /** Project authority was already durably switched by the sending Studio. */
+  readonly authoritative?: boolean;
 };
 
 export type WorkspaceHouseChangeMessage = {
@@ -35,10 +37,12 @@ export type WorkspaceHouseScopeRequestMessage = {
 
 export function createWorkspaceProjectChangeMessage(
   projectId: string,
+  authoritative = false,
 ): WorkspaceProjectChangeMessage {
   return {
     type: WORKSPACE_PROJECT_CHANGE_MESSAGE_TYPE,
     projectId,
+    ...(authoritative ? { authoritative: true } : {}),
   };
 }
 
