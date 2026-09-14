@@ -90,6 +90,8 @@ describe('Audit GDPR consent UX', () => {
     assert.match(form, /ODESÍLÁM…/);
     assert.match(form, /submitDurableLead/);
     assert.match(form, /submitClientOutput/);
+    assert.match(form, /output\.deliveryStatus !== 'SENT'/);
+    assert.match(form, /Poptávka byla bezpečně uložena/);
     assert.match(form, /setPhase\('success'\)/);
 
     const tryBlock = form.slice(

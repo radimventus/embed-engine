@@ -102,6 +102,7 @@ export function AuditContact({
       idempotencyKeyRef.current ?? crypto.randomUUID();
     idempotencyKeyRef.current = idempotencyKey;
 
+    let auditPersisted = false;
     try {
       const acceptedLead = await submitDurableLead({
         idempotencyKey,
@@ -119,15 +120,21 @@ export function AuditContact({
         acceptedAt: new Date().toISOString(),
         decisionSessionId,
       });
-      await submitClientOutput({snapshot:buildClientOutputSnapshot(runtime),recipient:trimmedEmail,trigger:'AUDIT',auditLeadId:acceptedLead.leadId});
+      auditPersisted = true;
+      const output = await submitClientOutput({snapshot:buildClientOutputSnapshot(runtime),recipient:trimmedEmail,trigger:'AUDIT',auditLeadId:acceptedLead.leadId});
+      if (output.deliveryStatus !== 'SENT') {
+        setPhase('error');
+        setErrorMessage('Poptávka byla bezpečně uložena, osobní PDF se však nepodařilo doručit. Zkuste odeslání znovu.');
+        return;
+      }
       analytics?.conversionCompleted('audit-contact-form');
       idempotencyKeyRef.current = null;
       setPhase('success');
     } catch {
       setPhase('error');
-      setErrorMessage(
-        'Poptávku se nepodařilo uložit. Zkuste to prosím znovu.',
-      );
+      setErrorMessage(auditPersisted
+        ? 'Poptávka byla bezpečně uložena, osobní PDF se však nepodařilo připravit nebo doručit. Zkuste odeslání znovu.'
+        : 'Poptávku se nepodařilo uložit. Zkuste to prosím znovu.');
     }
   };
 
