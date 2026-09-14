@@ -43,7 +43,9 @@ test('wires six relationship labels to one lazy cached evidence output', () => {
   assert.match(component, /Díváme se, co pro vás znamená/);
   assert.match(component, /animate-pulse/);
   assert.match(component, /Ověřená fakta/);
-  assert.match(component, /font-bold leading-\[1\.3\] text-white/);
+  assert.match(component, /text-\[15px\] font-normal leading-\[1\.3\] text-white/);
+  assert.match(component, /renderEmphasizedFact/);
+  assert.match(component, /part\.slice\(2, -2\)/);
   assert.doesNotMatch(component, />Souvisí<\/span>/);
   assert.doesNotMatch(component, />Nepřehlédnout<\/span>/);
   assert.match(component, /priority-relationship-connected[\s\S]*priority-relationship-blindspot/);
@@ -71,8 +73,8 @@ test('places relationship controls immediately below the priority section title'
   assert.equal(bridge.lastIndexOf('<PriorityRelationships />'), relationships);
 });
 
-test('uses bold typography for shared navy journey actions', () => {
+test('uses regular typography for shared navy journey actions', () => {
   const cta = read('../../foundation/journeyCta.ts');
-  assert.match(cta, /bg-\[#001930\][^']*font-bold/);
-  assert.doesNotMatch(cta, /bg-\[#001930\][^']*font-medium/);
+  assert.match(cta, /bg-\[#001930\][^']*font-normal/);
+  assert.doesNotMatch(cta, /bg-\[#001930\][^']*font-bold/);
 });

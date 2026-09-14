@@ -22,6 +22,25 @@ const SECTION_LABELS = {
   conclusion: 'Závěr',
 } as const;
 
+function renderEmphasizedFact(value: string) {
+  const clean = value.replace(/^[-*•]\s*/, '').trim();
+  const wholeBold = /^\*\*([^*]+)\*\*$/.exec(clean);
+  const normalized = wholeBold?.[1] ?? clean;
+  if (!normalized.includes('**')) {
+    const words = normalized.split(/\s+/);
+    const emphasisEnd = Math.min(words.length, 9);
+    return <>
+      <span>{words.slice(0, 2).join(' ')}{words.length > 2 ? ' ' : ''}</span>
+      {words.length > 2 ? <strong>{words.slice(2, emphasisEnd).join(' ')}</strong> : null}
+      {words.length > emphasisEnd ? <span>{` ${words.slice(emphasisEnd).join(' ')}`}</span> : null}
+    </>;
+  }
+  const parts = normalized.split(/(\*\*[^*]+\*\*)/g);
+  return parts.map((part, index) => part.startsWith('**') && part.endsWith('**')
+    ? <strong key={`${part}-${index}`}>{part.slice(2, -2)}</strong>
+    : <span key={`${part}-${index}`}>{part.replace(/\*+/g, '')}</span>);
+}
+
 function RelationshipDialog({
   bundle,
   generator,
@@ -121,12 +140,16 @@ function RelationshipDialog({
             </section>
             <div className="mt-7 grid grid-cols-2 gap-8 tabletMin:gap-6 mobile:grid-cols-1 mobile:gap-5">
               <section>
+                <h4 className="m-0 text-[14px] font-bold uppercase tracking-[0.02em]">{SECTION_LABELS.relationship}</h4>
+                <p className="mb-0 mt-2">{output.narrative.relationship}</p>
+              </section>
+              <section className="border-l border-solid border-[#D9CDAF] pl-8 tabletMin:pl-6 mobile:border-l-0 mobile:border-t mobile:pl-0 mobile:pt-5">
                 <h4 className="m-0 text-[14px] font-bold uppercase tracking-[0.02em]">{SECTION_LABELS.facts}</h4>
                 {output.narrative.bullets?.length ? (
                   <ul className="mb-0 mt-3 flex list-none flex-col gap-2 p-0">
                     {output.narrative.bullets.map((bullet) => (
-                      <li key={bullet} className="relative pl-4 font-bold before:absolute before:left-0 before:top-[0.72em] before:h-1.5 before:w-1.5 before:-translate-y-1/2 before:rounded-full before:bg-[#B8922D]">
-                        {bullet}
+                      <li key={bullet} className="relative pl-4 before:absolute before:left-0 before:top-[0.72em] before:h-1.5 before:w-1.5 before:-translate-y-1/2 before:rounded-full before:bg-[#B8922D]">
+                        {renderEmphasizedFact(bullet)}
                       </li>
                     ))}
                   </ul>
@@ -135,10 +158,6 @@ function RelationshipDialog({
                   <h4 className="m-0 text-[14px] font-bold uppercase tracking-[0.02em]">{SECTION_LABELS.remember}</h4>
                   <p className="mb-0 mt-2">{output.narrative.remember}</p>
                 </section>
-              </section>
-              <section className="border-l border-solid border-[#D9CDAF] pl-8 tabletMin:pl-6 mobile:border-l-0 mobile:border-t mobile:pl-0 mobile:pt-5">
-                <h4 className="m-0 text-[14px] font-bold uppercase tracking-[0.02em]">{SECTION_LABELS.relationship}</h4>
-                <p className="mb-0 mt-2">{output.narrative.relationship}</p>
               </section>
             </div>
             <section className="mt-8 border-t-2 border-solid border-[#B8922D] pt-5">
@@ -174,14 +193,14 @@ export function PriorityRelationships() {
       <div className="grid grid-cols-6 gap-3 tabletMin:grid-cols-3 mobile:grid-cols-1 mobile:gap-2">
         {connected.map((bundle) => (
           <button key={bundle.outputId} type="button" onClick={() => setActive(bundle)}
-            className="min-h-11 rounded-[8px] border-0 bg-[#001930] px-3 py-2.5 text-[13px] font-bold leading-[1.3] text-white transition-colors hover:bg-[#B8922D] hover:text-[#001930]"
+            className="min-h-11 rounded-[8px] border-0 bg-[#001930] px-3 py-2.5 text-[15px] font-normal leading-[1.3] text-white transition-colors hover:bg-[#B8922D] hover:text-[#001930]"
             data-testid="priority-relationship-connected">
             {bundle.title}
           </button>
         ))}
         {blindspots.map((bundle) => (
           <button key={bundle.outputId} type="button" onClick={() => setActive(bundle)}
-            className="min-h-11 rounded-[8px] border-0 bg-[#001930] px-3 py-2.5 text-[13px] font-bold leading-[1.3] text-white transition-colors hover:bg-[#B8922D] hover:text-[#001930]"
+            className="min-h-11 rounded-[8px] border-0 bg-[#001930] px-3 py-2.5 text-[15px] font-normal leading-[1.3] text-white transition-colors hover:bg-[#B8922D] hover:text-[#001930]"
             data-testid="priority-relationship-blindspot">
             {bundle.title}
           </button>
