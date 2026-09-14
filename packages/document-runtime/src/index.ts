@@ -39,3 +39,9 @@ export type {
   DocumentMailPort,
   DocumentTimelinePort,
 } from './ports/documentPorts';
+export type {
+  ClientOutputMedia,
+  ClientOutputNarrative,
+  ClientOutputSnapshot,
+  ClientOutputTrigger,
+} from './client-output/types';

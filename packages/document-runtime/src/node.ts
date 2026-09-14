@@ -7,3 +7,7 @@ export {
   renderCanonicalCommercialProformaPdf,
   type CanonicalCommercialProforma,
 } from './generator/canonicalCommercialProformaPdf';
+export {
+  renderClientOutputPdf,
+  type ClientOutputAssetLoader,
+} from './generator/clientOutputPdf';
