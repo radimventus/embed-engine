@@ -2351,8 +2351,16 @@ export function createPlatformApiServer(
               house.id === houseId &&
               house.canonicalProjectId === session.projectId,
           );
+          const defaultRegistryHouse = getDefaultCompanyRegistry().projects.find(
+            (house) =>
+              house.id === houseId &&
+              house.canonicalProjectId === session.projectId,
+          );
 
-          if (durableHouse === undefined) {
+          if (
+            durableHouse === undefined &&
+            defaultRegistryHouse === undefined
+          ) {
             return respond(response, 403, {
               error: "House Package není pro tuto relaci povolen.",
             });
