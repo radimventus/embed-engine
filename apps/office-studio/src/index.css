@@ -1562,8 +1562,8 @@ body {
 
 .office-cj-pilot-card__highlights {
   margin: 8px 0 0;
-  padding-left: 18px;
-  list-style: disc;
+  padding: 0;
+  list-style: none;
   display: flex;
   flex-direction: column;
   gap: 4px;
@@ -1572,9 +1572,21 @@ body {
   opacity: 0.85;
 }
 
-.office-cj-pilot-card__highlights li::marker {
-  color: var(--cj-pilot-gold);
-  font-size: 1.15em;
+.office-cj-pilot-card__highlights li {
+  position: relative;
+  padding-left: 16px;
+}
+
+.office-cj-pilot-card__highlights li::before {
+  content: '';
+  position: absolute;
+  top: 0.75em;
+  left: 1px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--cj-pilot-gold);
+  transform: translateY(-50%);
 }
 
 .office-cj-pilot-card__select {
