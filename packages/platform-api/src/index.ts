@@ -105,7 +105,6 @@ import {
   getDefaultCompanyRegistry,
   parsePartnerEnvironmentScope,
   projectPublicCompanyContact,
-  resolvePilotWorkspace,
 } from "@embed-engine/platform-access";
 import {
   canAccessStudio,
@@ -1906,8 +1905,37 @@ export function createPlatformApiServer(
               error: "Partner není pro tuto relaci povolen.",
             });
           }
-          const provision = resolvePilotWorkspace(companyId);
-          if (provision === null) {
+          const authoritySnapshot =
+            await canonicalRegistryAuthorityRepository.readAuthoritySnapshot();
+
+          const provisionCompany = authoritySnapshot.companies.find(
+            (company) => company.id === companyId,
+          );
+          const provisionProject = authoritySnapshot.projects.find(
+            (project) => project.companyId === companyId,
+          );
+          const provisionWorkspace =
+            provisionProject === undefined
+              ? undefined
+              : authoritySnapshot.workspaces.find(
+                  (workspace) =>
+                    workspace.id === provisionProject.workspaceId &&
+                    workspace.companyId === companyId,
+                );
+          const provisionTenant =
+            provisionCompany === undefined
+              ? undefined
+              : authoritySnapshot.tenants.find(
+                  (tenant) =>
+                    tenant.id === provisionCompany.tenantId &&
+                    tenant.companyId === companyId,
+                );
+          if (
+            provisionCompany === undefined ||
+            provisionProject === undefined ||
+            provisionWorkspace === undefined ||
+            provisionTenant === undefined
+          ) {
             return respond(response, 400, {
               error: "Partner environment is not prepared in Builder Studio.",
             });
@@ -1924,7 +1952,7 @@ export function createPlatformApiServer(
             });
           }
           await projectConfigs.ensureBillingNumber(
-            provision.project.id,
+            provisionProject.id,
             new Date().toISOString(),
           );
 
@@ -1940,10 +1968,10 @@ export function createPlatformApiServer(
               displayName: draft.displayName,
               roles: draft.roles,
               invitedByUserId,
-              tenantId: provision.tenant.id,
-              companyId: provision.company.id,
-              workspaceId: provision.workspace.id,
-              projectId: provision.project.id,
+              tenantId: provisionTenant.id,
+              companyId: provisionCompany.id,
+              workspaceId: provisionWorkspace.id,
+              projectId: provisionProject.id,
             }),
           );
         }
@@ -2314,10 +2342,21 @@ export function createPlatformApiServer(
             (house) => house.houseId,
           ),
         ]);
+
         if (!authorizedHouseIds.has(houseId)) {
-          return respond(response, 403, {
-            error: "House Package není pro tuto relaci povolen.",
-          });
+          const authoritySnapshot =
+            await canonicalRegistryAuthorityRepository.readAuthoritySnapshot();
+          const durableHouse = authoritySnapshot.houses.find(
+            (house) =>
+              house.id === houseId &&
+              house.canonicalProjectId === session.projectId,
+          );
+
+          if (durableHouse === undefined) {
+            return respond(response, 403, {
+              error: "House Package není pro tuto relaci povolen.",
+            });
+          }
         }
 
         if (housePackageMediaMatch !== null) {
