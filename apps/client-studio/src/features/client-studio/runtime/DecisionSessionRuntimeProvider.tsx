@@ -12,7 +12,9 @@ import {
   getCanonicalHouseRuntimeContext,
   selectCanonicalChatHouseKnowledge,
   selectCanonicalHouseKnowledge,
+  selectHouseRelationshipEvidence,
   type CanonicalHouseKnowledgeSelection,
+  type HouseRelationshipEvidenceBundle,
 } from '@embed-engine/object-house';
 import {
   createDecisionSessionRuntime,
@@ -112,6 +114,8 @@ export type DecisionSessionRuntimeContextValue = {
   readonly houseKnowledge: CanonicalHouseKnowledgeSelection | null;
   /** Complete safe CURRENT facts for explicit AI Chat questions. */
   readonly chatHouseKnowledge: CanonicalHouseKnowledgeSelection | null;
+  /** Deterministically selected, still ungenerated relationship evidence. */
+  readonly relationshipEvidence: readonly HouseRelationshipEvidenceBundle[];
   readonly analyticsScope: {
     readonly companyId: string;
     readonly projectId: string;
@@ -641,6 +645,13 @@ export function DecisionSessionRuntimeProvider({
         canonicalHouseContext === null
           ? null
           : selectCanonicalChatHouseKnowledge(canonicalHouseContext),
+      relationshipEvidence:
+        canonicalHouseContext === null
+          ? []
+          : selectHouseRelationshipEvidence({
+              context: canonicalHouseContext,
+              selectedPriorityIds: base.context.decision.priorityIds,
+            }),
       analyticsScope:
         projectBind === null ||
         projectBind.project === null ||

@@ -15,6 +15,7 @@ import { PRIORITY_ENGINE_TITLE_CLASS } from "./priority-engine-layout";
 import { usePriorityConversationContext } from "./PriorityConversationProvider";
 import { PRIORITY_BRIDGE_ANCHOR_ID } from "../../foundation/scrollToSection";
 import { useDecisionSessionRuntime } from "../../runtime/DecisionSessionRuntimeProvider";
+import { PriorityRelationships } from './PriorityRelationships';
 
 const bodyClass =
   "m-0 text-[15px] leading-[1.65] text-embed-foreground-primary";
@@ -153,6 +154,8 @@ export function PriorityChapterBridge() {
             </p>
           </section>
         </div>
+
+        <PriorityRelationships />
 
         <div className="mx-auto flex w-full min-w-0 max-w-[760px] flex-col items-center gap-2 text-center mobile:max-w-none">
           <p
