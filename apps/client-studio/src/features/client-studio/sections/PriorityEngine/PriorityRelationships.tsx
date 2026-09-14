@@ -16,6 +16,7 @@ const outputCache = new HouseRelationshipOutputCache();
 const SECTION_LABELS = {
   connection: 'Souvislost',
   houseSolution: 'Jak je to řešené u tohoto domu',
+  facts: 'Ověřená fakta',
   relationship: 'Co spolu souvisí',
   remember: 'Na co nezapomenout',
   conclusion: 'Závěr',
@@ -87,7 +88,23 @@ function RelationshipDialog({
           </button>
         </header>
         {output === null && !failed ? (
-          <p className="mt-6" role="status">Připravuji doloženou souvislost…</p>
+          <div className="mt-8" role="status">
+            <p className="m-0 text-[18px] font-bold leading-[1.5] text-[#001930]">
+              Díváme se, co pro vás znamená „{bundle.title}“
+              <span className="ml-2 inline-flex gap-1" aria-hidden="true">
+                {[0, 1, 2].map((index) => (
+                  <span
+                    key={index}
+                    className="h-1.5 w-1.5 animate-pulse rounded-full bg-[#B8922D]"
+                    style={{ animationDelay: `${index * 220}ms`, animationDuration: '1.2s' }}
+                  />
+                ))}
+              </span>
+            </p>
+            <p className="mb-0 mt-2 text-[15px] leading-[1.6] text-embed-foreground-primary/70">
+              Propojujeme vlastnosti tohoto domu s tím, co je pro vaše rozhodnutí důležité.
+            </p>
+          </div>
         ) : null}
         {failed ? (
           <p className="mt-6" role="alert">Pro tuto souvislost se nepodařilo připravit doložený výstup.</p>
@@ -104,10 +121,9 @@ function RelationshipDialog({
             </section>
             <div className="mt-7 grid grid-cols-2 gap-8 tabletMin:gap-6 mobile:grid-cols-1 mobile:gap-5">
               <section>
-                <h4 className="m-0 text-[14px] font-bold uppercase tracking-[0.02em]">{SECTION_LABELS.relationship}</h4>
-                <p className="mb-0 mt-2">{output.narrative.relationship}</p>
+                <h4 className="m-0 text-[14px] font-bold uppercase tracking-[0.02em]">{SECTION_LABELS.facts}</h4>
                 {output.narrative.bullets?.length ? (
-                  <ul className="mb-0 mt-4 flex list-none flex-col gap-2 p-0">
+                  <ul className="mb-0 mt-3 flex list-none flex-col gap-2 p-0">
                     {output.narrative.bullets.map((bullet) => (
                       <li key={bullet} className="relative pl-4 font-bold before:absolute before:left-0 before:top-[0.72em] before:h-1.5 before:w-1.5 before:-translate-y-1/2 before:rounded-full before:bg-[#B8922D]">
                         {bullet}
@@ -115,10 +131,14 @@ function RelationshipDialog({
                     ))}
                   </ul>
                 ) : null}
+                <section className="mt-6 border-t border-solid border-[#D9CDAF] pt-5">
+                  <h4 className="m-0 text-[14px] font-bold uppercase tracking-[0.02em]">{SECTION_LABELS.remember}</h4>
+                  <p className="mb-0 mt-2">{output.narrative.remember}</p>
+                </section>
               </section>
               <section className="border-l border-solid border-[#D9CDAF] pl-8 tabletMin:pl-6 mobile:border-l-0 mobile:border-t mobile:pl-0 mobile:pt-5">
-                <h4 className="m-0 text-[14px] font-bold uppercase tracking-[0.02em]">{SECTION_LABELS.remember}</h4>
-                <p className="mb-0 mt-2">{output.narrative.remember}</p>
+                <h4 className="m-0 text-[14px] font-bold uppercase tracking-[0.02em]">{SECTION_LABELS.relationship}</h4>
+                <p className="mb-0 mt-2">{output.narrative.relationship}</p>
               </section>
             </div>
             <section className="mt-8 border-t-2 border-solid border-[#B8922D] pt-5">
@@ -154,14 +174,14 @@ export function PriorityRelationships() {
       <div className="grid grid-cols-6 gap-3 tabletMin:grid-cols-3 mobile:grid-cols-1 mobile:gap-2">
         {connected.map((bundle) => (
           <button key={bundle.outputId} type="button" onClick={() => setActive(bundle)}
-            className="min-h-11 rounded-[8px] border-0 bg-[#001930] px-3 py-2.5 text-[13px] font-medium leading-[1.3] text-white transition-colors hover:bg-[#B8922D] hover:text-[#001930]"
+            className="min-h-11 rounded-[8px] border-0 bg-[#001930] px-3 py-2.5 text-[13px] font-bold leading-[1.3] text-white transition-colors hover:bg-[#B8922D] hover:text-[#001930]"
             data-testid="priority-relationship-connected">
             {bundle.title}
           </button>
         ))}
         {blindspots.map((bundle) => (
           <button key={bundle.outputId} type="button" onClick={() => setActive(bundle)}
-            className="min-h-11 rounded-[8px] border-0 bg-[#001930] px-3 py-2.5 text-[13px] font-medium leading-[1.3] text-white transition-colors hover:bg-[#B8922D] hover:text-[#001930]"
+            className="min-h-11 rounded-[8px] border-0 bg-[#001930] px-3 py-2.5 text-[13px] font-bold leading-[1.3] text-white transition-colors hover:bg-[#B8922D] hover:text-[#001930]"
             data-testid="priority-relationship-blindspot">
             {bundle.title}
           </button>
