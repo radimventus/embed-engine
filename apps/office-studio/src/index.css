@@ -1582,8 +1582,8 @@ body {
   position: absolute;
   top: 0.75em;
   left: 1px;
-  width: 6px;
-  height: 6px;
+  width: 10px;
+  height: 10px;
   border-radius: 50%;
   background: var(--cj-pilot-gold);
   transform: translateY(-50%);
