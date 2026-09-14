@@ -320,8 +320,8 @@ body {
 }
 
 .office-activity__dot {
-  width: 10px;
-  height: 10px;
+  width: 7px;
+  height: 7px;
   margin-top: 4px;
   border-radius: 50%;
   background: var(--platform-gold, #b8922d);
@@ -1033,8 +1033,8 @@ body {
 }
 
 .office-pilot-workflow-nav__marker {
-  width: 10px;
-  height: 10px;
+  width: 7px;
+  height: 7px;
   margin-top: 4px;
   border-radius: 999px;
   background: #dbe1ea;
@@ -1582,8 +1582,8 @@ body {
   position: absolute;
   top: 0.75em;
   left: 1px;
-  width: 10px;
-  height: 10px;
+  width: 7px;
+  height: 7px;
   border-radius: 50%;
   background: var(--cj-pilot-gold);
   transform: translateY(-50%);
@@ -2585,8 +2585,8 @@ body {
 
 .office-pilot-canvelo__marker {
   display: block;
-  width: 10px;
-  height: 10px;
+  width: 7px;
+  height: 7px;
   border-radius: 50%;
   background: #dbe1ea;
 }
