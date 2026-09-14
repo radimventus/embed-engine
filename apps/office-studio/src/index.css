@@ -1580,10 +1580,10 @@ body {
 .office-cj-pilot-card__highlights li::before {
   content: '';
   position: absolute;
-  top: 0.75em;
-  left: 1px;
-  width: 7px;
-  height: 7px;
+  top: 0.72em;
+  left: 2px;
+  width: 5px;
+  height: 5px;
   border-radius: 50%;
   background: var(--cj-pilot-gold);
   transform: translateY(-50%);
