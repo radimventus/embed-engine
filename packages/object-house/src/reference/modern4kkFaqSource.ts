@@ -570,7 +570,9 @@ export const MODERN_4KK_KNOWLEDGE: readonly HouseKnowledgeAtom[] = [
   ...LEGACY_KNOWLEDGE.filter(atom => atom.temporalStatus === 'HISTORICAL'),
   ...LEGACY_KNOWLEDGE.filter(atom => atom.id in PAYOFF_ROWS).map(atom => {
     const current = KNOWLEDGE_V04.find(row => row.id === `kb04-row-${PAYOFF_ROWS[atom.id]}`)!;
-    return { ...current, id: atom.id, factPoint: atom.factPoint,
+    return { ...current, id: atom.id, subject: atom.subject,
+      retrievalAliases: [...new Set([current.subject, ...(current.retrievalAliases ?? [])])],
+      factPoint: atom.factPoint,
       interpretationPoint: atom.interpretationPoint,
       safeInterpretation: atom.safeInterpretation, relatedTopics: atom.relatedTopics,
       unsupportedConclusions: atom.unsupportedConclusions };

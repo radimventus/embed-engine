@@ -24,6 +24,7 @@ test('selects exactly three CONNECTED and three BLINDSPOT outputs deterministica
   )));
   const selectedLabels = new Set(['energie', 'kvalita', 'údržba']);
   assert.ok(first.every((item) => !selectedLabels.has(item.title.toLocaleLowerCase('cs-CZ'))));
+  assert.ok(first.every((item) => item.title.length <= 60), first.map((item) => item.title).join(' | '));
 });
 
 test('Priority lens ranks evidence without removing the canonical House corpus', () => {
