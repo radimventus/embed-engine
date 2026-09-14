@@ -123,3 +123,20 @@ export {
 } from "./runtime-context/selectCanonicalHouseKnowledge";
 
 export { clientHouseKnowledgeText, clientHouseFactText } from "./knowledge/clientHouseKnowledgeText";
+
+/** TASK-112 — evidence-backed Priority relationship Client Output. */
+export type {
+  HouseRelationshipKind,
+  HouseRelationshipEvidenceRef,
+  HouseRelationshipEvidenceBundle,
+  HouseRelationshipNarrative,
+  HouseRelationshipOutput,
+  HouseRelationshipNarrativeGenerator,
+} from './relationship/houseRelationshipOutput';
+export {
+  houseKnowledgeVersion,
+  selectHouseRelationshipEvidence,
+  evidenceBoundNarrative,
+  generateHouseRelationshipOutput,
+  HouseRelationshipOutputCache,
+} from './relationship/houseRelationshipOutput';
