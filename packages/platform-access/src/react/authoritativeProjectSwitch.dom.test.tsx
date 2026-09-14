@@ -23,15 +23,17 @@ test("DSE → NEMA → DSE keeps API, memory session and React context on the la
 
   const window = new Window({ url: "https://conis.cz/studio/office/" });
   const contextBodies: Array<Record<string, unknown>> = [];
+  const requestPaths: string[] = [];
   let durable = dse;
   const fetch = async (url: unknown, init?: RequestInit) => {
     const href = String(url);
     if (href.endsWith("/public/auth/me")) return Response.json(durable);
+    if (init?.method === "POST") requestPaths.push(new URL(href).pathname);
     if (
       href.endsWith("/public/auth/canonical-project-authority") &&
       init?.method === "POST"
     ) {
-      return Response.json({ ok: true });
+      return Response.json({ error: "Neplatný požadavek." }, { status: 400 });
     }
     if (href.endsWith("/public/auth/canonical-registry")) {
       return Response.json({
@@ -144,6 +146,10 @@ test("DSE → NEMA → DSE keeps API, memory session and React context on the la
       assert.equal(loadPlatformSession()?.projectId, projectId);
       assert.equal(reactProjectId, projectId);
     }
+    assert.deepEqual(requestPaths, [
+      "/public/auth/context",
+      "/public/auth/context",
+    ]);
     assert.deepEqual(
       contextBodies.map((body) => body.projectId),
       ["project-nema-cz", "project-domy-s-energii"],

@@ -1,6 +1,5 @@
 import type { PlatformSession } from '../domain/types';
 import { createPlatformAccessAuthClient } from '../api/platformAccessClient';
-import { ensureCanonicalProjectAuthority } from '../api/canonicalProjectAuthority';
 import { loadPlatformSession, savePlatformSession } from '../session/sessionStore';
 
 export const AUTHORITATIVE_PROJECT_CONTEXT_CHANGED = 'conis:authoritative-project-context-changed';
@@ -15,8 +14,6 @@ export async function switchAuthoritativeProjectContext(
   if (loadPlatformSession() === null) {
     return { ok: false, error: 'Nejste přihlášeni.' };
   }
-  const authority = await ensureCanonicalProjectAuthority(projectId);
-  if (!authority.ok) return authority;
   let result;
   try {
     result = await createPlatformAccessAuthClient().mutateSessionContext({
