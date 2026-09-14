@@ -62,16 +62,16 @@ function RelationshipDialog({
         role="dialog"
         aria-modal="true"
         aria-labelledby="priority-relationship-title"
-        className="max-h-[88vh] w-full max-w-[760px] overflow-y-auto rounded-[12px] bg-white p-8 text-embed-foreground-primary shadow-2xl mobile:p-5"
+        className="max-h-[90vh] w-full max-w-[980px] overflow-y-auto rounded-[14px] bg-white px-12 py-10 text-embed-foreground-primary shadow-2xl tabletMin:px-8 tabletMin:py-8 mobile:p-5"
         data-testid="priority-relationship-dialog"
         data-relationship-kind={bundle.kind}
       >
-        <header className="flex items-start justify-between gap-5">
-          <div>
+        <header className="flex items-start justify-between gap-8 border-b border-solid border-[#E3E3E3] pb-7 mobile:gap-4 mobile:pb-5">
+          <div className="max-w-[820px]">
             <p className="m-0 text-[12px] font-bold uppercase tracking-[0.08em] text-[#B8922D]">
               {bundle.kind === 'CONNECTED' ? 'Souvisí s vašimi prioritami' : 'Co by vám nemělo uniknout'}
             </p>
-            <h3 id="priority-relationship-title" className="mb-0 mt-2 text-[24px] font-bold uppercase leading-tight">
+            <h3 id="priority-relationship-title" className="mb-0 mt-2 text-[32px] font-bold uppercase leading-[1.15] tracking-[-0.02em] tabletMin:text-[28px] mobile:text-[24px]">
               {bundle.title}
             </h3>
           </div>
@@ -80,7 +80,7 @@ function RelationshipDialog({
             type="button"
             onClick={onClose}
             aria-label="Zavřít"
-            className="h-9 w-9 shrink-0 rounded-full border border-solid border-[#D9D4CC] bg-white text-[22px] leading-none"
+            className="h-10 w-10 shrink-0 rounded-full border border-solid border-[#D9D4CC] bg-white text-[24px] leading-none text-[#001930] transition-colors hover:border-[#B8922D] hover:bg-[#F7F6F4]"
           >
             ×
           </button>
@@ -92,18 +92,34 @@ function RelationshipDialog({
           <p className="mt-6" role="alert">Pro tuto souvislost se nepodařilo připravit doložený výstup.</p>
         ) : null}
         {output !== null ? (
-          <div className="mt-6 grid gap-5 text-[15px] leading-[1.6]" data-testid="priority-relationship-content">
-            {(Object.keys(SECTION_LABELS) as Array<keyof typeof SECTION_LABELS>).map((key) => (
-              <section key={key}>
-                <h4 className="m-0 text-[15px] font-bold uppercase">{SECTION_LABELS[key]}</h4>
-                <p className="mb-0 mt-1">{output.narrative[key]}</p>
+          <div className="mt-8 text-[16px] leading-[1.65] mobile:mt-6 mobile:text-[15px]" data-testid="priority-relationship-content">
+            <section className="max-w-[800px]">
+              <h4 className="m-0 text-[12px] font-bold uppercase tracking-[0.08em] text-[#B8922D]">{SECTION_LABELS.connection}</h4>
+              <p className="mb-0 mt-2 text-[19px] font-medium leading-[1.5] mobile:text-[17px]">{output.narrative.connection}</p>
+            </section>
+            <section className="mt-8 rounded-[10px] bg-[#F7F6F4] px-7 py-6 mobile:mt-6 mobile:px-5 mobile:py-5">
+              <h4 className="m-0 text-[17px] font-bold uppercase leading-[1.35]">{SECTION_LABELS.houseSolution}</h4>
+              <p className="mb-0 mt-3 max-w-[840px]">{output.narrative.houseSolution}</p>
+            </section>
+            <div className="mt-7 grid grid-cols-2 gap-8 tabletMin:gap-6 mobile:grid-cols-1 mobile:gap-5">
+              <section>
+                <h4 className="m-0 text-[14px] font-bold uppercase tracking-[0.02em]">{SECTION_LABELS.relationship}</h4>
+                <p className="mb-0 mt-2">{output.narrative.relationship}</p>
               </section>
-            ))}
+              <section className="border-l border-solid border-[#D9CDAF] pl-8 tabletMin:pl-6 mobile:border-l-0 mobile:border-t mobile:pl-0 mobile:pt-5">
+                <h4 className="m-0 text-[14px] font-bold uppercase tracking-[0.02em]">{SECTION_LABELS.remember}</h4>
+                <p className="mb-0 mt-2">{output.narrative.remember}</p>
+              </section>
+            </div>
             {output.narrative.bullets?.length ? (
-              <ul className="m-0 list-disc pl-6">
+              <ul className="mb-0 mt-6 list-disc pl-6">
                 {output.narrative.bullets.map((bullet) => <li key={bullet}>{bullet}</li>)}
               </ul>
             ) : null}
+            <section className="mt-8 border-t-2 border-solid border-[#B8922D] pt-5">
+              <h4 className="m-0 text-[12px] font-bold uppercase tracking-[0.08em] text-[#B8922D]">{SECTION_LABELS.conclusion}</h4>
+              <p className="mb-0 mt-2 text-[18px] font-bold leading-[1.5]">{output.narrative.conclusion}</p>
+            </section>
           </div>
         ) : null}
       </section>
@@ -124,30 +140,30 @@ export function PriorityRelationships() {
   const connected = relationshipEvidence.filter((item) => item.kind === 'CONNECTED');
   const blindspots = relationshipEvidence.filter((item) => item.kind === 'BLINDSPOT');
   return (
-    <section className="grid gap-4" data-testid="priority-relationships">
-      <div>
-        <h3 className="m-0 text-[15px] font-bold uppercase">Souvisí s tím, co je pro vás důležité</h3>
-        <div className="mt-3 grid grid-cols-3 gap-3 mobile:grid-cols-1">
-          {connected.map((bundle) => (
-            <button key={bundle.outputId} type="button" onClick={() => setActive(bundle)}
-              className="rounded-[7px] border-0 bg-[#001930] px-4 py-3 text-[14px] font-bold text-white"
-              data-testid="priority-relationship-connected">
-              {bundle.title}
-            </button>
-          ))}
-        </div>
+    <section
+      className="rounded-[8px] border border-solid border-[#E3E3E3] bg-white px-4 py-3"
+      data-testid="priority-relationships"
+      aria-label="Kontextové souvislosti priorit"
+    >
+      <div className="mb-2 flex items-center justify-end gap-4 text-[10px] font-semibold uppercase tracking-[0.06em] text-embed-foreground-primary/55 mobile:justify-start">
+        <span className="inline-flex items-center gap-1.5"><span className="h-1.5 w-1.5 rounded-full bg-[#001930]" />Souvisí</span>
+        <span className="inline-flex items-center gap-1.5"><span className="h-1.5 w-1.5 rounded-full bg-[#B8922D]" />Nepřehlédnout</span>
       </div>
-      <div>
-        <h3 className="m-0 text-[15px] font-bold uppercase">Co by vám nemělo uniknout</h3>
-        <div className="mt-3 grid grid-cols-3 gap-3 mobile:grid-cols-1">
-          {blindspots.map((bundle) => (
-            <button key={bundle.outputId} type="button" onClick={() => setActive(bundle)}
-              className="rounded-[7px] border border-solid border-[#B8922D] bg-[#F7F6F4] px-4 py-3 text-[14px] font-bold text-[#001930]"
-              data-testid="priority-relationship-blindspot">
-              {bundle.title}
-            </button>
-          ))}
-        </div>
+      <div className="grid grid-cols-6 gap-2 tabletMin:grid-cols-3 mobile:grid-cols-2 mobile:gap-2">
+        {connected.map((bundle) => (
+          <button key={bundle.outputId} type="button" onClick={() => setActive(bundle)}
+            className="min-h-9 rounded-[6px] border-0 bg-[#001930] px-2.5 py-2 text-[12px] font-semibold leading-[1.25] text-white transition-colors hover:bg-[#B8922D] hover:text-[#001930]"
+            data-testid="priority-relationship-connected">
+            {bundle.title}
+          </button>
+        ))}
+        {blindspots.map((bundle) => (
+          <button key={bundle.outputId} type="button" onClick={() => setActive(bundle)}
+            className="min-h-9 rounded-[6px] border border-solid border-[#D9CDAF] bg-[#F7F6F4] px-2.5 py-2 text-[12px] font-semibold leading-[1.25] text-[#001930] transition-colors hover:border-[#B8922D] hover:bg-[#E8E5E0]"
+            data-testid="priority-relationship-blindspot">
+            {bundle.title}
+          </button>
+        ))}
       </div>
       {active !== null ? <RelationshipDialog bundle={active} generator={generator} onClose={() => setActive(null)} /> : null}
     </section>
