@@ -5,6 +5,10 @@ export type ClientOutputMedia = {
   readonly id: string;
   readonly url: string;
   readonly caption: string;
+  /** Canonical presentation role captured in the reproducible snapshot. */
+  readonly role?: 'cover' | 'exterior' | 'floorplan' | 'interior';
+  /** Client-facing semantic label; never an asset filename or internal id. */
+  readonly label?: string;
 };
 
 export type ClientOutputNarrative = {
@@ -22,6 +26,7 @@ export type ClientOutputSnapshot = {
   readonly knowledgeVersion: string;
   readonly variant: ClientOutputVariant;
   readonly priorities: readonly string[];
+  readonly cover?: readonly ClientOutputMedia[];
   readonly exterior: readonly ClientOutputMedia[];
   readonly floorPlans: readonly ClientOutputMedia[];
   readonly interiors: readonly ClientOutputMedia[];
