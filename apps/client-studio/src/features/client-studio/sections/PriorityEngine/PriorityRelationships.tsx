@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 
 import {
   HouseRelationshipOutputCache,
@@ -52,9 +53,9 @@ function RelationshipDialog({
     };
   }, [bundle, generator, onClose]);
 
-  return (
+  return createPortal(
     <div
-      className="fixed inset-0 z-[300] flex items-center justify-center bg-[#001930]/45 p-5"
+      className="fixed inset-0 z-[300] flex items-start justify-center overflow-y-auto bg-[#001930]/45 px-5 pb-5 pt-[12vh] mobile:px-3 mobile:pb-3 mobile:pt-[8vh]"
       role="presentation"
       onMouseDown={(event) => { if (event.target === event.currentTarget) onClose(); }}
     >
@@ -62,7 +63,7 @@ function RelationshipDialog({
         role="dialog"
         aria-modal="true"
         aria-labelledby="priority-relationship-title"
-        className="max-h-[90vh] w-full max-w-[980px] overflow-y-auto rounded-[14px] bg-white px-12 py-10 text-embed-foreground-primary shadow-2xl tabletMin:px-8 tabletMin:py-8 mobile:p-5"
+        className="mb-5 w-full max-w-[980px] rounded-[14px] bg-white px-12 py-10 text-embed-foreground-primary shadow-2xl tabletMin:px-8 tabletMin:py-8 mobile:p-5"
         data-testid="priority-relationship-dialog"
         data-relationship-kind={bundle.kind}
       >
@@ -123,7 +124,8 @@ function RelationshipDialog({
           </div>
         ) : null}
       </section>
-    </div>
+    </div>,
+    document.body,
   );
 }
 
@@ -141,25 +143,21 @@ export function PriorityRelationships() {
   const blindspots = relationshipEvidence.filter((item) => item.kind === 'BLINDSPOT');
   return (
     <section
-      className="rounded-[8px] border border-solid border-[#E3E3E3] bg-white px-4 py-3"
+      className="w-full"
       data-testid="priority-relationships"
       aria-label="Kontextové souvislosti priorit"
     >
-      <div className="mb-2 flex items-center justify-end gap-4 text-[10px] font-semibold uppercase tracking-[0.06em] text-embed-foreground-primary/55 mobile:justify-start">
-        <span className="inline-flex items-center gap-1.5"><span className="h-1.5 w-1.5 rounded-full bg-[#001930]" />Souvisí</span>
-        <span className="inline-flex items-center gap-1.5"><span className="h-1.5 w-1.5 rounded-full bg-[#B8922D]" />Nepřehlédnout</span>
-      </div>
-      <div className="grid grid-cols-6 gap-2 tabletMin:grid-cols-3 mobile:grid-cols-2 mobile:gap-2">
+      <div className="grid grid-cols-3 gap-3 mobile:grid-cols-1 mobile:gap-2">
         {connected.map((bundle) => (
           <button key={bundle.outputId} type="button" onClick={() => setActive(bundle)}
-            className="min-h-9 rounded-[6px] border-0 bg-[#001930] px-2.5 py-2 text-[12px] font-semibold leading-[1.25] text-white transition-colors hover:bg-[#B8922D] hover:text-[#001930]"
+            className="min-h-11 rounded-[8px] border-0 bg-[#001930] px-3 py-2.5 text-[13px] font-medium leading-[1.3] text-white transition-colors hover:bg-[#B8922D] hover:text-[#001930]"
             data-testid="priority-relationship-connected">
             {bundle.title}
           </button>
         ))}
         {blindspots.map((bundle) => (
           <button key={bundle.outputId} type="button" onClick={() => setActive(bundle)}
-            className="min-h-9 rounded-[6px] border border-solid border-[#D9CDAF] bg-[#F7F6F4] px-2.5 py-2 text-[12px] font-semibold leading-[1.25] text-[#001930] transition-colors hover:border-[#B8922D] hover:bg-[#E8E5E0]"
+            className="min-h-11 rounded-[8px] border-0 bg-[#001930] px-3 py-2.5 text-[13px] font-medium leading-[1.3] text-white transition-colors hover:bg-[#B8922D] hover:text-[#001930]"
             data-testid="priority-relationship-blindspot">
             {bundle.title}
           </button>

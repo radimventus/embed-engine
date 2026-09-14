@@ -88,6 +88,7 @@ export function PriorityChapterBridge() {
           >
             {PRIORITY_BRIDGE_TITLE}
           </h2>
+          <PriorityRelationships />
           <div className="flex flex-wrap gap-x-2 gap-y-1">
             {PRIORITY_PAYOFF_UPPER_LINES.map((line) => (
               <p key={line} className={bodyClass}>
@@ -154,8 +155,6 @@ export function PriorityChapterBridge() {
             </p>
           </section>
         </div>
-
-        <PriorityRelationships />
 
         <div className="mx-auto flex w-full min-w-0 max-w-[760px] flex-col items-center gap-2 text-center mobile:max-w-none">
           <p

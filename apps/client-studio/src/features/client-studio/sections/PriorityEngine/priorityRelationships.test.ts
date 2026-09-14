@@ -32,6 +32,13 @@ test('wires six relationship labels to one lazy cached evidence output', () => {
   assert.match(component, /active !== null \? <RelationshipDialog/);
   assert.match(component, /outputCache\.getOrGenerate\(bundle, generator\)/);
   assert.match(component, /role="dialog"/);
+  assert.match(component, /createPortal/);
+  assert.match(component, /document\.body/);
+  assert.match(component, /items-start/);
+  assert.match(component, /grid-cols-3/);
+  assert.doesNotMatch(component, />Souvisí<\/span>/);
+  assert.doesNotMatch(component, />Nepřehlédnout<\/span>/);
+  assert.match(component, /priority-relationship-connected[\s\S]*priority-relationship-blindspot/);
   assert.match(component, /Souvislost/);
   assert.match(component, /Jak je to řešené u tohoto domu/);
   assert.match(component, /Co spolu souvisí/);
@@ -42,4 +49,16 @@ test('wires six relationship labels to one lazy cached evidence output', () => {
   assert.match(generator, /bundle\.primaryFact, bundle\.relatedFact/);
   assert.match(generator, /parseRelationshipNarrative\(response\.content\) \?\? fallback/);
   assert.match(provider, /selectHouseRelationshipEvidence/);
+});
+
+test('places relationship controls immediately below the priority section title', () => {
+  const bridge = read('PriorityChapterBridge.tsx');
+  const title = bridge.indexOf('{PRIORITY_BRIDGE_TITLE}');
+  const relationships = bridge.indexOf('<PriorityRelationships />');
+  const supportingCopy = bridge.indexOf('PRIORITY_PAYOFF_UPPER_LINES.map');
+  const panels = bridge.indexOf('data-testid="priority-payoff-panels"');
+  assert.ok(title >= 0 && relationships > title);
+  assert.ok(relationships < supportingCopy);
+  assert.ok(relationships < panels);
+  assert.equal(bridge.lastIndexOf('<PriorityRelationships />'), relationships);
 });
