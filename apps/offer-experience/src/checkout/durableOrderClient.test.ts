@@ -40,7 +40,7 @@ describe('durable Offer order client', () => {
     assert.equal(payload.termsAcceptedAt, '2026-08-12T11:59:00.000Z');
     assert.equal(payload.partner.companyName, 'Domy s energií s.r.o.');
     assert.equal(payload.package.id, 'starter');
-    assert.equal(payload.priceCzk, 14_970);
+    assert.equal(payload.priceCzk, 19_970);
   });
 
   it('treats a matching pre-existing order as an idempotent retry', async () => {
@@ -84,14 +84,14 @@ describe('durable Offer order client', () => {
       orderId: payload.orderId,
       issuedAt: '2026-08-12T12:00:00.000Z',
       dueDate: '2026-08-26T12:00:00.000Z',
-      amountCzk: 14_970,
+      amountCzk: 19_970,
       variableSymbol: 'OFFTEST001',
       bankAccount: {
         accountNumber: '2303345128/2010',
         iban: 'CZ1520100000002303345128',
         bankName: 'Fio banka',
       },
-      spdPayload: 'SPD*1.0*AM:14970.00*X-VS:OFFTEST001',
+      spdPayload: 'SPD*1.0*AM:19970.00*X-VS:OFFTEST001',
     };
     const request = async (input: RequestInfo | URL): Promise<Response> => {
       const url = String(input);

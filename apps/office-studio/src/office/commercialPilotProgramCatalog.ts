@@ -21,7 +21,7 @@ export type CommercialPilotProgramPackage = {
   readonly highlights: readonly string[];
 };
 
-export const COMMERCIAL_PILOT_TRIAL_DAYS = 90 as const;
+export const COMMERCIAL_PILOT_TRIAL_DAYS = 30 as const;
 
 /**
  * Commercial PDF order: Pilot → Pilot Plus (recommended) → Pilot Max (anchor).
@@ -30,7 +30,7 @@ export const COMMERCIAL_PILOT_PROGRAM_PACKAGES: readonly CommercialPilotProgramP
   Object.freeze([
     {
       id: 'pilot',
-      name: 'Pilot',
+      name: 'PILOT',
       housesLabel: '1 dům',
       priceCzk: 9_970,
       trialDays: COMMERCIAL_PILOT_TRIAL_DAYS,
@@ -46,7 +46,7 @@ export const COMMERCIAL_PILOT_PROGRAM_PACKAGES: readonly CommercialPilotProgramP
     },
     {
       id: 'pilot-plus',
-      name: 'Pilot TIP',
+      name: 'PILOT TIP',
       housesLabel: '3 domy',
       priceCzk: 19_970,
       trialDays: COMMERCIAL_PILOT_TRIAL_DAYS,
@@ -54,21 +54,20 @@ export const COMMERCIAL_PILOT_PROGRAM_PACKAGES: readonly CommercialPilotProgramP
       followOnTariff: 'Navazující tarif · Pilot TIP',
       recommended: true,
       priceAnchor: false,
-      highlights: ['3 domy', '90 dní provozu v ceně', 'Doporučená varianta'],
+      highlights: ['3 domy', 'Doporučená varianta'],
     },
     {
       id: 'pilot-max',
-      name: 'Pilot Max',
-      housesLabel: 'Až 10 domů',
+      name: 'PILOT MAX',
+      housesLabel: 'až 10 domů',
       priceCzk: 59_970,
       trialDays: COMMERCIAL_PILOT_TRIAL_DAYS,
       summary: 'Pro rychlejší nasazení větší části katalogu.',
-      followOnTariff: 'Navazující tarif · Pilot Max',
+      followOnTariff: 'Navazující tarif · PILOT MAX',
       recommended: false,
       priceAnchor: true,
       highlights: [
-        'Až 10 domů',
-        '90 dní provozu v ceně',
+        'až 10 domů',
         'Rozšířený vzorek katalogu',
       ],
     },

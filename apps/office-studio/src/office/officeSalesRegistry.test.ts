@@ -37,14 +37,14 @@ describe('PE-09 Pilot Offer & Checkout', () => {
     resetPartnerEnvironmentLifecycleForTests();
   }
 
-  it('exposes Pilot, Starter and Studio Partner with comparison matrix', () => {
+  it('exposes Pilot, Pilot TIP and PILOT MAX with comparison matrix', () => {
     assert.deepEqual(
       OFFICE_SALES_PACKAGES.map((pkg) => pkg.id),
       ['pilot', 'starter', 'studio-partner'],
     );
     assert.equal(getSalesPackage('starter').recommended, true);
-    assert.equal(getSalesPackage('pilot').name, 'Pilot');
-    assert.equal(getSalesPackage('studio-partner').name, 'Studio Partner');
+    assert.equal(getSalesPackage('pilot').name, 'PILOT');
+    assert.equal(getSalesPackage('studio-partner').name, 'PILOT MAX');
 
     const comparison = buildPackageComparison();
     assert.ok(comparison.length >= 5);
@@ -53,7 +53,7 @@ describe('PE-09 Pilot Offer & Checkout', () => {
     assert.ok(
       comparison.every((row) => row.values['studio-partner'].length > 0),
     );
-    assert.match(formatCzk(4_970), /4.?970/);
+    assert.match(formatCzk(9_970), /9.?970/);
   });
 
   it('records OfferViewed, PackageSelected and OrderConfirmed on checkout', () => {
@@ -82,7 +82,7 @@ describe('PE-09 Pilot Offer & Checkout', () => {
     const confirmed = confirmSalesOrder(partner.id);
 
     assert.equal(confirmed?.offer.packageId, 'starter');
-    assert.equal(confirmed?.offer.priceCzk, 14_970);
+    assert.equal(confirmed?.offer.priceCzk, 19_970);
     assert.equal(confirmed?.order?.packageId, 'starter');
     assert.equal(confirmed?.order?.status, 'confirmed');
     assert.equal(confirmed?.stage, 'order_confirmed');

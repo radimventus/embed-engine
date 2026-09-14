@@ -29,7 +29,7 @@ function PilotDecisionBridge() {
     'Nasazení na web',
     'Skuteční návštěvníci',
     'Profily zájemců',
-    'Vyhodnocení po 90 dnech',
+    'Vyhodnocení po 30 dnech',
   ] as const;
 
   return (
@@ -117,8 +117,8 @@ export function PilotProgramScreen({ activeCase }: PilotProgramScreenProps) {
           Začněte v rozsahu, který vám dává smysl.
         </h2>
         <p className="office-cj-pilot__lead">
-          Vyberete rozsah pilotu, my vše připravíme a 90 dní ověříte
-          CONIS na skutečných návštěvnících vašeho webu.
+          Vyberete rozsah pilotu, my vše připravíme z vašich podkladů a CONIS
+          pak 30 dní ověříte na skutečných návštěvnících vašeho webu.
         </p>
       </header>
 
@@ -140,6 +140,10 @@ export function PilotProgramScreen({ activeCase }: PilotProgramScreenProps) {
           />
         ))}
       </div>
+
+      <p className="office-cj-pilot__hint">
+        30 dní reálného provozu je součástí ceny Pilotu.
+      </p>
 
       <p className="office-cj-pilot-decision__promise">
         <span className="office-cj-pilot-decision__promise-line">

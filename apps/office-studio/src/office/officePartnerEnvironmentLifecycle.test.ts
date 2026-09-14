@@ -88,7 +88,7 @@ describe('PE-10 Partner Environment lifecycle', () => {
     assert.equal(view.lifecycleStatus, 'active');
     assert.equal(view.permanentWorkspace, true);
     assert.equal(view.pilotMode, false);
-    assert.equal(view.workspaceSummary?.activePackage, 'Starter');
+    assert.equal(view.workspaceSummary?.activePackage, 'Pilot TIP');
 
     const summaries = listOfficeWorkspaceSummaries();
     assert.ok(summaries.some((item) => item.partnerId === partner.id));

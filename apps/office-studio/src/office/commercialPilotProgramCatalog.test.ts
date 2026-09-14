@@ -47,10 +47,10 @@ describe('PT-CJ-02 Pilot Program + lean journey', () => {
     );
   });
 
-  it('mirrors PDF catalog: Pilot · Pilot TIP · Pilot Max', () => {
+  it('mirrors the approved 30-day Pilot catalog', () => {
     assert.deepEqual(
       COMMERCIAL_PILOT_PROGRAM_PACKAGES.map((pkg) => pkg.name),
-      ['Pilot', 'Pilot TIP', 'Pilot Max'],
+      ['PILOT', 'PILOT TIP', 'PILOT MAX'],
     );
     assert.deepEqual(
       COMMERCIAL_PILOT_PROGRAM_PACKAGES.map((pkg) => pkg.priceCzk),
@@ -63,6 +63,16 @@ describe('PT-CJ-02 Pilot Program + lean journey', () => {
     assert.equal(
       COMMERCIAL_PILOT_PROGRAM_PACKAGES.find((pkg) => pkg.priceAnchor)?.id,
       'pilot-max',
+    );
+    assert.deepEqual(
+      COMMERCIAL_PILOT_PROGRAM_PACKAGES.map((pkg) => pkg.trialDays),
+      [30, 30, 30],
+    );
+    assert.equal(
+      COMMERCIAL_PILOT_PROGRAM_PACKAGES.some((pkg) =>
+        pkg.highlights.some((highlight) => /90/.test(highlight)),
+      ),
+      false,
     );
     assert.match(formatCommercialPilotPriceCzk(19_970), /19.?970/);
     assert.equal(resolveCommercialPilotProgramId('Starter'), 'pilot-plus');
@@ -109,6 +119,11 @@ describe('PT-CJ-02 Pilot Program + lean journey', () => {
       pilot,
       /COMMERCIAL_PILOT_PROGRAM_PACKAGES\.find\(\(pkg\) => pkg\.recommended\)\?\.id/,
     );
+    assert.match(pilot, /my vše připravíme z vašich podkladů/);
+    assert.match(pilot, /pak 30 dní ověříte/);
+    assert.match(pilot, /30 dní reálného provozu je součástí ceny Pilotu/);
+    assert.match(pilot, /Vyhodnocení po 30 dnech/);
+    assert.doesNotMatch(pilot, /90 dní|90 dnech/);
     assert.match(order, /Potvrdit objednávku/);
     assert.match(order, /Smluvní dokumenty/);
     assert.match(order, /cj-order-docs-accepted/);

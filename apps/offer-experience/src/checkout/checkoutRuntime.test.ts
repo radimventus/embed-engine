@@ -104,7 +104,7 @@ describe('CAP-CE-02 checkout runtime', () => {
     assert.equal(state.step, 'proforma');
     assert.equal(state.order?.orderId, 'OFF-TEST-001');
     assert.equal(state.order?.packageId, 'starter');
-    assert.equal(state.order?.priceCzk, 14_970);
+    assert.equal(state.order?.priceCzk, 19_970);
     assert.ok(state.payment.proforma !== null);
     assert.equal(state.payment.lifecycle, 'waiting_payment');
   });
@@ -138,7 +138,7 @@ describe('CAP-CE-02 checkout runtime', () => {
     const order = confirmedOrder();
 
     assert.equal(buildProformaRequest(order).orderId, 'OFF-TEST-001');
-    assert.equal(buildProformaRequest(order).amountCzk, 14_970);
+    assert.equal(buildProformaRequest(order).amountCzk, 19_970);
     assert.equal(buildQrPaymentPayload(order).currency, 'CZK');
     assert.equal(
       buildPaymentSessionRequest(order, {
@@ -260,6 +260,6 @@ describe('CAP-CE-03 payment runtime', () => {
     const handoff = buildOfficeHandoffRequest({ order, proforma, paidAt });
     assert.equal(handoff.lifecycle, 'pilot_ready');
     assert.equal(handoff.contactEmail, order.contact.email);
-    assert.equal(handoff.amountCzk, 14_970);
+    assert.equal(handoff.amountCzk, 19_970);
   });
 });

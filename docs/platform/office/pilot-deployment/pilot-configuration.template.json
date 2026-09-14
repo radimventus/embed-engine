@@ -63,7 +63,7 @@
     "defaultPackageId": "starter",
     "defaultPackageName": "Starter",
     "defaultAmountCzk": 14970,
-    "licenseLabel": "až 3 domy · 90 dní",
+    "licenseLabel": "3 domy · 30 dní",
     "availablePackages": ["Starter", "Pilot", "Studio Partner"]
   }
 }

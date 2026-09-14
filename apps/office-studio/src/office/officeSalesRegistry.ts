@@ -122,9 +122,9 @@ const SEED_CASES: readonly OfficeSalesCase[] = Object.freeze([
       personalNote:
         'Referenční šablona — Pilot 1 dům · Embed Experience · Reference House.',
       updatedAt: '2026-08-02T09:00:00.000Z',
-      priceCzk: 4_970,
+      priceCzk: 9_970,
       licenseHouses: 1,
-      trialDays: 90,
+      trialDays: 30,
       validUntil: '2026-08-16T09:00:00.000Z',
       acceptedAt: '2026-08-02T09:15:00.000Z',
     }),

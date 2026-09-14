@@ -1,6 +1,6 @@
 /**
  * CAP-CE-01 — Public Offer Experience domain model (UI foundation).
- * Package catalog mirrors Office PE-09 SSOT (Pilot · Starter · Studio Partner).
+ * Package catalog mirrors the approved Office Pilot Program offer.
  * No persistence / payment / backend.
  */
 
@@ -28,38 +28,38 @@ export type PublicOffer = {
   readonly contactName: string | null;
 };
 
-export const OFFER_TRIAL_DAYS = 90 as const;
+export const OFFER_TRIAL_DAYS = 30 as const;
 
 export const OFFER_PACKAGES: readonly OfferPackage[] = Object.freeze([
   {
     id: 'pilot',
-    name: 'Pilot',
+    name: 'PILOT',
     housesLabel: '1 dům',
-    priceCzk: 4_970,
+    priceCzk: 9_970,
     trialDays: OFFER_TRIAL_DAYS,
-    summary: 'Vstupní spolupráce — 1 dům a plná CONIS nabídka pro váš web.',
+    summary: 'Nejjednodušší způsob, jak CONIS ověřit v praxi.',
     recommended: false,
     highlights: ['1 dům', 'Pro zákazníky, správu i obchod', 'Základní branding'],
   },
   {
     id: 'starter',
-    name: 'Starter',
-    housesLabel: 'až 3 domy',
-    priceCzk: 14_970,
+    name: 'PILOT TIP',
+    housesLabel: '3 domy',
+    priceCzk: 19_970,
     trialDays: OFFER_TRIAL_DAYS,
-    summary: 'Doporučený start — až 3 domy a rozšířený provoz.',
+    summary: 'Pro rychlé ověření na reprezentativním vzorku nabídky.',
     recommended: true,
-    highlights: ['Až 3 domy', 'Pro zákazníky, správu i obchod', 'Plný brand'],
+    highlights: ['3 domy', 'Pro zákazníky, správu i obchod', 'Plný brand'],
   },
   {
     id: 'studio-partner',
-    name: 'Studio Partner',
-    housesLabel: 'Neomezeně',
-    priceCzk: 29_970,
+    name: 'PILOT MAX',
+    housesLabel: 'až 10 domů',
+    priceCzk: 59_970,
     trialDays: OFFER_TRIAL_DAYS,
-    summary: 'Partnerský provoz — více objektů a dlouhodobá spolupráce.',
+    summary: 'Pro rychlejší nasazení větší části katalogu.',
     recommended: false,
-    highlights: ['Neomezeně objektů', 'Pro zákazníky, správu i obchod', 'Vlastní brand'],
+    highlights: ['až 10 domů', 'Pro zákazníky, správu i obchod', 'Vlastní brand'],
   },
 ]);
 

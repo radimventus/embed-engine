@@ -53,7 +53,7 @@ describe('PE-12 Partner Administration', () => {
     assert.equal(getPartnerEnvironmentRecord('p-dse').packageId, 'starter');
     assert.equal(
       getPartnerEnvironmentRecord('p-dse').packageName,
-      'Starter',
+      'Pilot TIP',
     );
 
     changePartnerLicence('p-dse', 'Custom · 5 domů');
@@ -90,7 +90,7 @@ describe('PE-12 Partner Administration', () => {
     const rows = listPartnerAdminDashboardRows();
     assert.ok(rows.some((row) => row.partnerId === 'p-dse'));
     const nord = rows.find((row) => row.partnerId === 'p-dse');
-    assert.equal(nord?.packageName, 'Starter');
+    assert.equal(nord?.packageName, 'Pilot TIP');
     assert.equal(nord?.licence, 'Custom · 5 domů');
     assert.equal(nord?.notesCount, 1);
   });

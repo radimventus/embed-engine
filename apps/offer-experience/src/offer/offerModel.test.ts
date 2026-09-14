@@ -18,16 +18,27 @@ import {
 } from './offerRegistry';
 
 describe('CAP-CE-01 offer model', () => {
-  it('exposes Pilot · Starter · Studio Partner', () => {
+  it('exposes the approved 30-day Pilot catalog', () => {
     assert.deepEqual(
       OFFER_PACKAGES.map((item) => item.id),
       ['pilot', 'starter', 'studio-partner'],
     );
     assert.equal(getOfferPackage('starter').recommended, true);
-    assert.equal(getOfferPackage('pilot').trialDays, 90);
+    assert.deepEqual(
+      OFFER_PACKAGES.map((item) => item.name),
+      ['PILOT', 'PILOT TIP', 'PILOT MAX'],
+    );
+    assert.deepEqual(
+      OFFER_PACKAGES.map((item) => item.priceCzk),
+      [9_970, 19_970, 59_970],
+    );
+    assert.deepEqual(
+      OFFER_PACKAGES.map((item) => item.trialDays),
+      [30, 30, 30],
+    );
     assert.equal(isOfferPackageId('pilot'), true);
     assert.equal(isOfferPackageId('office'), false);
-    assert.match(formatOfferPriceCzk(4970), /4/);
+    assert.match(formatOfferPriceCzk(9_970), /9/);
   });
 
   it('resolves public offers by slug', () => {

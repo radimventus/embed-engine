@@ -19,7 +19,7 @@ const MOCK_EVENTS: PilotTimelineEvent[] = [
     title: 'Offer Sent',
     summary: 'Odeslána nabídka Starter · Domy s energií',
     detail:
-      'Partnerovi byla odeslána personalizovaná nabídka balíčku Starter včetně trial období 90 dní.',
+      'Partnerovi byla odeslána personalizovaná nabídka balíčku Pilot TIP včetně pilotního provozu 30 dní.',
     occurredAt: '2026-08-01T09:10:00.000Z',
   },
   {

@@ -208,9 +208,9 @@ def build_brief() -> Document:
         doc,
         ["Balíček", "Rozsah", "Cena (CZK)", "Trial", "Poznámka"],
         [
-            ["Pilot", "1 dům", "4 970", "90 dní", "Vstupní pilot · Embed Experience"],
-            ["Starter", "až 3 domy", "14 970", "90 dní", "Doporučený start · plný brand"],
-            ["Studio Partner", "dle nabídky", "dle nabídky", "90 dní", "Rozšířená partnerská spolupráce"],
+            ["PILOT", "1 dům", "9 970", "30 dní", "Nejjednodušší ověření CONIS v praxi"],
+            ["PILOT TIP", "3 domy", "19 970", "30 dní", "Doporučená varianta"],
+            ["PILOT MAX", "až 10 domů", "59 970", "30 dní", "Rychlejší nasazení větší části katalogu"],
         ],
     )
     p(
