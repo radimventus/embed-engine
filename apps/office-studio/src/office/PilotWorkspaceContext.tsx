@@ -26,9 +26,8 @@ import {
 } from '../mail';
 import { getConversationMailStore } from '../mail/conversationMailStore';
 import {
-  getSharedWorkspaceContext,
   loadPlatformSession,
-  updateSession,
+  switchAuthoritativeProjectContext,
 } from '@embed-engine/platform-access';
 import type {
   PilotConversationId,
@@ -104,14 +103,9 @@ import {
 } from './officeWorkspaceRecovery';
 
 /** PT-OS-02 — bind session + PE workspaceContext to Office Select Shared Project. */
-function syncSessionSharedProject(projectId: string): void {
-  const ctx = getSharedWorkspaceContext();
-  updateSession({
-    projectId,
-    ...(ctx !== null
-      ? { workspaceContext: { ...ctx, projectId } }
-      : {}),
-  });
+async function syncSessionSharedProject(projectId: string): Promise<boolean> {
+  const result = await switchAuthoritativeProjectContext(projectId, 'client');
+  return result.ok;
 }
 
 export type PilotWorkspaceContextValue = {
@@ -134,7 +128,7 @@ export type PilotWorkspaceContextValue = {
   readonly activeCaseId: PilotWorkspaceCaseId | null;
   readonly activeCase: PilotWorkspaceCase | null;
   readonly terminalView: PilotTerminalViewId;
-  readonly selectCase: (caseId: PilotWorkspaceCaseId | null) => void;
+  readonly selectCase: (caseId: PilotWorkspaceCaseId | null) => Promise<void>;
   readonly setTerminalView: (view: PilotTerminalViewId) => void;
   readonly createCasePlaceholder: () => void;
   readonly inbox: PilotInboxRuntimeState;
@@ -408,7 +402,7 @@ export function PilotWorkspaceProvider({
   /** PT-OS-02 / VR03 — keep Platform session projectId aligned with Office Select. */
   useEffect(() => {
     if (activeCaseId !== null) {
-      syncSessionSharedProject(activeCaseId);
+      void syncSessionSharedProject(activeCaseId);
     }
   }, [activeCaseId]);
 
@@ -418,7 +412,8 @@ export function PilotWorkspaceProvider({
    * Explicit project switch still opens Detail (R-001).
    */
   const selectCase = useCallback(
-    (caseId: PilotWorkspaceCaseId | null) => {
+    async (caseId: PilotWorkspaceCaseId | null) => {
+      if (caseId !== null && !(await syncSessionSharedProject(caseId))) return;
       const requestedEmpty = caseId === null;
       const resolvedCaseId =
         caseId === null && cases.length > 0 ? cases[0]!.id : caseId;
@@ -445,9 +440,6 @@ export function PilotWorkspaceProvider({
         selectedMessageId: plan.inboxSelectedMessageId,
       }));
       writeStoredActiveCaseId(plan.activeCaseId);
-      if (plan.activeCaseId !== null) {
-        syncSessionSharedProject(plan.activeCaseId);
-      }
     },
     [cases],
   );
@@ -481,7 +473,7 @@ export function PilotWorkspaceProvider({
     }));
     writeStoredActiveCaseId(plan.activeCaseId);
     if (plan.activeCaseId !== null) {
-      syncSessionSharedProject(plan.activeCaseId);
+      void syncSessionSharedProject(plan.activeCaseId);
     }
   }, [activeCaseId]);
 

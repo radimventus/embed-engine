@@ -571,12 +571,15 @@ describe('Authoritative Partner Environment house switch', () => {
           workspaceId: string;
           projectId: string;
           activeHouseId: string | null;
+          workspaceContext: { partnerId: string; projectId: string };
         };
       };
       assert.equal(forgedProjectBody.session.tenantId, DSE_TENANT_ID);
       assert.equal(forgedProjectBody.session.companyId, DSE_COMPANY_ID);
       assert.equal(forgedProjectBody.session.workspaceId, DSE_WORKSPACE_ID);
       assert.equal(forgedProjectBody.session.projectId, DSE_CANONICAL_PROJECT_ID);
+      assert.equal(forgedProjectBody.session.workspaceContext.partnerId, DSE_COMPANY_ID);
+      assert.equal(forgedProjectBody.session.workspaceContext.projectId, DSE_CANONICAL_PROJECT_ID);
       assert.equal(
         forgedProjectBody.session.activeHouseId,
         DSE_BUNGALOV_4KK_HOUSE_ID,

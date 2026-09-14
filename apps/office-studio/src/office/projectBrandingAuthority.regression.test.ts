@@ -79,3 +79,11 @@ test('TASK 86 FIX-03 — Project Detail owns partner invitation action', async (
     /PartnerUserInvitationSection/,
   );
 });
+
+
+test('TASK 114 follow-up — Office selection waits for canonical durable context', async () => {
+  const context = await read('apps/office-studio/src/office/PilotWorkspaceContext.tsx');
+  assert.match(context, /await syncSessionSharedProject\(caseId\)/);
+  assert.match(context, /switchAuthoritativeProjectContext\(projectId, 'client'\)/);
+  assert.doesNotMatch(context, /function syncSessionSharedProject[\s\S]{0,300}updateSession/);
+});

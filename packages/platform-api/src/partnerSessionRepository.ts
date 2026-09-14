@@ -607,6 +607,7 @@ export class FilePartnerSessionRepository implements PartnerSessionRepository {
             workspaceId: targetScope.workspaceId,
             projectId: targetScope.projectId,
           };
+          targetPartnerId = targetScope.companyId;
         }
 
         if (

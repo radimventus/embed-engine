@@ -4,6 +4,7 @@ import {
   ensureCanonicalProjectAuthority,
   getCanonicalWorkspaceForCompany,
   syncCanonicalRegistryFromAuthority,
+  switchAuthoritativeProjectContext,
   usePlatformSession,
 } from "@embed-engine/platform-access";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
@@ -646,8 +647,15 @@ export function useWorkspaceController(): WorkspaceController {
   const requestOpenFolder = useCallback(
     async (folderId: string, options: { readonly dirty: boolean }) => {
       const current = registryRef.current;
+      const authorize = async () => {
+        const authority = await switchAuthoritativeProjectContext(folderId, 'builder');
+        if (authority.ok) return true;
+        setSwitchError(authority.error);
+        return false;
+      };
       const opened = openWorkspaceFolder(current, folderId);
       if (opened.houseId === null) {
+        if (!(await authorize())) return null;
         setRegistry(opened.state);
         registryRef.current = opened.state;
         publishBuilderHouseScope(folderId, null);
@@ -657,6 +665,7 @@ export function useWorkspaceController(): WorkspaceController {
       }
 
       if (opened.houseId === current.activeProjectId) {
+        if (!(await authorize())) return null;
         setRegistry(opened.state);
         publishBuilderHouseScope(
           folderId,
@@ -682,6 +691,7 @@ export function useWorkspaceController(): WorkspaceController {
         return null;
       }
 
+      if (!(await authorize())) return null;
       publishBuilderHouseScope(folderId, null);
       publishWorkspaceProjectChange(folderId);
       const ok = await requestOpenProject(opened.houseId, { dirty: false });

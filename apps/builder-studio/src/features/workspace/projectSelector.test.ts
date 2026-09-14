@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import {readFile} from 'node:fs/promises';
 import test from 'node:test';
 import {getWorkspaceSidebarFolders} from './WorkspaceSidebar';
 import {composeWorkspaceRegistry} from './workspaceRegistry';
@@ -14,4 +15,11 @@ test('selector puts newest projects first without mutating registry and supports
   assert.deepEqual(getWorkspaceSidebarFolders(registry, true).map(x => x.id), ['new', 'archived', 'old']);
   assert.deepEqual(getWorkspaceSidebarFolders({...registry, activeFolderId: 'archived'}).map(x => x.id), ['new', 'archived', 'old']);
   assert.deepEqual(folders.map(x => x.id), ['old', 'archived', 'new']);
+});
+
+
+test('TASK 114 follow-up — Builder folder switch waits for canonical durable context', async () => {
+  const source = await readFile(new URL('./useWorkspaceController.ts', import.meta.url), 'utf8');
+  assert.match(source, /switchAuthoritativeProjectContext\(folderId, 'builder'\)/);
+  assert.match(source, /if \(!\(await authorize\(\)\)\) return null/);
 });

@@ -497,6 +497,12 @@ export {
 } from './pilot/operatorPartnerEnvironment';
 
 export {
+  switchAuthoritativeProjectContext,
+  AUTHORITATIVE_PROJECT_CONTEXT_CHANGED,
+  type ProjectContextStudio,
+} from './pilot/authoritativeProjectContext';
+
+export {
   WORKSPACE_STUDIO_SWITCH_ORDER,
   WORKSPACE_STUDIO_LABELS,
   workspaceStudiosForRoles,

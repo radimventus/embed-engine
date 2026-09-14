@@ -44,6 +44,7 @@ import {
 import { syncCanonicalRegistryFromAuthority } from '../api/canonicalRegistrySync';
 import {
   clearPlatformSession,
+  loadPlatformSession,
   savePlatformSession,
 } from '../session/sessionStore';
 import { resolveWorkspaceHostHref } from '../cloud/cloudConfig';
@@ -55,6 +56,7 @@ import {
   clearOperatorPartnerEnvironment,
   switchOperatorPartnerStudio,
 } from '../pilot/operatorPartnerEnvironment';
+import { AUTHORITATIVE_PROJECT_CONTEXT_CHANGED } from '../pilot/authoritativeProjectContext';
 
 export type PlatformSessionContextValue = {
   readonly session: PlatformSession | null;
@@ -107,6 +109,11 @@ export function SessionProvider({
   }, []);
   const [session, setSession] = useState<PlatformSession | null>(null);
   const [isRestoring, setIsRestoring] = useState(true);
+  useEffect(() => {
+    const refresh = () => setSession(loadPlatformSession());
+    window.addEventListener(AUTHORITATIVE_PROJECT_CONTEXT_CHANGED, refresh);
+    return () => window.removeEventListener(AUTHORITATIVE_PROJECT_CONTEXT_CHANGED, refresh);
+  }, []);
   const applySession = useCallback((restored: PlatformSession) => {
     savePlatformSession(restored);
     if (primaryRole(restored.user.roles) === 'manager') {

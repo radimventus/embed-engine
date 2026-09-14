@@ -47,7 +47,7 @@ export function PilotProjectSelector({
             }))}
             onChange={(next) => {
               if (next.length === 0) return;
-              selectCase(next);
+              void selectCase(next);
               onEnterWorkSurface?.();
             }}
           />
