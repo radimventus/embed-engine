@@ -160,7 +160,9 @@ export function selectCanonicalChatHouseKnowledge(
         ]),
       ),
     ],
-    priorityFaq: [],
+    // Complete canonical FAQ remains House-scoped and supports outputs without
+    // an explicit Priority lens, such as the UNIVERSAL Client Output.
+    priorityFaq: context.priorityFaq,
   };
 }
 

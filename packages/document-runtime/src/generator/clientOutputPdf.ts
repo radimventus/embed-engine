@@ -72,8 +72,8 @@ async function mediaPage(pdf: PDFDocument, regular: PDFFont, bold: PDFFont, head
   }
 }
 
-function narrativePage(pdf: PDFDocument, regular: PDFFont, bold: PDFFont, heading: string, items: readonly ClientOutputNarrative[]): void {
-  const page = pdf.addPage(A4_LANDSCAPE); title(page, bold, 'Podle vašich priorit', heading);
+function narrativePage(pdf: PDFDocument, regular: PDFFont, bold: PDFFont, eyebrow: string, heading: string, items: readonly ClientOutputNarrative[]): void {
+  const page = pdf.addPage(A4_LANDSCAPE); title(page, bold, eyebrow, heading);
   items.slice(0,3).forEach((item, index) => {
     const x = 42 + index * 263;
     page.drawText(item.title, { x, y: 460, size: 13, font: bold, color: NAVY, maxWidth: 230 });
@@ -93,10 +93,11 @@ export async function renderClientOutputPdf(snapshot: ClientOutputSnapshot, load
   drawCover(pdf.addPage(A4_LANDSCAPE), bold, regular, snapshot);
   await mediaPage(pdf, regular, bold, 'Exteriér a první dojem', snapshot.exterior, 16/9, load);
   await mediaPage(pdf, regular, bold, snapshot.house.storeys > 1 ? 'Půdorysy jednotlivých podlaží' : 'Půdorys domu', snapshot.floorPlans, 4/3, load);
-  narrativePage(pdf, regular, bold, 'Co je pro vás důležité', snapshot.priorityNarratives);
-  narrativePage(pdf, regular, bold, 'Tři souvislosti, které podporují vaše priority', snapshot.connectedTopics);
+  const personalized = snapshot.priorities.length > 0;
+  narrativePage(pdf, regular, bold, personalized ? 'Podle vašich priorit' : 'Váš dům v souvislostech', personalized ? 'Co je pro vás důležité' : 'Co je důležité vědět', snapshot.priorityNarratives);
+  narrativePage(pdf, regular, bold, personalized ? 'Podle vašich priorit' : 'Váš dům v souvislostech', personalized ? 'Tři souvislosti, které podporují vaše priority' : 'Tři důležité souvislosti domu', snapshot.connectedTopics);
   for (let index=0; index<snapshot.interiors.length; index+=2) await mediaPage(pdf, regular, bold, 'Interiéry v souvislostech', snapshot.interiors.slice(index,index+2), 16/9, load);
-  narrativePage(pdf, regular, bold, 'Souvislosti, které stojí za pozornost', snapshot.blindspots);
+  narrativePage(pdf, regular, bold, personalized ? 'Podle vašich priorit' : 'Váš dům v souvislostech', 'Souvislosti, které stojí za pozornost', snapshot.blindspots);
   const faq = pdf.addPage(A4_LANDSCAPE); title(faq,bold,'Otázky a odpovědi','Co pomůže před dalším krokem');
   let fy=465; snapshot.faq.slice(0,4).forEach(item=>{ faq.drawText(item.question,{x:42,y:fy,size:11,font:bold,color:NAVY,maxWidth:750}); fy=textBlock(faq,regular,item.answer,42,fy-20,750,10)-16; });
   const process=pdf.addPage(A4_LANDSCAPE); title(process,bold,'Pozemek a proces','Od domu k vašemu rozhodnutí');

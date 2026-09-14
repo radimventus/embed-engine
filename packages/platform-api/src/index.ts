@@ -13,6 +13,7 @@ import {
 import type { ClientOutputSnapshot, ClientOutputTrigger } from '@embed-engine/document-runtime';
 import { FileClientOutputRepository, type ClientOutputRepository } from './clientOutputRepository';
 import { createClientOutputDelivery, type ClientOutputDelivery } from './clientOutputDelivery';
+import { loadClientOutputAsset } from './clientOutputAssetLoader';
 import { deliverPersistedClientOutput, persistClientOutput } from './clientOutputService';
 import { createServer, type IncomingMessage, type Server } from "node:http";
 import { mkdir, readFile, rename, writeFile } from "node:fs/promises";
@@ -773,7 +774,8 @@ export function createPlatformApiServer(
   notifyFeedback: FeedbackNotifier = createManagerFeedbackNotifier(),
   clientOutputs: ClientOutputRepository = new FileClientOutputRepository(),
   deliverClientOutput: ClientOutputDelivery = createClientOutputDelivery(),
-  clientOutputRenderer: typeof renderClientOutputPdf = renderClientOutputPdf,
+  clientOutputRenderer: typeof renderClientOutputPdf = (snapshot) =>
+    renderClientOutputPdf(snapshot, loadClientOutputAsset),
 ): Server {
   const partnerSessions =
     partnerSessionsParam ??
