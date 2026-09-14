@@ -110,19 +110,17 @@ function RelationshipDialog({
           <div className="mt-8" role="status">
             <p className="m-0 text-[18px] font-bold leading-[1.5] text-[#001930]">
               Díváme se, co pro vás znamená „{bundle.title}“
-              <span className="ml-2 inline-flex gap-1" aria-hidden="true">
-                {[0, 1, 2].map((index) => (
-                  <span
-                    key={index}
-                    className="h-1.5 w-1.5 animate-pulse rounded-full bg-[#B8922D]"
-                    style={{ animationDelay: `${index * 220}ms`, animationDuration: '1.2s' }}
-                  />
-                ))}
-              </span>
             </p>
             <p className="mb-0 mt-2 text-[15px] leading-[1.6] text-embed-foreground-primary/70">
               Propojujeme vlastnosti tohoto domu s tím, co je pro vaše rozhodnutí důležité.
             </p>
+            <div className="mt-6 inline-flex items-center gap-3 rounded-full bg-[#F7F6F4] px-4 py-2.5 text-[14px] font-medium text-[#001930]">
+              <span
+                className="h-5 w-5 animate-spin rounded-full border-[3px] border-solid border-[#D9CDAF] border-t-[#B8922D]"
+                aria-hidden="true"
+              />
+              <span>Načítám</span>
+            </div>
           </div>
         ) : null}
         {failed ? (

@@ -41,7 +41,8 @@ test('wires six relationship labels to one lazy cached evidence output', () => {
   assert.match(component, /items-start/);
   assert.match(component, /grid-cols-6/);
   assert.match(component, /Díváme se, co pro vás znamená/);
-  assert.match(component, /animate-pulse/);
+  assert.match(component, /animate-spin/);
+  assert.match(component, />Načítám<\/span>/);
   assert.match(component, /Ověřená fakta/);
   assert.match(component, /text-\[15px\] font-normal leading-\[1\.3\] text-white/);
   assert.match(component, /renderEmphasizedFact/);
