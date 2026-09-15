@@ -483,11 +483,7 @@ export function WorkspaceHostApp() {
         session?.activeHouseId ??
         context?.activeHouseId ??
         null;
-      return projectId !== null &&
-        houseId !== null &&
-        isHouseInProject(houseId, projectId)
-        ? houseId
-        : null;
+      return projectId !== null && houseId !== null ? houseId : null;
     },
   );
   const clientMountedRef = useRef(false);
@@ -751,21 +747,10 @@ export function WorkspaceHostApp() {
         const projectId =
           loadPlatformSession()?.projectId ?? currentContext.projectId;
         const requestedIdentity = event.data.authoredHouseIdentity;
-        const isRequestedAuthoredHouse =
-          event.data.houseId !== null &&
-          requestedIdentity?.houseId === event.data.houseId &&
-          requestedIdentity.canonicalProjectId === projectId &&
-          requestedIdentity.status === 'draft' &&
-          requestedIdentity.dataMode === 'LIVE_EMPTY';
-        const isAllowed =
-          projectId !== null &&
-          (event.data.houseId === null ||
-            isHouseInProject(event.data.houseId, projectId) ||
-            isRequestedAuthoredHouse);
-        if (!isAllowed) {
+        if (projectId === null) {
           replyPort.postMessage({
             ok: false,
-            error: 'House Package není pro tuto relaci povolen.',
+            error: 'Projekt není v aktivní relaci dostupný.',
           });
           return;
         }

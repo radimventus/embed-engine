@@ -149,7 +149,7 @@ describe('VR-04 Canonical Workspace Shell', () => {
     );
     assert.match(
       app,
-      /session\?\.activeHouseId[\s\S]*isHouseInProject\(houseId, projectId\)/,
+      /session\?\.activeHouseId[\s\S]*return projectId !== null && houseId !== null \? houseId : null/,
     );
 
     // Workspace rendering must not directly require ctx fields.
@@ -480,6 +480,26 @@ describe('VR-04 Canonical Workspace Shell', () => {
     );
     assert.match(app, /setSharedProjectId\(next\.projectId\)/);
     assert.match(app, /studioFrameSrc\([\s\S]*sharedProjectId,[\s\S]*sharedActiveHouseId/);
+  });
+
+  it('TASK-114 — delegates authoritative House scope to the server and mirrors exact confirmation', () => {
+    const app = read('src/WorkspaceHostApp.tsx');
+    const handlerStart = app.indexOf(
+      'if (isWorkspaceHouseScopeRequestMessage(event.data))',
+    );
+    const handlerEnd = app.indexOf(
+      'if (\n        isWorkspaceProjectChangeMessage(event.data)',
+      handlerStart,
+    );
+    assert.notEqual(handlerStart, -1);
+    assert.notEqual(handlerEnd, -1);
+    const handler = app.slice(handlerStart, handlerEnd);
+
+    assert.doesNotMatch(handler, /isHouseInProject\(/);
+    assert.match(handler, /projectId,/);
+    assert.match(handler, /activeHouseId: requestedHouseId/);
+    assert.match(handler, /result\.projectId === projectId/);
+    assert.match(handler, /result\.activeHouseId === requestedHouseId/);
   });
 
   it('CAP-VR38c — scopes Builder House changes under the active Project', () => {

@@ -142,6 +142,11 @@ describe('Authoritative Partner Environment house switch', () => {
         workspaceId: 'blokki-main',
       },
     });
+    await canonicalAuthority.upsertHouseAuthority({
+      id: 'durable-house',
+      canonicalProjectId: BLOKKI_SCOPE.projectId,
+      name: 'Durable House',
+    });
 
       await partners.create({ id: 'company-blokki', draft: blokkiDraft });
       await partners.updateEnvironmentScope('company-blokki', BLOKKI_SCOPE);
@@ -149,6 +154,7 @@ describe('Authoritative Partner Environment house switch', () => {
       const sessions = new FilePartnerSessionRepository(
         join(directory, 'partner-sessions.json'),
         createPartnerEnvironmentScopeResolver(partners),
+        canonicalAuthority,
         canonicalAuthority,
       );
       const admin = await sessions.activate({
@@ -262,6 +268,70 @@ describe('Authoritative Partner Environment house switch', () => {
       assert.equal(bungalov.companyId, BLOKKI_SCOPE.companyId);
       assert.equal(bungalov.projectId, BLOKKI_SCOPE.projectId);
       assert.equal(bungalov.activeHouseId, BLOKKI_BUNGALOV_ID);
+    });
+  });
+
+  it('uses exact durable, legacy, authored, and unknown House authority rules', async () => {
+    await withHarness(async ({ sessions, adminToken }) => {
+      const enteredBlokki = await sessions.mutateContext(adminToken, enterBlokki);
+      assert.ok(enteredBlokki !== null);
+
+      const durable = await sessions.mutateContext(adminToken, {
+        action: 'switch',
+        activeStudio: 'builder',
+        projectId: BLOKKI_SCOPE.projectId,
+        activeHouseId: 'durable-house',
+      });
+      assert.ok(durable !== null);
+      assert.equal(durable.activeHouseId, 'durable-house');
+
+      const wrongProject = await sessions.mutateContext(adminToken, {
+        action: 'switch',
+        activeStudio: 'builder',
+        projectId: DSE_CANONICAL_PROJECT_ID,
+        activeHouseId: 'durable-house',
+      });
+      assert.ok(wrongProject !== null);
+      assert.equal(wrongProject.projectId, DSE_CANONICAL_PROJECT_ID);
+      assert.equal(wrongProject.activeHouseId, null);
+
+      const legacy = await sessions.mutateContext(adminToken, {
+        action: 'switch',
+        activeStudio: 'builder',
+        projectId: DSE_CANONICAL_PROJECT_ID,
+        activeHouseId: DSE_BUNGALOV_4KK_HOUSE_ID,
+      });
+      assert.ok(legacy !== null);
+      assert.equal(legacy.activeHouseId, DSE_BUNGALOV_4KK_HOUSE_ID);
+
+      const authoredHouseId = 'authored-live-empty-house';
+      const authored = await sessions.mutateContext(adminToken, {
+        action: 'switch',
+        activeStudio: 'builder',
+        projectId: DSE_CANONICAL_PROJECT_ID,
+        activeHouseId: authoredHouseId,
+        authoredHouseIdentities: [
+          {
+            houseId: authoredHouseId,
+            name: 'Authored draft House',
+            canonicalProjectId: DSE_CANONICAL_PROJECT_ID,
+            packageRoot: 'apps/client-studio/public/house-packages/authored-draft',
+            dataMode: 'LIVE_EMPTY',
+            status: 'draft',
+          },
+        ],
+      });
+      assert.ok(authored !== null);
+      assert.equal(authored.activeHouseId, authoredHouseId);
+
+      const unknown = await sessions.mutateContext(adminToken, {
+        action: 'switch',
+        activeStudio: 'builder',
+        projectId: DSE_CANONICAL_PROJECT_ID,
+        activeHouseId: 'unknown-house',
+      });
+      assert.ok(unknown !== null);
+      assert.equal(unknown.activeHouseId, null);
     });
   });
 
@@ -422,6 +492,7 @@ describe('Authoritative Partner Environment house switch', () => {
     const sessions = new FilePartnerSessionRepository(
       join(directory, 'partner-sessions.json'),
       createPartnerEnvironmentScopeResolver(partners),
+      canonicalAuthority,
       canonicalAuthority,
     );
     const server = createPlatformApiServer(

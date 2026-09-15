@@ -781,6 +781,7 @@ export function createPlatformApiServer(
       undefined,
       createPartnerEnvironmentScopeResolver(officePartners),
       canonicalRegistryAuthorityRepository,
+      canonicalRegistryAuthorityRepository,
     );
   return createServer(async (request, response) => {
     const origin = request.headers.origin;

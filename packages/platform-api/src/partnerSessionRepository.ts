@@ -86,6 +86,13 @@ export type CanonicalProjectAuthorityResolver = {
   } | null>;
 };
 
+export type CanonicalHouseAuthorityResolver = {
+  resolveHouseAuthority(houseId: string): Promise<{
+    readonly id: string;
+    readonly canonicalProjectId: string;
+  } | null>;
+};
+
 type PartnerAuthoredHouseIdentity = {
   readonly houseId: string;
   readonly name: string;
@@ -306,6 +313,9 @@ export class FilePartnerSessionRepository implements PartnerSessionRepository {
       null,
     private readonly canonicalProjectAuthorityResolver: CanonicalProjectAuthorityResolver = {
       resolveProjectAuthority: async () => null,
+    },
+    private readonly canonicalHouseAuthorityResolver: CanonicalHouseAuthorityResolver = {
+      resolveHouseAuthority: async () => null,
     },
   ) {
     this.statePath = statePath;
@@ -537,9 +547,18 @@ export class FilePartnerSessionRepository implements PartnerSessionRepository {
         const validHouseIds = canonicalHouseIdsForProject(
           authoritativeScope.projectId,
         );
+        const canonicalHouseAuthority =
+          requestedHouseId === null
+            ? null
+            : await this.canonicalHouseAuthorityResolver.resolveHouseAuthority(
+                requestedHouseId,
+              );
         const activeHouseId =
           requestedHouseId !== null &&
           (
+            (canonicalHouseAuthority?.id === requestedHouseId &&
+              canonicalHouseAuthority.canonicalProjectId ===
+                authoritativeScope.projectId) ||
             validHouseIds.has(requestedHouseId) ||
             authoredHouseIdentities.some(
               (house) => house.houseId === requestedHouseId,
@@ -688,9 +707,18 @@ export class FilePartnerSessionRepository implements PartnerSessionRepository {
             ? current.activeHouseId ?? null
             : mutation.activeHouseId?.trim() || null;
 
+        const canonicalHouseAuthority =
+          requestedHouseId === null
+            ? null
+            : await this.canonicalHouseAuthorityResolver.resolveHouseAuthority(
+                requestedHouseId,
+              );
         const activeHouseId =
           requestedHouseId !== null &&
           (
+            (canonicalHouseAuthority?.id === requestedHouseId &&
+              canonicalHouseAuthority.canonicalProjectId ===
+                authorizedScope.projectId) ||
             houseIdentityBelongsToAuthorizedProject(requestedHouseId, {
               companyId: authorizedScope.companyId,
               projectId: authorizedScope.projectId,

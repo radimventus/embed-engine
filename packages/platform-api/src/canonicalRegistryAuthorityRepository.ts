@@ -422,6 +422,20 @@ export class FileCanonicalRegistryAuthorityRepository {
     };
   }
 
+  async resolveHouseAuthority(
+    houseIdInput: string,
+  ): Promise<Pick<PlatformCanonicalHouse, 'id' | 'canonicalProjectId'> | null> {
+    const houseId = normalize(houseIdInput);
+    if (houseId.length === 0) return null;
+
+    const house = (await this.readAuthoritySnapshot()).houses.find(
+      (item) => item.id === houseId,
+    );
+    return house === undefined
+      ? null
+      : { id: house.id, canonicalProjectId: house.canonicalProjectId };
+  }
+
   async resolveProjectAuthority(
     projectIdInput: string,
   ): Promise<PlatformCanonicalProjectRuntimeAuthority | null> {
