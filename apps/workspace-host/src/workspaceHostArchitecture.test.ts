@@ -498,6 +498,7 @@ describe('VR-04 Canonical Workspace Shell', () => {
     assert.match(handler, /restoreAuthoritativeProjectMirror/);
     assert.match(handler, /createPlatformAccessAuthClient\(\)\.restoreSession\(\)/);
     assert.match(handler, /savePlatformSession\(restored\)/);
+    assert.match(handler, /replyPort\?\.postMessage/);
     assert.doesNotMatch(handler, /mutateSessionContext|enqueueAuthoritativeMutation/);
   });
 

@@ -733,7 +733,7 @@ describe('workspaceRegistry (CAP-BLD-08 / EPIC-BX-01 / CAP-PLAT-02a / CAP-PLAT-0
     );
   });
 
-  it('propagates a selected Project folder before activating its House', async () => {
+  it('confirms a selected Project in Host before activating its House', async () => {
     const { readFileSync } = await import('node:fs');
     const { dirname, join } = await import('node:path');
     const { fileURLToPath } = await import('node:url');
@@ -747,9 +747,12 @@ describe('workspaceRegistry (CAP-BLD-08 / EPIC-BX-01 / CAP-PLAT-02a / CAP-PLAT-0
       source.indexOf('const confirmDirtySave'),
     );
 
-    assert.match(
-      folderSelection,
-      /publishBuilderHouseScope\(folderId, null\)[\s\S]*publishWorkspaceProjectChange\(folderId,\s*true\)[\s\S]*requestOpenProject\(opened\.houseId/,
+    assert.doesNotMatch(folderSelection, /publishBuilderHouseScope\(folderId, null\)/);
+    assert.match(folderSelection, /confirmAuthoritativeWorkspaceProjectChange\(folderId\)/);
+    assert.match(folderSelection, /requestOpenProject\(opened\.houseId/);
+    assert.ok(
+      folderSelection.indexOf('confirmAuthoritativeWorkspaceProjectChange(folderId)') <
+        folderSelection.indexOf('requestOpenProject(opened.houseId'),
     );
   });
 

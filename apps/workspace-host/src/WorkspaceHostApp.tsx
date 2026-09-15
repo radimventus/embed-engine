@@ -804,6 +804,7 @@ export function WorkspaceHostApp() {
         // in-memory session belongs to another runtime, so restore the server
         // session into Host memory before mirroring it. Never mutate twice.
         if (event.data.authoritative === true) {
+          const replyPort = event.ports[0];
           void restoreAuthoritativeProjectMirror({
             requestedProjectId,
             restoreSession: () =>
@@ -813,7 +814,24 @@ export function WorkspaceHostApp() {
               setSharedProjectId(restored.projectId);
               setSharedActiveHouseId(restored.activeHouseId);
             },
-          });
+          })
+            .then((accepted) => {
+              replyPort?.postMessage(
+                accepted
+                  ? { ok: true }
+                  : {
+                      ok: false,
+                      error:
+                        'Platform API nepotvrdilo požadovaný kontext projektu.',
+                    },
+              );
+            })
+            .catch(() => {
+              replyPort?.postMessage({
+                ok: false,
+                error: 'Kontext projektu se nepodařilo obnovit z Platform API.',
+              });
+            });
           return;
         }
 

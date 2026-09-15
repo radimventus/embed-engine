@@ -21,14 +21,17 @@ test('selector puts newest projects first without mutating registry and supports
 test('TASK 114 follow-up — Builder folder switch waits for canonical durable context', async () => {
   const source = await readFile(new URL('./useWorkspaceController.ts', import.meta.url), 'utf8');
   assert.match(source, /switchAuthoritativeProjectContext\(folderId, 'builder'\)/);
-  assert.match(source, /if \(!\(await authorize\(\)\)\) return null/);
+  assert.match(source, /switchProject: authorize/);
+  assert.match(source, /runBuilderProjectAuthorityOrder/);
 });
 
 
-test('TASK 114 VR — Builder commits the authorized folder before first-House activation', async () => {
+test('TASK 114 VR — Builder waits for Host Project confirmation before first-House activation', async () => {
   const source = await readFile(new URL('./useWorkspaceController.ts', import.meta.url), 'utf8');
-  const authorize = source.indexOf("if (!(await authorize())) return null;", source.indexOf('const requestOpenFolder'));
-  const commit = source.indexOf('registryRef.current = opened.state;', authorize);
-  const house = source.indexOf('requestOpenProject(opened.houseId', authorize);
-  assert.ok(authorize >= 0 && commit > authorize && house > commit);
+  const start = source.indexOf('const requestOpenFolder');
+  const project = source.indexOf('switchProject: authorize', start);
+  const host = source.indexOf('confirmAuthoritativeWorkspaceProjectChange(folderId)', project);
+  const house = source.indexOf('requestOpenProject(opened.houseId', host);
+  assert.ok(project >= 0 && host > project && house > host);
+  assert.doesNotMatch(source.slice(start, host), /publishBuilderHouseScope\(folderId, null\)/);
 });

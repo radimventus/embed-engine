@@ -27,6 +27,7 @@ import {
 
 import { requestPlatformHousePackageInitialize } from "../house-package/requestPlatformHousePackage";
 import { requestWorkspaceActive } from "./requestWorkspaceActive";
+import { runBuilderProjectAuthorityOrder } from './builderProjectAuthorityOrder';
 import {
   composeWorkspaceRegistry,
   closeWorkspaceProject,
@@ -199,6 +200,39 @@ function publishWorkspaceProjectChange(
     createWorkspaceProjectChangeMessage(projectId, authoritative),
     targetOrigin,
   );
+}
+
+async function confirmAuthoritativeWorkspaceProjectChange(
+  projectId: string,
+): Promise<{ readonly ok: boolean; readonly error?: string }> {
+  if (
+    typeof window === 'undefined' ||
+    window.parent === window ||
+    !isCanonicalProjectId(projectId)
+  ) {
+    return { ok: true };
+  }
+  const channel = new MessageChannel();
+  const response = new Promise<{ readonly ok: boolean; readonly error?: string }>(
+    (resolve) => {
+      channel.port1.onmessage = (event: MessageEvent<unknown>) => {
+        const value = event.data as {
+          readonly ok?: unknown;
+          readonly error?: unknown;
+        };
+        resolve({
+          ok: value.ok === true,
+          ...(typeof value.error === 'string' ? { error: value.error } : {}),
+        });
+      };
+    },
+  );
+  window.parent.postMessage(
+    createWorkspaceProjectChangeMessage(projectId, true),
+    new URL(resolveWorkspaceHostHref()).origin,
+    [channel.port2],
+  );
+  return response;
 }
 
 function publishWorkspaceHouseChange(houseId: string | null): void {
@@ -657,51 +691,49 @@ export function useWorkspaceController(): WorkspaceController {
         return false;
       };
       const opened = openWorkspaceFolder(current, folderId);
-      if (opened.houseId === null) {
-        if (!(await authorize())) return null;
-        setRegistry(opened.state);
-        registryRef.current = opened.state;
-        publishBuilderHouseScope(folderId, null);
-        publishWorkspaceProjectChange(folderId, true);
-        setSwitchError(null);
-        return null;
-      }
-
-      if (opened.houseId === current.activeProjectId) {
-        if (!(await authorize())) return null;
-        setRegistry(opened.state);
-        publishBuilderHouseScope(
-          folderId,
-          current.projects.find((project) => project.id === opened.houseId) ??
-            null,
-        );
-        publishWorkspaceProjectChange(folderId, true);
-        return opened.houseId;
-      }
-
-      const decision = decideProjectSwitch({
-        dirty: options.dirty,
-        activeProjectId: current.activeProjectId,
-        targetProjectId: opened.houseId,
-      });
-      if (decision.action === "confirm-dirty") {
-        const target = current.projects.find(
-          (project) => project.id === opened.houseId,
-        );
-        if (target !== undefined) {
-          setDirtyPrompt({ kind: "switch", target });
+      if (opened.houseId !== null && opened.houseId !== current.activeProjectId) {
+        const decision = decideProjectSwitch({
+          dirty: options.dirty,
+          activeProjectId: current.activeProjectId,
+          targetProjectId: opened.houseId,
+        });
+        if (decision.action === 'confirm-dirty') {
+          const target = current.projects.find(
+            (project) => project.id === opened.houseId,
+          );
+          if (target !== undefined) {
+            setDirtyPrompt({ kind: 'switch', target });
+          }
+          return null;
         }
-        return null;
       }
 
-      if (!(await authorize())) return null;
-      // The durable Project switch must be visible before first-House activation.
-      setRegistry(opened.state);
-      registryRef.current = opened.state;
-      publishBuilderHouseScope(folderId, null);
-      publishWorkspaceProjectChange(folderId, true);
-      const ok = await requestOpenProject(opened.houseId, { dirty: false });
-      return ok ? opened.houseId : null;
+      const transition = await runBuilderProjectAuthorityOrder({
+        switchProject: authorize,
+        applyProjectProjection: () => {
+          setRegistry(opened.state);
+          registryRef.current = opened.state;
+        },
+        confirmHostProject: async () => {
+          const confirmation =
+            await confirmAuthoritativeWorkspaceProjectChange(folderId);
+          if (!confirmation.ok) {
+            setSwitchError(
+              confirmation.error ??
+                'Workspace nepotvrdil požadovaný kontext projektu.',
+            );
+          }
+          return confirmation.ok;
+        },
+        synchronizeHouse: async () => {
+          if (opened.houseId === null) return null;
+          const ok = await requestOpenProject(opened.houseId, { dirty: false });
+          return ok ? opened.houseId : null;
+        },
+      });
+      if (!transition.ok) return null;
+      setSwitchError(null);
+      return transition.value;
     },
     [requestOpenProject],
   );
