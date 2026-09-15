@@ -26,7 +26,10 @@ import {
 } from '../mail';
 import { getConversationMailStore } from '../mail/conversationMailStore';
 import {
+  createWorkspaceProjectChangeMessage,
+  isCanonicalProjectId,
   loadPlatformSession,
+  resolveWorkspaceHostHref,
   switchAuthoritativeProjectContext,
 } from '@embed-engine/platform-access';
 import type {
@@ -105,7 +108,22 @@ import {
 /** PT-OS-02 — bind session + PE workspaceContext to Office Select Shared Project. */
 async function syncSessionSharedProject(projectId: string): Promise<boolean> {
   const result = await switchAuthoritativeProjectContext(projectId, 'client');
-  return result.ok;
+  if (!result.ok) return false;
+
+  // Office may run in its own Workspace iframe. Its session store is isolated
+  // from the Host bundle, so ask the Host to restore the server-confirmed
+  // session instead of assuming this runtime's memory was shared.
+  if (
+    typeof window !== 'undefined' &&
+    window.parent !== window &&
+    isCanonicalProjectId(projectId)
+  ) {
+    window.parent.postMessage(
+      createWorkspaceProjectChangeMessage(projectId, true),
+      new URL(resolveWorkspaceHostHref()).origin,
+    );
+  }
+  return true;
 }
 
 export type PilotWorkspaceContextValue = {

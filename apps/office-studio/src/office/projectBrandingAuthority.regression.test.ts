@@ -88,6 +88,18 @@ test('TASK 114 follow-up — Office selection waits for canonical durable contex
   assert.doesNotMatch(context, /function syncSessionSharedProject[\s\S]{0,300}updateSession/);
 });
 
+test('TASK 114 — Office reports its completed authoritative switch to Workspace Host', async () => {
+  const context = await read('apps/office-studio/src/office/PilotWorkspaceContext.tsx');
+  const syncStart = context.indexOf('async function syncSessionSharedProject');
+  const syncEnd = context.indexOf('export type PilotWorkspaceContextValue', syncStart);
+  const sync = context.slice(syncStart, syncEnd);
+
+  assert.match(sync, /await switchAuthoritativeProjectContext\(projectId, 'client'\)/);
+  assert.match(sync, /if \(!result\.ok\) return false/);
+  assert.match(sync, /createWorkspaceProjectChangeMessage\(projectId, true\)/);
+  assert.match(sync, /window\.parent\.postMessage/);
+});
+
 
 test('TASK 114 VR — Office has one explicit durable switch and no state-mirroring write-back', async () => {
   const context = await read('apps/office-studio/src/office/PilotWorkspaceContext.tsx');

@@ -482,6 +482,25 @@ describe('VR-04 Canonical Workspace Shell', () => {
     assert.match(app, /studioFrameSrc\([\s\S]*sharedProjectId,[\s\S]*sharedActiveHouseId/);
   });
 
+  it('TASK-114 — restores authoritative Project changes from server before mirroring', () => {
+    const app = read('src/WorkspaceHostApp.tsx');
+    const handlerStart = app.indexOf(
+      'if (event.data.authoritative === true)',
+    );
+    const handlerEnd = app.indexOf(
+      'const currentHouseId =',
+      handlerStart,
+    );
+    assert.notEqual(handlerStart, -1);
+    assert.notEqual(handlerEnd, -1);
+    const handler = app.slice(handlerStart, handlerEnd);
+
+    assert.match(handler, /restoreAuthoritativeProjectMirror/);
+    assert.match(handler, /createPlatformAccessAuthClient\(\)\.restoreSession\(\)/);
+    assert.match(handler, /savePlatformSession\(restored\)/);
+    assert.doesNotMatch(handler, /mutateSessionContext|enqueueAuthoritativeMutation/);
+  });
+
   it('TASK-114 — delegates authoritative House scope to the server and mirrors exact confirmation', () => {
     const app = read('src/WorkspaceHostApp.tsx');
     const handlerStart = app.indexOf(

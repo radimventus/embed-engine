@@ -53,6 +53,7 @@ import {
 } from '@embed-engine/platform-shell';
 
 import clientStudioCss from '../../client-studio/src/index.css?inline';
+import { restoreAuthoritativeProjectMirror } from './authoritativeProjectMirror';
 
 
 type WorkspaceEntryStage = 'heslo' | 'start';
@@ -799,15 +800,20 @@ export function WorkspaceHostApp() {
         });
         const requestedProjectId = event.data.projectId;
 
-        // Builder already switched durable Project authority before publishing
-        // this message. The Host must mirror that confirmed session only;
-        // a second mutation creates an async echo/race and may roll context back.
+        // The embedded Studio already switched durable Project authority. Its
+        // in-memory session belongs to another runtime, so restore the server
+        // session into Host memory before mirroring it. Never mutate twice.
         if (event.data.authoritative === true) {
-          const confirmedSession = loadPlatformSession();
-          if (confirmedSession?.projectId === requestedProjectId) {
-            setSharedProjectId(confirmedSession.projectId);
-            setSharedActiveHouseId(confirmedSession.activeHouseId);
-          }
+          void restoreAuthoritativeProjectMirror({
+            requestedProjectId,
+            restoreSession: () =>
+              createPlatformAccessAuthClient().restoreSession(),
+            saveSession: (restored) => savePlatformSession(restored),
+            mirrorSession: (restored) => {
+              setSharedProjectId(restored.projectId);
+              setSharedActiveHouseId(restored.activeHouseId);
+            },
+          });
           return;
         }
 
