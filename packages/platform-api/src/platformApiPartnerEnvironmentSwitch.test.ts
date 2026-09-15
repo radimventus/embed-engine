@@ -482,6 +482,16 @@ describe('Authoritative Partner Environment house switch', () => {
         workspaceId: 'blokki-main',
       },
     });
+    await canonicalAuthority.upsertHouseAuthority({
+      id: 'durable-house',
+      canonicalProjectId: BLOKKI_SCOPE.projectId,
+      name: 'Durable House',
+    });
+    await canonicalAuthority.upsertHouseAuthority({
+      id: 'foreign-durable-house',
+      canonicalProjectId: DSE_CANONICAL_PROJECT_ID,
+      name: 'Foreign Durable House',
+    });
     const inviteRepository = new FilePlatformInviteRepository(
       join(directory, 'invites.json'),
     );
@@ -507,6 +517,9 @@ describe('Authoritative Partner Environment house switch', () => {
       undefined,
       undefined,
       partners,
+      undefined,
+      undefined,
+      canonicalAuthority,
     );
     await new Promise<void>((resolve) => server.listen(0, '127.0.0.1', resolve));
     try {
@@ -542,6 +555,59 @@ describe('Authoritative Partner Environment house switch', () => {
       assert.equal(activation.status, 200);
       const cookie = activation.headers.get('set-cookie')?.split(';')[0];
       assert.ok(cookie);
+
+      const managerInvite = await inviteRepository.create({
+        email: 'manager-registry@conis.test',
+        displayName: 'Blokki Manager',
+        roles: ['manager'],
+        invitedByUserId: 'user-operator',
+        tenantId: BLOKKI_SCOPE.tenantId,
+        companyId: BLOKKI_SCOPE.companyId,
+        workspaceId: BLOKKI_SCOPE.workspaceId,
+        projectId: BLOKKI_SCOPE.projectId,
+      });
+      const managerActivation = await fetch(
+        `${baseUrl}/public/auth/activate/${encodeURIComponent(managerInvite.token)}`,
+        {
+          method: 'POST',
+          headers: {
+            'content-type': 'application/json',
+            origin: 'https://conis.cz',
+          },
+          body: JSON.stringify({
+            ndaAccepted: true,
+            password: 'secure-password',
+            rememberMe: true,
+          }),
+        },
+      );
+      assert.equal(managerActivation.status, 200);
+      const managerCookie = managerActivation.headers.get('set-cookie')?.split(';')[0];
+      assert.ok(managerCookie);
+      const managerRegistry = await fetch(
+        `${baseUrl}/public/auth/canonical-registry`,
+        { headers: { cookie: managerCookie, origin: 'https://conis.cz' } },
+      );
+      assert.equal(managerRegistry.status, 200);
+      const managerRegistryBody = (await managerRegistry.json()) as {
+        registry: {
+          projects: Array<{ id: string }>;
+          houses: Array<{ id: string; canonicalProjectId: string }>;
+        };
+      };
+      assert.deepEqual(
+        managerRegistryBody.registry.projects.map((project) => project.id),
+        [BLOKKI_SCOPE.projectId],
+      );
+      assert.deepEqual(
+        managerRegistryBody.registry.houses.map((house) => house.id),
+        ['durable-house'],
+      );
+      assert.ok(
+        managerRegistryBody.registry.houses.every(
+          (house) => house.canonicalProjectId === BLOKKI_SCOPE.projectId,
+        ),
+      );
 
       const persist = await fetch(
         `${baseUrl}/office/partners/company-blokki/environment-scope`,

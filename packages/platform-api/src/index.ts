@@ -2480,18 +2480,38 @@ export function createPlatformApiServer(
           });
         }
 
-        if (!isPlatformAdmin(current.user.roles)) {
-          return respond(response, 403, {
-            error: "Canonical registry může číst pouze CONIS Admin.",
-          });
-        }
-
         const registry =
           await canonicalRegistryAuthorityRepository.readAuthoritySnapshot();
+        const visibleRegistry = isPlatformAdmin(current.user.roles)
+          ? registry
+          : {
+              tenants: registry.tenants.filter(
+                (tenant) => tenant.id === current.tenantId,
+              ),
+              companies: registry.companies.filter(
+                (company) =>
+                  company.id === current.companyId &&
+                  company.tenantId === current.tenantId,
+              ),
+              workspaces: registry.workspaces.filter(
+                (workspace) =>
+                  workspace.id === current.workspaceId &&
+                  workspace.companyId === current.companyId,
+              ),
+              projects: registry.projects.filter(
+                (project) =>
+                  project.id === current.projectId &&
+                  project.companyId === current.companyId &&
+                  project.workspaceId === current.workspaceId,
+              ),
+              houses: registry.houses.filter(
+                (house) => house.canonicalProjectId === current.projectId,
+              ),
+            };
 
         return respond(response, 200, {
           ok: true,
-          registry,
+          registry: visibleRegistry,
         });
       }
 
