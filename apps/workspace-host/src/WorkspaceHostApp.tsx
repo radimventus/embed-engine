@@ -54,6 +54,7 @@ import {
 
 import clientStudioCss from '../../client-studio/src/index.css?inline';
 import { restoreAuthoritativeProjectMirror } from './authoritativeProjectMirror';
+import { workspaceStudioFrameAuthorityKey } from './workspaceStudioFrameAuthority';
 
 
 type WorkspaceEntryStage = 'heslo' | 'start';
@@ -1105,7 +1106,7 @@ export function WorkspaceHostApp() {
             />
           ) : (
             <WorkspaceStudioFrame
-              key={surface}
+              key={workspaceStudioFrameAuthorityKey(surface, sharedProjectId)}
               surface={surface}
               projectId={sharedProjectId}
               activeHouseId={sharedActiveHouseId}

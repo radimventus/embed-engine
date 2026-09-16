@@ -8,12 +8,33 @@ import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { describe, it } from 'node:test';
 
+import { workspaceStudioFrameAuthorityKey } from './workspaceStudioFrameAuthority';
+
 const here = dirname(fileURLToPath(import.meta.url));
 const hostRoot = join(here, '..');
 
 function read(relative: string): string {
   return readFileSync(join(hostRoot, relative), 'utf8');
 }
+
+it('Manager runtime identity follows P1 → P2 → P3 without coupling House scope', () => {
+  const p1 = workspaceStudioFrameAuthorityKey('manager', 'project-dse');
+  const p2 = workspaceStudioFrameAuthorityKey('manager', 'project-p2');
+  const p3 = workspaceStudioFrameAuthorityKey('manager', 'project-p3');
+
+  assert.notEqual(p1, p2);
+  assert.notEqual(p2, p3);
+  assert.equal(
+    workspaceStudioFrameAuthorityKey('manager', 'project-p2'),
+    p2,
+    'House-only changes retain the Manager runtime identity',
+  );
+  assert.equal(
+    workspaceStudioFrameAuthorityKey('builder', 'project-p2'),
+    workspaceStudioFrameAuthorityKey('builder', 'project-p3'),
+    'Builder ACK lifecycle remains mounted and unchanged',
+  );
+});
 
 describe('VR-04 Canonical Workspace Shell', () => {
   it('TASK-81 — keeps persistent Pilot Program CTA above Workspace content', () => {

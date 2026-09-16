@@ -125,7 +125,13 @@ export function InviteShell({
         return;
       }
       prepareWelcomeJourney(result.session.user.email);
-      acceptAuthenticatedSession(result.session);
+      const accepted = await acceptAuthenticatedSession(result.session);
+      if (!accepted) {
+        setError(
+          'Účet byl aktivován, ale jeho projektová data se nepodařilo načíst. Přihlaste se prosím znovu.',
+        );
+        return;
+      }
       onActivated?.();
     } catch {
       setError('Výsledek aktivace se nepodařilo ověřit. Ověřujeme stav účtu.');

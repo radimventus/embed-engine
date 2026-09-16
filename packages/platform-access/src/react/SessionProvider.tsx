@@ -65,7 +65,9 @@ export type PlatformSessionContextValue = {
   readonly registry: CompanyRegistryState;
   readonly bootstrap: WorkspaceBootstrap | null;
   readonly login: (credentials: LoginCredentials) => Promise<{ ok: true } | { ok: false; error: string }>;
-  readonly acceptAuthenticatedSession: (session: PlatformSession) => void;
+  readonly acceptAuthenticatedSession: (
+    session: PlatformSession,
+  ) => Promise<boolean>;
   readonly logout: () => Promise<void>;
   readonly selectStudio: (studioId: PlatformStudioId) => void;
   readonly clearStudio: () => void;
@@ -294,9 +296,20 @@ export function SessionProvider({
     return { ok: true as const };
   }, [bindStudioId]);
 
-  const acceptAuthenticatedSession = useCallback((next: PlatformSession) => {
-    applySession(next);
-  }, [applySession]);
+  const acceptAuthenticatedSession = useCallback(
+    async (next: PlatformSession): Promise<boolean> => {
+      // Invite activation can introduce a durable-only Partner/Project into a
+      // runtime that still contains only the default registry. Hydrate the
+      // same authority used by ordinary restore before exposing the session.
+      const synchronized = await syncCanonicalRegistryFromAuthority();
+      if (!synchronized.ok) return false;
+
+      refreshRegistry();
+      applySession(next);
+      return true;
+    },
+    [applySession, refreshRegistry],
+  );
 
   const logout = useCallback(async () => {
     clearOperatorPartnerEnvironment();
