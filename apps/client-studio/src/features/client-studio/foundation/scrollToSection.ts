@@ -81,6 +81,29 @@ export function isSectionScrollReady(sectionId: string): boolean {
   return targetTop <= maximumScrollTop;
 }
 
+/** Confirms that canonical positioning has actually reached its target. */
+export function isSectionAtScrollAnchor(
+  sectionId: string,
+  additionalOffsetPx = 0,
+  tolerancePx = 3,
+): boolean {
+  const target = document.getElementById(sectionId);
+  if (target === null) return false;
+  const header = document.querySelector<HTMLElement>(
+    "[data-experience-header]",
+  );
+  const headerOffset =
+    (header ? Math.ceil(header.getBoundingClientRect().height) : 0) + 20;
+  const overlayMount = document.querySelector<HTMLElement>(
+    "[data-embed-overlay-mount]",
+  );
+  const viewportTop = overlayMount?.getBoundingClientRect().top ?? 0;
+  const expectedTop = viewportTop + headerOffset - additionalOffsetPx;
+  return (
+    Math.abs(target.getBoundingClientRect().top - expectedTop) <= tolerancePx
+  );
+}
+
 /** Priority chapter bridge block — CAP UX 39 scroll target. */
 export const PRIORITY_BRIDGE_ANCHOR_ID = "priority-chapter-bridge";
 

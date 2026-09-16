@@ -13,6 +13,7 @@ type JourneySceneFrameProps = {
   readonly onNavigate?: (sceneId: string) => void;
   readonly animateOnMount?: boolean;
   readonly compactDesktopEnd?: boolean;
+  readonly standardDesktopGap?: boolean;
   /** When false, footer sits 30px under content instead of viewport bottom. */
   readonly pinFooterToBottom?: boolean;
   /** Leading footer slot (e.g. Welcome Bridge), top-aligned with nav CTA. */
@@ -20,10 +21,8 @@ type JourneySceneFrameProps = {
   readonly children: ReactNode;
 };
 
-const SCENE_MIN_HEIGHT =
-  "calc(100dvh - var(--experience-header-height, 72px))";
-const SCENE_SAFE_BOTTOM_SPACE =
-  "max(20px, env(safe-area-inset-bottom, 0px))";
+const SCENE_MIN_HEIGHT = "calc(100dvh - var(--experience-header-height, 72px))";
+const SCENE_SAFE_BOTTOM_SPACE = "max(20px, env(safe-area-inset-bottom, 0px))";
 const SCENE_FINAL_SAFE_BOTTOM_SPACE =
   "max(40px, env(safe-area-inset-bottom, 0px))";
 
@@ -39,6 +38,7 @@ export function JourneySceneFrame({
   onNavigate,
   animateOnMount = false,
   compactDesktopEnd = false,
+  standardDesktopGap = false,
   pinFooterToBottom = true,
   footerLeading,
   children,
@@ -120,14 +120,16 @@ export function JourneySceneFrame({
       id={sceneId}
       data-journey-scene={sceneId}
       data-compact-desktop-end={compactDesktopEnd ? "true" : undefined}
+      data-standard-desktop-gap={standardDesktopGap ? "true" : undefined}
       className="flex w-full snap-start snap-normal flex-col gap-5"
       style={{
         minHeight: SCENE_MIN_HEIGHT,
         // Layout safety lives after the navigation marker and therefore does
         // not move the progressive navigation boundary.
-        paddingBottom: previousSceneId && !nextSceneId
-          ? SCENE_FINAL_SAFE_BOTTOM_SPACE
-          : SCENE_SAFE_BOTTOM_SPACE,
+        paddingBottom:
+          previousSceneId && !nextSceneId
+            ? SCENE_FINAL_SAFE_BOTTOM_SPACE
+            : SCENE_SAFE_BOTTOM_SPACE,
         opacity: isEntered ? 1 : 0,
         transform: "translateY(0)",
         transition: animateOnMount ? "opacity 1000ms ease" : undefined,
@@ -139,14 +141,16 @@ export function JourneySceneFrame({
         <div
           data-journey-navigation-boundary={sceneId}
           className={`grid grid-cols-[minmax(0,1fr)_auto] items-start gap-5 px-section ${
-            isFooterLeadingVisible
-              ? "mobile:grid-cols-1 mobile:gap-0"
-              : ""
-          } ${
-            pinFooterToBottom ? "mt-auto" : ""
-          }`}
+            isFooterLeadingVisible ? "mobile:grid-cols-1 mobile:gap-0" : ""
+          } ${pinFooterToBottom ? "mt-auto" : ""}`}
         >
-          <div ref={footerLeadingRef} data-mobile-journey-bridge="" className="min-w-0">{footerLeading}</div>
+          <div
+            ref={footerLeadingRef}
+            data-mobile-journey-bridge=""
+            className="min-w-0"
+          >
+            {footerLeading}
+          </div>
           {nextSceneId ? (
             <button
               type="button"

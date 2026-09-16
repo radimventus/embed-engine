@@ -14,13 +14,17 @@ import {
   isOrientationSection,
   isPrioritySection,
   isRacioSection,
+  isSectionAtScrollAnchor,
   isSectionScrollReady,
   nextProgressiveSceneId,
+  previousProgressiveSceneId,
   registerJourneySectionNavigator,
   scrollToSection,
   useActiveSection,
+  usePhysicalScrollLock,
   useProgressiveScrollUnlock,
 } from "./foundation";
+import type { ProgressiveNavigationDirection } from "./foundation";
 import { LegacyCommandExperience } from "./legacy/LegacyCommandExperience";
 import { AIAdvisor } from "./sections/AIAdvisor/AIAdvisor";
 import { Hero } from "./sections/Hero/Hero";
@@ -51,7 +55,8 @@ type ClientStudioPageProps = {
   onVisibleSceneIdsChange?: (sceneIds: readonly string[]) => void;
 };
 
-export const PROGRESSIVE_NAVIGATION_SETTLE_MS = 900;
+export const PROGRESSIVE_PHYSICAL_SCROLL_LOCK_MS = 1000;
+export const PROGRESSIVE_PHYSICAL_SCROLL_LOCK_FAILSAFE_MS = 1500;
 
 /**
  * Decision Session Experience host (ED-DA-04 / CSCB-01).
@@ -77,9 +82,11 @@ export function ClientStudioPage({
   const [pendingSceneId, setPendingSceneId] = useState<string | null>(
     PILOT_SECTION_IDS.socialProof,
   );
-  const [pendingSceneScrollOffsetPx, setPendingSceneScrollOffsetPx] =
-    useState(initialLandingOffsetPx);
+  const [pendingSceneScrollOffsetPx, setPendingSceneScrollOffsetPx] = useState(
+    initialLandingOffsetPx,
+  );
   const [isSceneTransitioning, setIsSceneTransitioning] = useState(false);
+  const [isPhysicalScrollLocked, setIsPhysicalScrollLocked] = useState(false);
   const visibleSceneIds = scenes
     .slice(0, revealedSceneCount)
     .map((scene) => scene.id);
@@ -91,6 +98,7 @@ export function ClientStudioPage({
   const [snapEnabled, setSnapEnabled] = useState(false);
   const [scrollIntentResetKey, setScrollIntentResetKey] = useState(0);
   const transitionTimerRef = useRef<number | null>(null);
+  const transitionFailsafeRef = useRef<number | null>(null);
   const transitionEndCleanupRef = useRef<(() => void) | null>(null);
 
   useEffect(() => {
@@ -98,9 +106,14 @@ export function ClientStudioPage({
       if (transitionTimerRef.current !== null) {
         window.clearTimeout(transitionTimerRef.current);
       }
+      if (transitionFailsafeRef.current !== null) {
+        window.clearTimeout(transitionFailsafeRef.current);
+      }
       transitionEndCleanupRef.current?.();
     };
   }, []);
+
+  usePhysicalScrollLock(isPhysicalScrollLocked);
 
   useEffect(() => {
     onActiveSceneChange?.(activeSceneId);
@@ -152,47 +165,74 @@ export function ClientStudioPage({
         return;
       }
 
-      let settleStarted = false;
+      let physicalLockStarted = false;
       const finishTransition = () => {
         if (transitionTimerRef.current !== null) {
           window.clearTimeout(transitionTimerRef.current);
           transitionTimerRef.current = null;
         }
+        if (transitionFailsafeRef.current !== null) {
+          window.clearTimeout(transitionFailsafeRef.current);
+          transitionFailsafeRef.current = null;
+        }
+        setIsPhysicalScrollLocked(false);
         setIsSceneTransitioning(false);
       };
       const scrollRoot =
         document.querySelector<HTMLElement>("[data-embed-overlay-mount]") ??
         window;
-      const beginSettle = () => {
-        if (settleStarted) return;
-        settleStarted = true;
+      const beginPhysicalLock = () => {
+        if (physicalLockStarted) return;
+        physicalLockStarted = true;
         transitionEndCleanupRef.current?.();
         transitionEndCleanupRef.current = null;
         if (transitionTimerRef.current !== null) {
           window.clearTimeout(transitionTimerRef.current);
         }
+        setIsPhysicalScrollLocked(true);
         transitionTimerRef.current = window.setTimeout(
           finishTransition,
-          PROGRESSIVE_NAVIGATION_SETTLE_MS,
+          PROGRESSIVE_PHYSICAL_SCROLL_LOCK_MS,
+        );
+        transitionFailsafeRef.current = window.setTimeout(
+          finishTransition,
+          PROGRESSIVE_PHYSICAL_SCROLL_LOCK_FAILSAFE_MS,
         );
       };
+      const target = document.getElementById(sceneId);
+      const positionTarget = (behavior: ScrollBehavior) => {
+        const previousTransform = target?.style.transform;
+        if (target !== null && scrollOffsetPx !== 0) {
+          target.style.transform = `translateY(${scrollOffsetPx}px)`;
+        }
+        scrollToSection(sceneId, behavior);
+        if (target !== null && scrollOffsetPx !== 0) {
+          target.style.transform = previousTransform ?? "";
+        }
+      };
+      const beginPhysicalLockAtTarget = () => {
+        if (!isSectionAtScrollAnchor(sceneId, scrollOffsetPx)) return false;
+        beginPhysicalLock();
+        return true;
+      };
       transitionEndCleanupRef.current?.();
-      const onScrollEnd = () => beginSettle();
-      scrollRoot.addEventListener("scrollend", onScrollEnd, { once: true });
+      const onScrollEnd = () => {
+        beginPhysicalLockAtTarget();
+      };
+      scrollRoot.addEventListener("scrollend", onScrollEnd);
       transitionEndCleanupRef.current = () => {
         scrollRoot.removeEventListener("scrollend", onScrollEnd);
       };
-      // Fallback for engines that do not dispatch scrollend.
-      transitionTimerRef.current = window.setTimeout(beginSettle, 2000);
-      const target = document.getElementById(sceneId);
-      const previousTransform = target?.style.transform;
-      if (target !== null && scrollOffsetPx !== 0) {
-        target.style.transform = `translateY(${scrollOffsetPx}px)`;
-      }
-      scrollToSection(sceneId, "smooth");
-      if (target !== null && scrollOffsetPx !== 0) {
-        target.style.transform = previousTransform ?? "";
-      }
+      // Fallback for engines that do not dispatch scrollend: first guarantee
+      // canonical positioning, then start the physical focus lock.
+      transitionTimerRef.current = window.setTimeout(() => {
+        if (beginPhysicalLockAtTarget()) return;
+        positionTarget("auto");
+        window.requestAnimationFrame(() => {
+          if (!beginPhysicalLockAtTarget()) finishTransition();
+        });
+      }, 2000);
+      positionTarget("smooth");
       setPendingSceneId((current) => (current === sceneId ? null : current));
     };
 
@@ -220,6 +260,7 @@ export function ClientStudioPage({
       setSnapEnabled(true);
     }
     setIsSceneTransitioning(true);
+    setIsPhysicalScrollLocked(false);
     setActiveSceneId(sceneId);
     setRequestedSceneId(sceneId);
     setPendingSceneScrollOffsetPx(scrollOffsetPx);
@@ -229,6 +270,10 @@ export function ClientStudioPage({
     if (transitionTimerRef.current !== null) {
       window.clearTimeout(transitionTimerRef.current);
       transitionTimerRef.current = null;
+    }
+    if (transitionFailsafeRef.current !== null) {
+      window.clearTimeout(transitionFailsafeRef.current);
+      transitionFailsafeRef.current = null;
     }
   };
 
@@ -270,124 +315,136 @@ export function ClientStudioPage({
     scenes.map((scene) => scene.id),
     activeSceneId,
   );
+  const previousProgressiveScene = previousProgressiveSceneId(
+    scenes.map((scene) => scene.id),
+    activeSceneId,
+  );
+
+  const navigateProgressively = (direction: ProgressiveNavigationDirection) => {
+    const targetScene =
+      direction === "forward" ? nextProgressiveScene : previousProgressiveScene;
+    if (targetScene === null) return;
+    if (direction === "forward" && activeSceneId === scenes[0]!.id) {
+      welcomeBridge.dismiss();
+    }
+    unlockScene(targetScene);
+  };
 
   useProgressiveScrollUnlock({
-    enabled: nextProgressiveScene !== null,
-    settling: isSceneTransitioning,
+    navigationBlocked: isSceneTransitioning || isPhysicalScrollLocked,
+    canNavigateForward: nextProgressiveScene !== null,
+    canNavigateBackward: previousProgressiveScene !== null,
     currentSceneId: activeSceneId ?? scenes[0]!.id,
     progressKey: `${revealedSceneCount}:${scrollIntentResetKey}`,
-    onUnlockNext: () => {
-      if (nextProgressiveScene === null) return;
-      if (activeSceneId === scenes[0]!.id) {
-        welcomeBridge.dismiss();
-      }
-      unlockScene(nextProgressiveScene);
-    },
+    onNavigate: navigateProgressively,
   });
 
   return (
     <DecisionAnalyticsProvider>
-        <SocialProofFeedProvider>
-          <RuntimeBootstrapGate>
-            <BuilderPreviewPersonaApplicator />
-            <WalkthroughProvider>
-              <GuidedJourneyRoot
-                snapEnabled={snapEnabled && !isSceneTransitioning}
-              />
-              <JourneySurfaceObserver />
-              <DesktopCanvas>
-                <div
-                  className="relative"
-                  data-guided-journey="decision-journey"
-                  data-current-scene={activeSceneId ?? ""}
-                >
-                  {legacyExperience !== null &&
-                  onLegacySelectChoice !== undefined &&
-                  onLegacyContinue !== undefined ? (
-                    <LegacyCommandExperience
-                      experience={legacyExperience}
-                      onSelectChoice={onLegacySelectChoice}
-                      onContinue={onLegacyContinue}
-                    />
-                  ) : null}
-                  <JourneySceneFrame
-                    sceneId={scenes[0]!.id}
-                    nextSceneId={scenes[1]?.id}
-                    onNavigate={handleSceneNavigate}
-                    pinFooterToBottom={false}
-                    footerLeading={
-                      <ClientStudioWelcomeBridge
-                        open={welcomeBridge.open}
-                        onContinue={welcomeBridge.continueToPriority}
-                        onDismiss={welcomeBridge.dismiss}
-                      />
-                    }
-                  >
-                    <Hero />
-                    <ChapterSpacer />
-                    <SpatialTerminal />
-                  </JourneySceneFrame>
-                  {revealedSceneCount >= 2 ? (
-                    <PriorityExperienceProvider>
-                      <JourneySceneFrame
-                        sceneId={scenes[1]!.id}
-                        onNavigate={handleSceneNavigate}
-                        animateOnMount={revealedSceneCount === 2}
-                      >
-                        <PriorityEngine
-                          onBack={() =>
-                            unlockScene(
-                              scenes[0]!.id,
-                              PILOT_SECTION_IDS.socialProof,
-                              20,
-                            )
-                          }
-                          onContinueToRacio={() => {
-                            if (PILOT_FLAGS.showAiAdvisor) {
-                              unlockScene(scenes[2]!.id);
-                            }
-                          }}
-                          showRacioBridge={revealedSceneCount < 3}
-                        />
-                      </JourneySceneFrame>
-                    </PriorityExperienceProvider>
-                  ) : null}
-                  {revealedSceneCount >= 3 ? (
-                    <JourneySceneFrame
-                      sceneId={scenes[2]!.id}
-                      previousSceneId={scenes[1]?.id}
-                      nextSceneId={scenes[3]?.id}
-                      onNavigate={handleSceneNavigate}
-                      animateOnMount={revealedSceneCount === 3}
-                      pinFooterToBottom={false}
-                    >
-                      {PILOT_FLAGS.showAiAdvisor ? <AIAdvisor /> : null}
-                    </JourneySceneFrame>
-                  ) : null}
-                  {revealedSceneCount >= 4 ? (
-                    <JourneySceneFrame
-                      sceneId={scenes[3]!.id}
-                      compactDesktopEnd
-                      onNavigate={handleSceneNavigate}
-                      animateOnMount={revealedSceneCount === 4}
-                      pinFooterToBottom={false}
-                    >
-                      <AuditLeadCapture
-                        onBack={() => unlockScene(scenes[2]!.id)}
-                      />
-                    </JourneySceneFrame>
-                  ) : null}
-                  <AmbientSocialProof
-                    enabled={!isSceneTransitioning}
-                    journeyHasLeftMain={
-                      activeSceneId !== scenes[0]?.id || revealedSceneCount > 1
-                    }
+      <SocialProofFeedProvider>
+        <RuntimeBootstrapGate>
+          <BuilderPreviewPersonaApplicator />
+          <WalkthroughProvider>
+            <GuidedJourneyRoot
+              snapEnabled={snapEnabled && !isSceneTransitioning}
+            />
+            <JourneySurfaceObserver />
+            <DesktopCanvas>
+              <div
+                className="relative"
+                data-guided-journey="decision-journey"
+                data-current-scene={activeSceneId ?? ""}
+              >
+                {legacyExperience !== null &&
+                onLegacySelectChoice !== undefined &&
+                onLegacyContinue !== undefined ? (
+                  <LegacyCommandExperience
+                    experience={legacyExperience}
+                    onSelectChoice={onLegacySelectChoice}
+                    onContinue={onLegacyContinue}
                   />
-                </div>
-              </DesktopCanvas>
-            </WalkthroughProvider>
-          </RuntimeBootstrapGate>
-        </SocialProofFeedProvider>
+                ) : null}
+                <JourneySceneFrame
+                  sceneId={scenes[0]!.id}
+                  nextSceneId={scenes[1]?.id}
+                  onNavigate={handleSceneNavigate}
+                  pinFooterToBottom={false}
+                  footerLeading={
+                    <ClientStudioWelcomeBridge
+                      open={welcomeBridge.open}
+                      onContinue={welcomeBridge.continueToPriority}
+                      onDismiss={welcomeBridge.dismiss}
+                    />
+                  }
+                >
+                  <Hero />
+                  <ChapterSpacer />
+                  <SpatialTerminal />
+                </JourneySceneFrame>
+                {revealedSceneCount >= 2 ? (
+                  <PriorityExperienceProvider>
+                    <JourneySceneFrame
+                      sceneId={scenes[1]!.id}
+                      onNavigate={handleSceneNavigate}
+                      animateOnMount={revealedSceneCount === 2}
+                      standardDesktopGap
+                    >
+                      <PriorityEngine
+                        onBack={() =>
+                          unlockScene(
+                            scenes[0]!.id,
+                            PILOT_SECTION_IDS.socialProof,
+                            20,
+                          )
+                        }
+                        onContinueToRacio={() => {
+                          if (PILOT_FLAGS.showAiAdvisor) {
+                            unlockScene(scenes[2]!.id);
+                          }
+                        }}
+                        showRacioBridge={revealedSceneCount < 3}
+                      />
+                    </JourneySceneFrame>
+                  </PriorityExperienceProvider>
+                ) : null}
+                {revealedSceneCount >= 3 ? (
+                  <JourneySceneFrame
+                    sceneId={scenes[2]!.id}
+                    previousSceneId={scenes[1]?.id}
+                    nextSceneId={scenes[3]?.id}
+                    onNavigate={handleSceneNavigate}
+                    animateOnMount={revealedSceneCount === 3}
+                    pinFooterToBottom={false}
+                    standardDesktopGap
+                  >
+                    {PILOT_FLAGS.showAiAdvisor ? <AIAdvisor /> : null}
+                  </JourneySceneFrame>
+                ) : null}
+                {revealedSceneCount >= 4 ? (
+                  <JourneySceneFrame
+                    sceneId={scenes[3]!.id}
+                    compactDesktopEnd
+                    onNavigate={handleSceneNavigate}
+                    animateOnMount={revealedSceneCount === 4}
+                    pinFooterToBottom={false}
+                    standardDesktopGap
+                  >
+                    <AuditLeadCapture
+                      onBack={() => unlockScene(scenes[2]!.id)}
+                    />
+                  </JourneySceneFrame>
+                ) : null}
+                <AmbientSocialProof
+                  enabled={!isSceneTransitioning}
+                  journeyHasLeftMain={
+                    activeSceneId !== scenes[0]?.id || revealedSceneCount > 1
+                  }
+                />
+              </div>
+            </DesktopCanvas>
+          </WalkthroughProvider>
+        </RuntimeBootstrapGate>
+      </SocialProofFeedProvider>
     </DecisionAnalyticsProvider>
   );
 }

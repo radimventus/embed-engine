@@ -22,16 +22,16 @@
     @apply font-sans antialiased;
   }
 
-  html[data-guided-journey-root='true'],
-  body[data-guided-journey-root='true'],
-  [data-guided-journey-root='true'] {
+  html[data-guided-journey-root="true"],
+  body[data-guided-journey-root="true"],
+  [data-guided-journey-root="true"] {
     scroll-behavior: smooth;
     scroll-padding-top: var(--guided-journey-header-offset, 92px);
     scroll-padding-bottom: var(--guided-journey-bottom-nav-offset, 0px);
   }
 
-  html[data-guided-journey-root='true'][data-guided-journey-snap='on'],
-  [data-guided-journey-root='true'][data-guided-journey-snap='on'] {
+  html[data-guided-journey-root="true"][data-guided-journey-snap="on"],
+  [data-guided-journey-root="true"][data-guided-journey-snap="on"] {
     scroll-snap-type: y proximity;
   }
 
@@ -78,7 +78,7 @@
   /**
    * RCS-06 — unify short UI transitions; respect reduced motion below.
    */
-  [data-studio-shell='mobile-nav'] button,
+  [data-studio-shell="mobile-nav"] button,
   [data-journey-scene] button {
     transition-duration: 150ms;
     transition-timing-function: ease-out;
@@ -93,14 +93,18 @@
      * Soft contain for below-fold scenes — keeps aspect reserved via
      * minHeight on JourneySceneFrame; reduces paint work while scrolling.
      */
-    [data-journey-scene]:not([data-journey-scene='journey-scene-orientation']) {
+    [data-journey-scene]:not([data-journey-scene="journey-scene-orientation"]) {
       content-visibility: auto;
       contain-intrinsic-size: auto 720px;
     }
   }
 
   @media (min-width: 1280px) {
-    [data-journey-scene][data-compact-desktop-end='true'] {
+    [data-journey-scene][data-standard-desktop-gap="true"] {
+      margin-top: 48px;
+    }
+
+    [data-journey-scene][data-compact-desktop-end="true"] {
       min-height: 0 !important;
     }
   }
@@ -132,9 +136,9 @@
   }
 
   @media (prefers-reduced-motion: reduce) {
-    html[data-guided-journey-root='true'],
-    body[data-guided-journey-root='true'],
-    [data-guided-journey-root='true'] {
+    html[data-guided-journey-root="true"],
+    body[data-guided-journey-root="true"],
+    [data-guided-journey-root="true"] {
       scroll-behavior: auto;
     }
 
@@ -146,14 +150,12 @@
       animation: none;
     }
 
-    [data-studio-shell='mobile-nav'] button,
+    [data-studio-shell="mobile-nav"] button,
     [data-journey-scene] button {
       transition-duration: 0ms;
     }
   }
 }
-
-
 
 /* TASK 89 — global vertical availability contract.
    Preserve guided journey behavior; guarantee bottom reachability. */

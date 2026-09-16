@@ -5,185 +5,211 @@ import { fileURLToPath } from "node:url";
 import { describe, it } from "node:test";
 
 import {
-  EMPTY_SCROLL_INTENT,
+  EMPTY_DIRECTIONAL_INTENT,
   PROGRESSIVE_SCROLL_UNLOCK_THRESHOLD_PX,
-  applyGuardedScrollIntent,
-  applyScrollIntent,
-  accumulateScrollIntent,
-  lockScrollIntentUntilIdle,
-  nextProgressiveSceneId,
+  applyDirectionalIntent,
   hasReachedNavigationBoundary,
+  hasReachedSceneStart,
+  nextProgressiveSceneId,
+  previousProgressiveSceneId,
   touchDownwardDeltaPx,
 } from "./useProgressiveScrollUnlock";
 
 const here = dirname(fileURLToPath(import.meta.url));
+const read = (path: string) => readFileSync(join(here, path), "utf8");
 
-describe("progressive scroll navigation", () => {
-  it("keeps the threshold tunable and accumulates downward intent", () => {
+describe("pinned progressive scene navigation", () => {
+  it("uses a tunable 160px threshold and transitions forward immediately", () => {
     assert.equal(PROGRESSIVE_SCROLL_UNLOCK_THRESHOLD_PX, 160);
-    assert.deepEqual(accumulateScrollIntent(0, 60), {
-      accumulatedPx: 60,
-      thresholdReached: false,
-    });
-    assert.deepEqual(accumulateScrollIntent(60, 100), {
-      accumulatedPx: 0,
-      thresholdReached: true,
-    });
+    const partial = applyDirectionalIntent(EMPTY_DIRECTIONAL_INTENT, 159);
+    const reached = applyDirectionalIntent(partial.state, 1);
+    assert.equal(partial.transition, null);
+    assert.equal(reached.transition, "forward");
+    assert.deepEqual(reached.state, EMPTY_DIRECTIONAL_INTENT);
   });
 
-  it("never carries excess input into a second unlock", () => {
-    const first = applyScrollIntent(EMPTY_SCROLL_INTENT, 500);
-    const momentum = applyScrollIntent(first.state, 500);
-
-    assert.equal(first.unlock, true);
-    assert.equal(momentum.unlock, false);
-    assert.deepEqual(momentum.state, lockScrollIntentUntilIdle());
+  it("transitions backward at the same signed threshold", () => {
+    const partial = applyDirectionalIntent(EMPTY_DIRECTIONAL_INTENT, -100);
+    const reached = applyDirectionalIntent(partial.state, -60);
+    assert.equal(reached.transition, "backward");
+    assert.deepEqual(reached.state, EMPTY_DIRECTIONAL_INTENT);
   });
 
-  it("resets 140px intent on button navigation before another 20px", () => {
-    const page = readFileSync(join(here, "../ClientStudioPage.tsx"), "utf8");
-    const partial = applyScrollIntent(EMPTY_SCROLL_INTENT, 140);
-    const afterButton = lockScrollIntentUntilIdle();
-    const followingScroll = applyScrollIntent(afterButton, 20);
-
-    assert.equal(partial.state.accumulatedPx, 140);
-    assert.equal(followingScroll.unlock, false);
-    assert.equal(followingScroll.state.accumulatedPx, 0);
-    assert.match(page, /setScrollIntentResetKey\(\(current\) => current \+ 1\)/);
-    assert.match(page, /progressKey: `\$\{revealedSceneCount\}:\$\{scrollIntentResetKey\}`/);
+  it("resets accumulated displacement when direction changes", () => {
+    const down = applyDirectionalIntent(EMPTY_DIRECTIONAL_INTENT, 140);
+    const up = applyDirectionalIntent(down.state, -20);
+    assert.deepEqual(up.state, { direction: "backward", accumulatedPx: 20 });
+    assert.equal(up.transition, null);
   });
 
-  it("uses viewport Y movement with the same positive-downward convention", () => {
+  it("maps both directions to adjacent available scenes", () => {
+    const ids = ["orientation", "priority", "racio", "audit"];
+    assert.equal(nextProgressiveSceneId(ids, "priority"), "racio");
+    assert.equal(previousProgressiveSceneId(ids, "priority"), "orientation");
+    assert.equal(previousProgressiveSceneId(ids, "orientation"), null);
+  });
+
+  it("keeps touch direction consistent with wheel direction", () => {
     assert.equal(touchDownwardDeltaPx(420, 380), 40);
     assert.equal(touchDownwardDeltaPx(380, 420), -40);
   });
 
-  it("routes buttons and scroll through the same canonical unlock", () => {
-    const page = readFileSync(join(here, "../ClientStudioPage.tsx"), "utf8");
-    assert.match(page, /const unlockScene =/);
-    assert.match(page, /scrollTargetId = sceneId/);
-    assert.match(page, /const handleSceneNavigate[\s\S]*unlockScene\(sceneId\)/);
-    assert.match(page, /useProgressiveScrollUnlock\(/);
-    assert.match(page, /unlockScene\(nextProgressiveScene\)/);
-    assert.equal(page.includes("preserveViewport"), false);
-  });
-
-  it("positions only after the newly unlocked scene is available", () => {
-    const page = readFileSync(join(here, "../ClientStudioPage.tsx"), "utf8");
-    const readiness = page.indexOf("document.getElementById(sceneId) === null");
-    const positioning = page.indexOf('scrollToSection(sceneId, "smooth")');
-
-    assert.ok(readiness > 0);
-    assert.ok(readiness < positioning);
-    assert.match(page, /!isSectionScrollReady\(sceneId\)/);
-    assert.match(page, /window\.requestAnimationFrame\(scrollWhenReady\)/);
-  });
-
-  it("uses the current scene navigation boundary instead of document bottom", () => {
-    const hook = readFileSync(join(here, "useProgressiveScrollUnlock.ts"), "utf8");
-    const frame = readFileSync(join(here, "JourneySceneFrame.tsx"), "utf8");
-
-    assert.match(frame, /data-journey-navigation-boundary=\{sceneId\}/);
-    assert.match(hook, /currentSceneBoundary\(sceneId\)/);
-    assert.match(hook, /!isAtCurrentSceneBoundary\(root, currentSceneId\)/);
-    assert.match(hook, /boundary\.getBoundingClientRect\(\)\.bottom/);
-    assert.equal(hook.includes("document.documentElement.scrollHeight"), false);
-    assert.equal(hook.includes("document.body.scrollHeight"), false);
-  });
-
-  it("handles short and long scenes at their content navigation boundary", () => {
-    assert.equal(hasReachedNavigationBoundary(560, 800), true);
+  it("allows long-scene reading before either reading boundary", () => {
     assert.equal(hasReachedNavigationBoundary(1_400, 800), false);
+    assert.equal(hasReachedSceneStart(40, 0, 92), false);
     assert.equal(hasReachedNavigationBoundary(800, 800), true);
+    assert.equal(hasReachedSceneStart(92, 0, 92), true);
   });
 
-  it("uses the same boundary rule across viewport heights", () => {
-    for (const viewportBottom of [568, 768, 900, 1_080]) {
-      assert.equal(
-        hasReachedNavigationBoundary(viewportBottom, viewportBottom),
-        true,
-      );
-      assert.equal(
-        hasReachedNavigationBoundary(viewportBottom + 100, viewportBottom),
-        false,
-      );
-    }
+  it("uses scene bounds rather than document bottom", () => {
+    const hook = read("useProgressiveScrollUnlock.ts");
+    assert.match(hook, /isAtCurrentSceneBoundary/);
+    assert.match(hook, /isAtCurrentSceneStart/);
+    assert.doesNotMatch(hook, /document\.documentElement\.scrollHeight/);
+    assert.doesNotMatch(hook, /document\.body\.scrollHeight/);
   });
 
-  it("keeps safe bottom space out of navigation boundary geometry", () => {
-    const frame = readFileSync(join(here, "JourneySceneFrame.tsx"), "utf8");
-    const hook = readFileSync(join(here, "useProgressiveScrollUnlock.ts"), "utf8");
-
-    assert.match(frame, /SCENE_SAFE_BOTTOM_SPACE/);
-    assert.match(frame, /data-journey-navigation-boundary=\{sceneId\}/);
-    assert.match(hook, /hasReachedNavigationBoundary/);
-    assert.equal(hook.includes("scrollHeight"), true);
-    assert.equal(hook.includes("root.scrollHeight"), false);
-  });
-
-  it("blocks momentum during 900ms settle and starts afterward from zero", () => {
-    const page = readFileSync(join(here, "../ClientStudioPage.tsx"), "utf8");
-    const duringSettle = applyGuardedScrollIntent(
-      { accumulatedPx: 140, lockedUntilIdle: false },
-      500,
-      { enabled: true, settling: true },
+  it("pins input only at the matching directional reading boundary", () => {
+    const hook = read("useProgressiveScrollUnlock.ts");
+    assert.match(
+      hook,
+      /direction === "forward"[\s\S]*isAtCurrentSceneBoundary/,
     );
-    const afterSettle = applyGuardedScrollIntent(
-      duringSettle.state,
-      160,
-      { enabled: true, settling: false },
+    assert.match(hook, /isAtCurrentSceneStart/);
+    assert.match(hook, /event\.preventDefault\(\)/);
+    assert.match(hook, /passive: false/);
+  });
+
+  it("protects directional inner scrollers", () => {
+    const hook = read("useProgressiveScrollUnlock.ts");
+    assert.match(hook, /direction === "forward"[\s\S]*element\.scrollHeight/);
+    assert.match(hook, /direction === "backward" && element\.scrollTop/);
+  });
+
+  it("routes buttons and both scroll directions through unlockScene", () => {
+    const page = read("../ClientStudioPage.tsx");
+    assert.match(
+      page,
+      /const handleSceneNavigate[\s\S]*unlockScene\(sceneId\)/,
     );
-
-    assert.deepEqual(duringSettle, {
-      state: EMPTY_SCROLL_INTENT,
-      unlock: false,
-    });
-    assert.equal(afterSettle.unlock, true);
-    assert.match(page, /PROGRESSIVE_NAVIGATION_SETTLE_MS = 900/);
-    assert.match(page, /scrollend/);
-    assert.match(page, /settling: isSceneTransitioning/);
-    assert.equal(page.includes("overflow = \"hidden\""), false);
+    assert.match(page, /const navigateProgressively/);
+    assert.match(page, /unlockScene\(targetScene\)/);
+    assert.match(page, /onNavigate: navigateProgressively/);
   });
 
-  it("protects nested scrollers and keeps momentum locked after positioning", () => {
-    const hook = readFileSync(join(here, "useProgressiveScrollUnlock.ts"), "utf8");
-    const page = readFileSync(join(here, "../ClientStudioPage.tsx"), "utf8");
-
-    assert.match(hook, /nestedScrollerCanContinue\(target, root\)/);
-    assert.match(hook, /intentRef\.current\.lockedUntilIdle/);
-    assert.match(hook, /releaseAfterIdle\(\)/);
-    assert.match(page, /setScrollIntentResetKey\(\(current\) => current \+ 1\)/);
-    assert.match(hook, /deltaPx <= 0/);
-    assert.match(hook, /touchmove/);
-    assert.match(hook, /wheel/);
+  it("starts transition synchronously at threshold", () => {
+    const hook = read("useProgressiveScrollUnlock.ts");
+    const transition = hook.indexOf("navigateRef.current(result.transition)");
+    assert.ok(transition > 0);
+    assert.doesNotMatch(
+      hook.slice(transition - 180, transition + 80),
+      /setTimeout/,
+    );
   });
 
-  it("re-arms forward scroll repeatedly after canonical Back navigation", () => {
-    const page = readFileSync(join(here, "../ClientStudioPage.tsx"), "utf8");
-    const sceneIds = ["orientation", "priority", "racio", "decision"];
-
-    for (let cycle = 0; cycle < 3; cycle += 1) {
-      assert.equal(nextProgressiveSceneId(sceneIds, "racio"), "decision");
-      assert.equal(nextProgressiveSceneId(sceneIds, "decision"), null);
-      assert.equal(nextProgressiveSceneId(sceneIds, "racio"), "decision");
-    }
-
-    assert.match(page, /enabled: nextProgressiveScene !== null/);
-    assert.match(page, /currentSceneId: activeSceneId/);
-    assert.match(page, /setRevealedSceneCount\(\(current\) => Math\.max/);
-    assert.match(page, /settling: isSceneTransitioning/);
+  it("positions only after target render readiness", () => {
+    const page = read("../ClientStudioPage.tsx");
+    const ready = page.indexOf("document.getElementById(sceneId) === null");
+    const position = page.indexOf('positionTarget("smooth")');
+    assert.ok(ready > 0 && ready < position);
+    assert.match(page, /!isSectionScrollReady\(sceneId\)/);
   });
 
-  it("removes only final desktop min-height while preserving compact clipping safety", () => {
-    const page = readFileSync(join(here, "../ClientStudioPage.tsx"), "utf8");
-    const frame = readFileSync(join(here, "JourneySceneFrame.tsx"), "utf8");
-    const css = readFileSync(join(here, "../../../index.css"), "utf8");
+  it("starts physical lock only from canonical scroll completion", () => {
+    const page = read("../ClientStudioPage.tsx");
+    assert.match(
+      page,
+      /const onScrollEnd = \(\) => \{[\s\S]*beginPhysicalLockAtTarget\(\)/,
+    );
+    assert.match(page, /scrollRoot\.addEventListener\("scrollend"/);
+    assert.match(page, /isSectionAtScrollAnchor\(sceneId, scrollOffsetPx\)/);
+    assert.match(page, /setIsPhysicalScrollLocked\(true\)/);
+    const anchorGuard = page.indexOf("if (!isSectionAtScrollAnchor");
+    const lockStart = page.indexOf("beginPhysicalLock();", anchorGuard);
+    assert.ok(anchorGuard > 0 && anchorGuard < lockStart);
+  });
 
-    assert.match(page, /sceneId=\{scenes\[3\]!\.id\}[\s\S]*compactDesktopEnd/);
-    assert.match(frame, /data-compact-desktop-end/);
-    assert.match(css, /@media \(min-width: 1280px\)[\s\S]*data-compact-desktop-end='true'[\s\S]*min-height: 0 !important/);
+  it("physically blocks wheel and touch for 1000ms", () => {
+    const page = read("../ClientStudioPage.tsx");
+    const lock = read("usePhysicalScrollLock.ts");
+    assert.match(page, /PROGRESSIVE_PHYSICAL_SCROLL_LOCK_MS = 1000/);
+    assert.match(lock, /addEventListener\("wheel"[\s\S]*passive: false/);
+    assert.match(lock, /addEventListener\("touchmove"[\s\S]*passive: false/);
+    assert.match(lock, /preventPhysicalScroll[\s\S]*preventDefault/);
+    assert.doesNotMatch(lock, /overflow/);
+  });
+
+  it("blocks momentum and resets intent through transition and lock", () => {
+    const page = read("../ClientStudioPage.tsx");
+    const hook = read("useProgressiveScrollUnlock.ts");
+    assert.match(
+      page,
+      /navigationBlocked: isSceneTransitioning \|\| isPhysicalScrollLocked/,
+    );
+    assert.match(
+      hook,
+      /if \(navigationBlocked\)[\s\S]*EMPTY_DIRECTIONAL_INTENT/,
+    );
+    assert.match(
+      page,
+      /setScrollIntentResetKey\(\(current\) => current \+ 1\)/,
+    );
+  });
+
+  it("has an independent physical-lock fail-safe", () => {
+    const page = read("../ClientStudioPage.tsx");
+    assert.match(page, /PROGRESSIVE_PHYSICAL_SCROLL_LOCK_FAILSAFE_MS = 1500/);
+    assert.match(page, /transitionFailsafeRef\.current = window\.setTimeout/);
+    assert.match(page, /setIsPhysicalScrollLocked\(false\)/);
+  });
+
+  it("uses one canonical 48px desktop gap for standard scenes", () => {
+    const page = read("../ClientStudioPage.tsx");
+    const css = read("../../../index.css");
+    assert.match(
+      css,
+      /@media \(min-width: 1280px\)[\s\S]*data-standard-desktop-gap=["']true["'][\s\S]*margin-top: 48px/,
+    );
+    assert.equal((page.match(/standardDesktopGap/g) ?? []).length, 3);
+  });
+
+  it("preserves the HERO TOUR Social Proof composition exception", () => {
+    const page = read("../ClientStudioPage.tsx");
+    const orientation = page.slice(
+      page.indexOf("sceneId={scenes[0]!.id}"),
+      page.indexOf("{revealedSceneCount >= 2"),
+    );
+    assert.doesNotMatch(orientation, /standardDesktopGap/);
+    assert.match(orientation, /<Hero \/>/);
+    assert.match(orientation, /<SpatialTerminal \/>/);
+    assert.match(orientation, /ClientStudioWelcomeBridge/);
+  });
+
+  it("preserves mobile clipping and safe-area protection", () => {
+    const frame = read("JourneySceneFrame.tsx");
+    const css = read("../../../index.css");
     assert.match(frame, /minHeight: SCENE_MIN_HEIGHT/);
-    assert.match(frame, /SCENE_SAFE_BOTTOM_SPACE/);
-    assert.match(frame, /SCENE_FINAL_SAFE_BOTTOM_SPACE/);
+    assert.match(frame, /env\(safe-area-inset-bottom/);
+    assert.match(
+      css,
+      /@media \(max-width: 767px\)[\s\S]*content-visibility: auto/,
+    );
+  });
+
+  it("provides TOUR to PRIORITY Back through canonical navigation", () => {
+    const page = read("../ClientStudioPage.tsx");
+    const priority = read("../sections/PriorityEngine/PriorityEngine.tsx");
+    assert.match(priority, /onClick=\{onBack\}[\s\S]*← Zpět/);
+    assert.match(
+      page,
+      /<PriorityEngine[\s\S]*onBack=\{\(\) =>[\s\S]*unlockScene/,
+    );
+  });
+
+  it("keeps revealed progress monotonic and active scene authoritative", () => {
+    const page = read("../ClientStudioPage.tsx");
+    assert.match(page, /setRevealedSceneCount\(\(current\) => Math\.max/);
+    assert.match(page, /currentSceneId: activeSceneId/);
+    assert.match(page, /setActiveSceneId\(sceneId\)/);
   });
 });

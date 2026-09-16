@@ -38,7 +38,10 @@ export function applyScrollIntent(
   thresholdPx = PROGRESSIVE_SCROLL_UNLOCK_THRESHOLD_PX,
 ): { readonly state: ProgressiveScrollIntentState; readonly unlock: boolean } {
   if (state.lockedUntilIdle) {
-    return { state: { accumulatedPx: 0, lockedUntilIdle: true }, unlock: false };
+    return {
+      state: { accumulatedPx: 0, lockedUntilIdle: true },
+      unlock: false,
+    };
   }
   const result = accumulateScrollIntent(
     state.accumulatedPx,
@@ -86,25 +89,65 @@ export function nextProgressiveSceneId(
   sceneIds: readonly string[],
   currentSceneId: string | null,
 ): string | null {
-  const currentIndex = currentSceneId === null
-    ? -1
-    : sceneIds.indexOf(currentSceneId);
+  const currentIndex =
+    currentSceneId === null ? -1 : sceneIds.indexOf(currentSceneId);
   return currentIndex >= 0 ? (sceneIds[currentIndex + 1] ?? null) : null;
 }
 
+export type ProgressiveNavigationDirection = "forward" | "backward";
+
+export type DirectionalIntentState = {
+  readonly direction: ProgressiveNavigationDirection | null;
+  readonly accumulatedPx: number;
+};
+
+export const EMPTY_DIRECTIONAL_INTENT: DirectionalIntentState = {
+  direction: null,
+  accumulatedPx: 0,
+};
+
+export function applyDirectionalIntent(
+  state: DirectionalIntentState,
+  signedDeltaPx: number,
+  thresholdPx = PROGRESSIVE_SCROLL_UNLOCK_THRESHOLD_PX,
+): {
+  readonly state: DirectionalIntentState;
+  readonly transition: ProgressiveNavigationDirection | null;
+} {
+  if (signedDeltaPx === 0) {
+    return { state, transition: null };
+  }
+  const direction = signedDeltaPx > 0 ? "forward" : "backward";
+  const accumulatedPx =
+    (state.direction === direction ? state.accumulatedPx : 0) +
+    Math.abs(signedDeltaPx);
+  return accumulatedPx >= thresholdPx
+    ? { state: EMPTY_DIRECTIONAL_INTENT, transition: direction }
+    : { state: { direction, accumulatedPx }, transition: null };
+}
+
+export function previousProgressiveSceneId(
+  sceneIds: readonly string[],
+  currentSceneId: string | null,
+): string | null {
+  const currentIndex =
+    currentSceneId === null ? -1 : sceneIds.indexOf(currentSceneId);
+  return currentIndex > 0 ? (sceneIds[currentIndex - 1] ?? null) : null;
+}
+
 type UseProgressiveScrollUnlockOptions = {
-  readonly enabled: boolean;
-  readonly settling: boolean;
+  readonly navigationBlocked: boolean;
+  readonly canNavigateForward: boolean;
+  readonly canNavigateBackward: boolean;
   readonly currentSceneId: string;
   readonly progressKey: string | number;
-  readonly onUnlockNext: () => void;
+  readonly onNavigate: (direction: ProgressiveNavigationDirection) => void;
   readonly thresholdPx?: number;
 };
 
 function scrollRoot(): HTMLElement | Window {
   return (
-    document.querySelector<HTMLElement>("[data-embed-overlay-mount]") ??
-    window
+    document.querySelector<HTMLElement>("[data-embed-overlay-mount]") ?? window
   );
 }
 
@@ -136,6 +179,37 @@ function isAtCurrentSceneBoundary(
   );
 }
 
+function headerOffsetPx(): number {
+  const header = document.querySelector<HTMLElement>(
+    "[data-experience-header]",
+  );
+  return (header?.getBoundingClientRect().height ?? 72) + 20;
+}
+
+function isAtCurrentSceneStart(
+  root: HTMLElement | Window,
+  sceneId: string,
+): boolean {
+  const scene = document.getElementById(sceneId);
+  if (scene === null) return false;
+  const viewportTop =
+    root instanceof HTMLElement ? root.getBoundingClientRect().top : 0;
+  return hasReachedSceneStart(
+    scene.getBoundingClientRect().top,
+    viewportTop,
+    headerOffsetPx(),
+  );
+}
+
+export function hasReachedSceneStart(
+  sceneTopPx: number,
+  viewportTopPx: number,
+  headerOffset: number,
+  tolerancePx = BOTTOM_TOLERANCE_PX,
+): boolean {
+  return sceneTopPx >= viewportTopPx + headerOffset - tolerancePx;
+}
+
 export function hasReachedNavigationBoundary(
   boundaryBottomPx: number,
   viewportBottomPx: number,
@@ -147,6 +221,7 @@ export function hasReachedNavigationBoundary(
 function nestedScrollerCanContinue(
   target: EventTarget | null,
   root: HTMLElement | Window,
+  direction: ProgressiveNavigationDirection,
 ): boolean {
   let element = target instanceof HTMLElement ? target : null;
 
@@ -158,12 +233,16 @@ function nestedScrollerCanContinue(
   ) {
     const overflowY = window.getComputedStyle(element).overflowY;
     const scrollable = overflowY === "auto" || overflowY === "scroll";
-    if (
-      scrollable &&
-      element.scrollTop + element.clientHeight <
-        element.scrollHeight - BOTTOM_TOLERANCE_PX
-    ) {
-      return true;
+    if (scrollable) {
+      if (
+        direction === "forward" &&
+        element.scrollTop + element.clientHeight <
+          element.scrollHeight - BOTTOM_TOLERANCE_PX
+      )
+        return true;
+      if (direction === "backward" && element.scrollTop > BOTTOM_TOLERANCE_PX) {
+        return true;
+      }
     }
     element = element.parentElement;
   }
@@ -176,41 +255,38 @@ function wheelDeltaPx(event: WheelEvent, root: HTMLElement | Window): number {
     return event.deltaY * 16;
   }
   if (event.deltaMode === WheelEvent.DOM_DELTA_PAGE) {
-    return event.deltaY *
-      (root instanceof HTMLElement ? root.clientHeight : window.innerHeight);
+    return (
+      event.deltaY *
+      (root instanceof HTMLElement ? root.clientHeight : window.innerHeight)
+    );
   }
   return event.deltaY;
 }
 
-/**
- * Reveals one more journey scene only when downward input continues at the
- * bottom of all currently revealed content. It never scrolls the viewport.
- */
+/** Accumulates pinned navigation intent only beyond the scene reading bounds. */
 export function useProgressiveScrollUnlock({
-  enabled,
-  settling,
+  navigationBlocked,
+  canNavigateForward,
+  canNavigateBackward,
   currentSceneId,
   progressKey,
-  onUnlockNext,
+  onNavigate,
   thresholdPx = PROGRESSIVE_SCROLL_UNLOCK_THRESHOLD_PX,
 }: UseProgressiveScrollUnlockOptions): void {
-  const intentRef = useRef<ProgressiveScrollIntentState>(EMPTY_SCROLL_INTENT);
-  const previousProgressKeyRef = useRef(progressKey);
+  const intentRef = useRef<DirectionalIntentState>(EMPTY_DIRECTIONAL_INTENT);
   const touchYRef = useRef<number | null>(null);
   const idleTimerRef = useRef<number | null>(null);
-  const unlockRef = useRef(onUnlockNext);
-  unlockRef.current = onUnlockNext;
+  const navigateRef = useRef(onNavigate);
+  navigateRef.current = onNavigate;
 
   useEffect(() => {
-    if (!enabled || settling) {
-      intentRef.current = EMPTY_SCROLL_INTENT;
+    if (navigationBlocked) {
+      intentRef.current = EMPTY_DIRECTIONAL_INTENT;
       return;
     }
 
     const root = scrollRoot();
     const eventTarget: EventTarget = root;
-    const progressChanged = previousProgressKeyRef.current !== progressKey;
-    previousProgressKeyRef.current = progressKey;
 
     const clearIdleTimer = () => {
       if (idleTimerRef.current !== null) {
@@ -219,58 +295,53 @@ export function useProgressiveScrollUnlock({
       }
     };
     const resetIntent = () => {
-      intentRef.current = EMPTY_SCROLL_INTENT;
+      intentRef.current = EMPTY_DIRECTIONAL_INTENT;
       clearIdleTimer();
     };
-    const releaseAfterIdle = () => {
-      clearIdleTimer();
-      idleTimerRef.current = window.setTimeout(() => {
-        intentRef.current = EMPTY_SCROLL_INTENT;
-        idleTimerRef.current = null;
-      }, INTENT_IDLE_RESET_MS);
-    };
-    if (progressChanged) {
-      intentRef.current = lockScrollIntentUntilIdle();
-      releaseAfterIdle();
-    }
-    const addIntent = (deltaPx: number, target: EventTarget | null) => {
-      if (deltaPx <= 0) {
-        intentRef.current = lockScrollIntentUntilIdle();
-        releaseAfterIdle();
-        return;
-      }
-      if (intentRef.current.lockedUntilIdle) {
-        releaseAfterIdle();
-        return;
-      }
+    const addIntent = (
+      signedDeltaPx: number,
+      target: EventTarget | null,
+    ): boolean => {
+      if (signedDeltaPx === 0) return false;
+      const direction = signedDeltaPx > 0 ? "forward" : "backward";
+      const available =
+        direction === "forward" ? canNavigateForward : canNavigateBackward;
+      const atReadingBoundary =
+        direction === "forward"
+          ? isAtCurrentSceneBoundary(root, currentSceneId)
+          : isAtCurrentSceneStart(root, currentSceneId);
       if (
-        !isAtCurrentSceneBoundary(root, currentSceneId) ||
-        nestedScrollerCanContinue(target, root)
+        !available ||
+        !atReadingBoundary ||
+        nestedScrollerCanContinue(target, root, direction)
       ) {
         resetIntent();
-        return;
+        return false;
       }
 
-      const result = applyGuardedScrollIntent(intentRef.current, deltaPx, {
-        enabled,
-        settling,
+      const result = applyDirectionalIntent(
+        intentRef.current,
+        signedDeltaPx,
         thresholdPx,
-      });
+      );
       intentRef.current = result.state;
       clearIdleTimer();
-      if (result.unlock) {
-        releaseAfterIdle();
-        unlockRef.current();
-        return;
+      if (result.transition !== null) {
+        resetIntent();
+        navigateRef.current(result.transition);
+        return true;
       }
       idleTimerRef.current = window.setTimeout(
         resetIntent,
         INTENT_IDLE_RESET_MS,
       );
+      return true;
     };
 
     const onWheel = (event: WheelEvent) => {
-      addIntent(wheelDeltaPx(event, root), event.target);
+      if (addIntent(wheelDeltaPx(event, root), event.target)) {
+        event.preventDefault();
+      }
     };
     const onTouchStart = (event: TouchEvent) => {
       touchYRef.current = event.touches[0]?.clientY ?? null;
@@ -280,7 +351,11 @@ export function useProgressiveScrollUnlock({
       const previousY = touchYRef.current;
       touchYRef.current = currentY;
       if (currentY !== null && previousY !== null) {
-        addIntent(touchDownwardDeltaPx(previousY, currentY), event.target);
+        if (
+          addIntent(touchDownwardDeltaPx(previousY, currentY), event.target)
+        ) {
+          event.preventDefault();
+        }
       }
     };
     const onTouchEnd = () => {
@@ -288,19 +363,45 @@ export function useProgressiveScrollUnlock({
       resetIntent();
     };
 
-    eventTarget.addEventListener("wheel", onWheel as EventListener, { passive: true });
-    eventTarget.addEventListener("touchstart", onTouchStart as EventListener, { passive: true });
-    eventTarget.addEventListener("touchmove", onTouchMove as EventListener, { passive: true });
-    eventTarget.addEventListener("touchend", onTouchEnd as EventListener, { passive: true });
-    eventTarget.addEventListener("touchcancel", onTouchEnd as EventListener, { passive: true });
+    eventTarget.addEventListener("wheel", onWheel as EventListener, {
+      passive: false,
+    });
+    eventTarget.addEventListener("touchstart", onTouchStart as EventListener, {
+      passive: true,
+    });
+    eventTarget.addEventListener("touchmove", onTouchMove as EventListener, {
+      passive: false,
+    });
+    eventTarget.addEventListener("touchend", onTouchEnd as EventListener, {
+      passive: true,
+    });
+    eventTarget.addEventListener("touchcancel", onTouchEnd as EventListener, {
+      passive: true,
+    });
 
     return () => {
       clearIdleTimer();
       eventTarget.removeEventListener("wheel", onWheel as EventListener);
-      eventTarget.removeEventListener("touchstart", onTouchStart as EventListener);
-      eventTarget.removeEventListener("touchmove", onTouchMove as EventListener);
+      eventTarget.removeEventListener(
+        "touchstart",
+        onTouchStart as EventListener,
+      );
+      eventTarget.removeEventListener(
+        "touchmove",
+        onTouchMove as EventListener,
+      );
       eventTarget.removeEventListener("touchend", onTouchEnd as EventListener);
-      eventTarget.removeEventListener("touchcancel", onTouchEnd as EventListener);
+      eventTarget.removeEventListener(
+        "touchcancel",
+        onTouchEnd as EventListener,
+      );
     };
-  }, [currentSceneId, enabled, progressKey, settling, thresholdPx]);
+  }, [
+    canNavigateBackward,
+    canNavigateForward,
+    currentSceneId,
+    navigationBlocked,
+    progressKey,
+    thresholdPx,
+  ]);
 }
