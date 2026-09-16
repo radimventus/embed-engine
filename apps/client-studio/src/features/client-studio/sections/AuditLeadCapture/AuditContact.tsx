@@ -259,75 +259,6 @@ export function AuditContact({
             </div>
           </div>
 
-          <div
-            className="mt-3 flex items-start gap-2"
-            data-testid="audit-gdpr-consent"
-          >
-            <label
-              htmlFor="audit-gdpr-consent"
-              className="mt-0.5 cursor-pointer"
-              data-testid="audit-gdpr-consent-control"
-            >
-              <input
-                id="audit-gdpr-consent"
-                type="checkbox"
-                checked={gdprConsent}
-                disabled={phase === 'loading'}
-                className="sr-only"
-                onChange={(event: ChangeEvent<HTMLInputElement>) => {
-                  const checked = event.target.checked;
-                  setGdprConsent(checked);
-                }}
-              />
-              <span
-                aria-hidden="true"
-                data-testid="audit-gdpr-consent-mark"
-                className="flex h-4 w-4 items-center justify-center border-2"
-                style={{
-                  borderColor: AUDIT_ACCENT,
-                  backgroundColor: gdprConsent ? AUDIT_ACCENT : 'transparent',
-                  borderRadius: 3,
-                }}
-              >
-                {gdprConsent ? (
-                  <svg
-                    viewBox="0 0 16 16"
-                    className="h-3 w-3"
-                    aria-hidden="true"
-                  >
-                    <path
-                      d="M3.5 8.5 6.5 11.5 12.5 4.5"
-                      fill="none"
-                      stroke={AUDIT_ON_ACCENT}
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                  </svg>
-                ) : null}
-              </span>
-            </label>
-            <p className="text-sm leading-snug" style={{ color: AUDIT_MUTED }}>
-              <label htmlFor="audit-gdpr-consent" className="cursor-pointer">
-                Odesláním souhlasíte se{' '}
-              </label>
-              <a
-                href={project?.privacyUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                data-testid="audit-gdpr-privacy-link"
-                className="underline underline-offset-2"
-                style={{ color: AUDIT_ACCENT }}
-              >
-                zpracováním osobních údajů
-              </a>
-              <label htmlFor="audit-gdpr-consent" className="cursor-pointer">
-                {' '}
-                v souladu s pravidly GDPR.
-              </label>
-            </p>
-          </div>
-
           <p
             className="mt-3 text-center text-sm leading-snug"
             style={{ color: AUDIT_MUTED }}
@@ -350,6 +281,26 @@ export function AuditContact({
       ) : null}
 
       <div className="mt-5 grid grid-cols-2 gap-6 mobile:grid-cols-1">
+        <div className="flex gap-3">
+          <div
+            className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border"
+            style={{ borderColor: AUDIT_ACCENT }}
+          >
+            <UserIcon className="h-5 w-5" />
+          </div>
+          <div>
+            <p className="text-sm font-semibold" style={{ color: AUDIT_WHITE }}>
+              Nezávislé posouzení.
+            </p>
+            <p
+              className="mt-1 text-xs leading-snug"
+              style={{ color: AUDIT_MUTED }}
+            >
+              Posouzení je nezávazné. Rozhodnutí je vždy na vás.
+            </p>
+          </div>
+        </div>
+
         <div
           className="flex gap-3 mobile:hidden"
           data-testid="audit-data-trust"
@@ -373,30 +324,11 @@ export function AuditContact({
             </p>
           </div>
         </div>
-
-        <div className="flex gap-3">
-          <div
-            className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border"
-            style={{ borderColor: AUDIT_ACCENT }}
-          >
-            <UserIcon className="h-5 w-5" />
-          </div>
-          <div>
-            <p className="text-sm font-semibold" style={{ color: AUDIT_WHITE }}>
-              Nezávislé posouzení.
-            </p>
-            <p
-              className="mt-1 text-xs leading-snug"
-              style={{ color: AUDIT_MUTED }}
-            >
-              Posouzení je nezávazné. Rozhodnutí je vždy na vás.
-            </p>
-          </div>
-        </div>
       </div>
 
       <AuditConsentDialog
         open={consentDialogOpen}
+        privacyHref={project?.privacyUrl}
         onCancel={closeConsentDialog}
         onConfirm={confirmConsentAndContinue}
       />

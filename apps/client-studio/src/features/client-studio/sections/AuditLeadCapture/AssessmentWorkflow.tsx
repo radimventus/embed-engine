@@ -78,58 +78,70 @@ export function AssessmentWorkflow({ landOption }: AssessmentWorkflowProps) {
       </div>
 
       <div
-        className="mt-6 flex items-center justify-center gap-3 mobile:hidden"
-        data-testid="audit-workflow-mode"
+        className="mt-8 grid grid-cols-[9.5rem_1px_minmax(0,1fr)] items-center gap-x-5 mobile:hidden"
+        data-testid="audit-workflow-desktop"
       >
-        <ModeIcon className="h-8 w-8" />
-        <p
-          className="whitespace-nowrap text-center text-xs font-bold tracking-[0.14em]"
-          style={{ color: AUDIT_ACCENT }}
+        <div
+          className="flex flex-col items-center justify-center gap-3"
+          data-testid="audit-workflow-mode"
         >
-          {mode.label}
-        </p>
-      </div>
+          <ModeIcon className="h-8 w-8" />
+          <p
+            className="whitespace-nowrap text-center text-[11px] font-bold tracking-[0.14em]"
+            style={{ color: AUDIT_ACCENT }}
+          >
+            {mode.label}
+          </p>
+        </div>
 
-      <div className="relative mt-8" role="list" aria-label="Stanice posouzení">
         <div
           aria-hidden="true"
-          className="pointer-events-none absolute left-[12.5%] right-[37.5%] top-[44px] h-px mobile:hidden"
+          className="h-[72px] w-px"
           style={{ backgroundColor: AUDIT_ACCENT }}
-        />
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute left-[62.5%] right-[12.5%] top-[44px] border-t border-dashed mobile:hidden"
-          style={{ borderColor: AUDIT_ACCENT }}
+          data-testid="audit-workflow-mode-divider"
         />
 
-        <div className="grid grid-cols-4 gap-4 mobile:hidden">
-          {stations.map((station, index) => (
-            <div
-              key={`${station.motif}-${station.title}`}
-              role="listitem"
-              className="relative z-10 flex flex-col items-center text-center mobile:text-left"
-              data-testid="audit-workflow-step"
-            >
+        <div className="relative" role="list" aria-label="Stanice posouzení">
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute left-[12.5%] right-[37.5%] top-7 h-px"
+            style={{ backgroundColor: AUDIT_ACCENT }}
+          />
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute left-[62.5%] right-[12.5%] top-7 border-t border-dashed"
+            style={{ borderColor: AUDIT_ACCENT }}
+          />
+
+          <div className="grid grid-cols-4 gap-3">
+            {stations.map((station, index) => (
               <div
-                className="flex h-[88px] w-[88px] items-center justify-center rounded-full border-2 bg-[#001930]"
-                style={{ borderColor: AUDIT_ACCENT }}
+                key={`${station.motif}-${station.title}`}
+                role="listitem"
+                className="relative z-10 flex min-w-0 flex-col items-center text-center"
+                data-testid="audit-workflow-step"
               >
-                <StationMotifIcon motif={station.motif} className="h-12 w-12" />
+                <div
+                  className="flex h-14 w-14 items-center justify-center rounded-full border bg-[#001930]"
+                  style={{ borderColor: AUDIT_ACCENT }}
+                >
+                  <StationMotifIcon motif={station.motif} className="h-7 w-7" />
+                </div>
+                <p className="mt-3 text-xs font-semibold tracking-wide">
+                  <span style={{ color: AUDIT_ACCENT }}>
+                    {String(index + 1).padStart(2, '0')}{' '}
+                  </span>
+                  <span style={{ color: AUDIT_WHITE }}>{station.title}</span>
+                </p>
+                <p
+                  className="mt-1 max-w-[10.5rem] text-[11px] leading-snug"
+                  style={{ color: AUDIT_MUTED }}
+                >
+                  {station.lines.join(' ')}
+                </p>
               </div>
-              <p className="mt-5 text-sm font-semibold tracking-wide mobile:w-full">
-                <span style={{ color: AUDIT_ACCENT }}>
-                  {String(index + 1).padStart(2, '0')}{' '}
-                </span>
-                <span style={{ color: AUDIT_WHITE }}>{station.title}</span>
-              </p>
-              <p
-                className="mt-1.5 text-[13px] leading-snug mobile:w-full"
-                style={{ color: AUDIT_MUTED }}
-              >
-                {station.lines.join(' ')}
-              </p>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       </div>
     </div>

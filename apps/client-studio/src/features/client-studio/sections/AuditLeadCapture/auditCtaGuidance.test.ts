@@ -18,7 +18,7 @@ describe('Audit CTA consent modal', () => {
   it('keeps the gold CTA interactive while consent is unchecked', () => {
     const submit = source.slice(
       source.indexOf('data-testid="audit-contact-submit"'),
-      source.indexOf('data-testid="audit-gdpr-consent"'),
+      source.indexOf('data-testid="audit-post-submit-copy"'),
     );
 
     assert.match(submit, /disabled=\{phase === 'loading'\}/);
@@ -45,5 +45,19 @@ describe('Audit CTA consent modal', () => {
     assert.match(source, /formRef\.current\?\.requestSubmit\(\)/);
     assert.match(source, /onCancel=\{closeConsentDialog\}/);
     assert.match(source, /onConfirm=\{confirmConsentAndContinue\}/);
+  });
+
+  it('cancels without submitting and bypasses the modal for existing consent', () => {
+    const closeStart = source.indexOf('const closeConsentDialog');
+    const effectStart = source.indexOf('useEffect', closeStart);
+    const closeHandler = source.slice(closeStart, effectStart);
+    const clickStart = source.indexOf('const handleCtaClick');
+    const clickEnd = source.indexOf('const confirmConsentAndContinue', clickStart);
+    const clickHandler = source.slice(clickStart, clickEnd);
+
+    assert.match(closeHandler, /setConsentDialogOpen\(false\)/);
+    assert.equal(closeHandler.includes('requestSubmit'), false);
+    assert.match(clickHandler, /if \(gdprConsent\)/);
+    assert.match(clickHandler, /return;/);
   });
 });

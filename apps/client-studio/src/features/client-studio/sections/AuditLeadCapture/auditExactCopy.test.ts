@@ -15,14 +15,14 @@ function form(): string {
 describe('Audit exact FORM copy', () => {
   const source = form();
 
-  it('keeps the required follow-up sentence immediately after GDPR', () => {
-    const gdpr = source.indexOf('data-testid="audit-gdpr-consent"');
+  it('keeps the required follow-up sentence immediately after the contact grid', () => {
+    const grid = source.indexOf('data-testid="audit-contact-grid"');
     const copy = source.indexOf('data-testid="audit-post-submit-copy"');
     const trust = source.indexOf('Nezávislé posouzení.');
     const formClose = source.indexOf('</form>');
 
-    assert.ok(gdpr > 0);
-    assert.ok(gdpr < copy);
+    assert.ok(grid > 0);
+    assert.ok(grid < copy);
     assert.ok(copy < formClose);
     assert.ok(formClose < trust);
     assert.match(
@@ -47,5 +47,9 @@ describe('Audit exact FORM copy', () => {
     assert.equal(source.includes('LockIcon'), true);
     assert.match(source, /data-testid="audit-data-trust"/);
     assert.match(source, /mobile:hidden/);
+    assert.ok(
+      source.indexOf('Nezávislé posouzení.') <
+        source.indexOf('Vaše data jsou u nás v bezpečí.'),
+    );
   });
 });

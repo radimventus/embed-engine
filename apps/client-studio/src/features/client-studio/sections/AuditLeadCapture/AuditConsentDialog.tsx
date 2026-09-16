@@ -5,6 +5,7 @@ import { AUDIT_ACCENT, AUDIT_ON_ACCENT } from './audit-panel';
 
 type AuditConsentDialogProps = {
   readonly open: boolean;
+  readonly privacyHref?: string;
   readonly onCancel: () => void;
   readonly onConfirm: () => void;
 };
@@ -12,6 +13,7 @@ type AuditConsentDialogProps = {
 /** Audit-scoped use of the CONIS modal pattern: portaled, dimmed and focus-restoring. */
 export function AuditConsentDialog({
   open,
+  privacyHref,
   onCancel,
   onConfirm,
 }: AuditConsentDialogProps) {
@@ -65,8 +67,17 @@ export function AuditConsentDialog({
           </button>
         </div>
         <p className="mt-3 text-sm leading-relaxed text-[#001930]/70">
-          Pro odeslání poptávky je potřeba souhlasit se zpracováním osobních
-          údajů.
+          Pro odeslání poptávky je potřeba souhlasit se{' '}
+          <a
+            href={privacyHref}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="font-medium underline underline-offset-2"
+            data-testid="audit-consent-privacy-link"
+          >
+            zpracováním osobních údajů
+          </a>
+          .
         </p>
         <div className="mt-6 flex justify-end gap-3">
           <button

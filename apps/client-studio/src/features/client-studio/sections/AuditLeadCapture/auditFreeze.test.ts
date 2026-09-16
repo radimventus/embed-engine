@@ -50,7 +50,8 @@ describe('Audit Freeze shell (CAP UX 42)', () => {
     assert.match(form, /ODESLAT POPTÁVKU/);
     assert.match(form, /submitDurableLead/);
     assert.match(form, /project\?\.privacyUrl/);
-    assert.match(form, /audit-gdpr-consent/);
+    assert.match(form, /AuditConsentDialog/);
+    assert.equal(form.includes('audit-gdpr-consent'), false);
     assert.equal(form.includes('mailto:'), false);
     assert.equal(form.includes('AUDIT_PRIVACY_HREF'), false);
     assert.equal(form.includes('COMMERCIAL_CONSENT'), false);

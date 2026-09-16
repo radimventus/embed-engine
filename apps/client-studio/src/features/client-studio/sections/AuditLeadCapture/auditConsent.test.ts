@@ -19,30 +19,11 @@ describe('Audit GDPR consent UX', () => {
   const dialog = stripComments(read('AuditConsentDialog.tsx'));
   const payload = stripComments(read('durableLeadSubmission.ts'));
 
-  it('places GDPR after the compact contact grid', () => {
-    const nameIndex = form.indexOf('id="audit-contact-name"');
-    const emailIndex = form.indexOf('id="audit-contact-email"');
-    const phoneIndex = form.indexOf('id="audit-contact-phone"');
-    const submitIndex = form.indexOf('data-testid="audit-contact-submit"');
-    const gdprIndex = form.indexOf('data-testid="audit-gdpr-consent"');
-
-    assert.ok(nameIndex > 0);
-    assert.ok(nameIndex < emailIndex);
-    assert.ok(emailIndex < phoneIndex);
-    assert.ok(phoneIndex < submitIndex);
-    assert.ok(submitIndex < gdprIndex);
-  });
-
-  it('keeps a togglable checkbox with a visible checked mark', () => {
-    assert.match(form, /id="audit-gdpr-consent"/);
-    assert.match(form, /type="checkbox"/);
-    assert.match(form, /checked=\{gdprConsent\}/);
-    assert.match(form, /setGdprConsent\(checked\)/);
-    assert.match(form, /data-testid="audit-gdpr-consent-mark"/);
-    assert.match(
-      form,
-      /backgroundColor: gdprConsent \? AUDIT_ACCENT : 'transparent'/,
-    );
+  it('removes the former consent checkbox row from the form', () => {
+    assert.equal(form.includes('audit-gdpr-consent'), false);
+    assert.equal(form.includes('type="checkbox"'), false);
+    assert.equal(form.includes('Odesláním souhlasíte'), false);
+    assert.equal(form.includes('audit-gdpr-privacy-link'), false);
   });
 
   it('blocks POST and submitDurableLead while consent is unchecked', () => {
@@ -74,20 +55,12 @@ describe('Audit GDPR consent UX', () => {
     assert.match(dialog, /data-testid="audit-consent-backdrop"/);
   });
 
-  it('keeps the Project privacy link outside the checkbox control label', () => {
-    const controlStart = form.indexOf(
-      'data-testid="audit-gdpr-consent-control"',
-    );
-    const controlLabelClose = form.indexOf('</label>', controlStart);
-    const linkIndex = form.indexOf('data-testid="audit-gdpr-privacy-link"');
-
-    assert.ok(controlStart > 0);
-    assert.ok(linkIndex > controlLabelClose);
-    assert.equal(
-      form.slice(controlStart, controlLabelClose).includes('<a'),
-      false,
-    );
-    assert.match(form, /href=\{project\?\.privacyUrl\}/);
+  it('moves the original Project privacy destination into the modal link', () => {
+    assert.match(form, /privacyHref=\{project\?\.privacyUrl\}/);
+    assert.match(dialog, /data-testid="audit-consent-privacy-link"/);
+    assert.match(dialog, /href=\{privacyHref\}/);
+    assert.match(dialog, /zpracováním osobních údajů/);
+    assert.match(dialog, /target="_blank"/);
     assert.equal(form.includes('AUDIT_PRIVACY_HREF'), false);
   });
 

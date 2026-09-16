@@ -21,13 +21,13 @@ describe('Audit compact conversion layout', () => {
 
     const grid = source.slice(
       source.indexOf('data-testid="audit-contact-grid"'),
-      source.indexOf('data-testid="audit-gdpr-consent"'),
+      source.indexOf('data-testid="audit-post-submit-copy"'),
     );
     const phone = source.indexOf('id="audit-contact-phone"');
     const phoneBlock = source.slice(phone, source.indexOf('data-testid="audit-contact-submit"'));
     const submit = source.slice(
       source.indexOf('data-testid="audit-contact-submit"'),
-      source.indexOf('data-testid="audit-gdpr-consent"'),
+      source.indexOf('data-testid="audit-post-submit-copy"'),
     );
 
     assert.equal(grid.includes('col-span-2'), false);
@@ -38,18 +38,19 @@ describe('Audit compact conversion layout', () => {
     assert.match(submit, /ODESÍLÁM…/);
   });
 
-  it('follows heading → grid → GDPR → supporting sentence → remaining trust item', () => {
+  it('follows heading → grid → supporting sentence → ordered trust items', () => {
     const heading = source.indexOf('Kam vám máme poslat výstup?');
     const grid = source.indexOf('data-testid="audit-contact-grid"');
-    const gdpr = source.indexOf('data-testid="audit-gdpr-consent"');
     const copy = source.indexOf('data-testid="audit-post-submit-copy"');
     const independent = source.indexOf('Nezávislé posouzení.');
+    const safety = source.indexOf('Vaše data jsou u nás v bezpečí.');
 
     assert.ok(heading > 0);
     assert.ok(heading < grid);
-    assert.ok(grid < gdpr);
-    assert.ok(gdpr < copy);
+    assert.ok(grid < copy);
     assert.ok(copy < independent);
+    assert.ok(independent < safety);
+    assert.equal(source.includes('audit-gdpr-consent'), false);
     assert.equal(source.includes('Vaše údaje jsou v bezpečí.'), false);
     assert.match(
       source,

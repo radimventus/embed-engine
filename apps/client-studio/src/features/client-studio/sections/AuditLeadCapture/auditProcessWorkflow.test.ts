@@ -73,14 +73,32 @@ describe('Audit process workflow', () => {
     );
   });
 
-  it('renders each station as one node with equal circles and correct connectors', () => {
+  it('renders the compact reference geometry with one reusable node per station', () => {
     const source = readFileSync(join(here, 'AssessmentWorkflow.tsx'), 'utf8');
     assert.match(source, /stations\.map\(\(station, index\) =>/);
     assert.match(source, /data-testid="audit-workflow-step"/);
-    assert.match(source, /h-\[88px\] w-\[88px\]/);
+    assert.match(source, /className="flex h-14 w-14/);
+    assert.match(source, /className="h-7 w-7"/);
     assert.match(source, /grid grid-cols-4/);
     assert.match(source, /left-\[12\.5%\] right-\[37\.5%\]/);
     assert.match(source, /left-\[62\.5%\] right-\[12\.5%\]/);
     assert.match(source, /border-t border-dashed/);
+    assert.equal(source.includes('h-[88px] w-[88px]'), false);
+  });
+
+  it('keeps the selected-mode legend separate on the left', () => {
+    const source = readFileSync(join(here, 'AssessmentWorkflow.tsx'), 'utf8');
+    const desktop = source.indexOf('data-testid="audit-workflow-desktop"');
+    const mode = source.indexOf('data-testid="audit-workflow-mode"');
+    const divider = source.indexOf('data-testid="audit-workflow-mode-divider"');
+    const process = source.indexOf('role="list"');
+
+    assert.ok(desktop > 0);
+    assert.ok(desktop < mode);
+    assert.ok(mode < divider);
+    assert.ok(divider < process);
+    assert.match(source, /grid-cols-\[9\.5rem_1px_minmax\(0,1fr\)\]/);
+    assert.match(source, /className="h-\[72px\] w-px"/);
+    assert.match(source, /\{mode\.label\}/);
   });
 });

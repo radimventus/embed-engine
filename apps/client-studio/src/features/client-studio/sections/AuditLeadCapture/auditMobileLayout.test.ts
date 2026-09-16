@@ -11,12 +11,12 @@ const root = path.resolve(
 const read = (name: string) =>
   fs.readFileSync(path.join(root, name), "utf8");
 
-test("Audit visible headings use reduced mobile typography", () => {
+test("Audit visible headings preserve the established mobile typography", () => {
   const situation = read("SituationSelect.tsx");
   const workflow = read("AssessmentWorkflow.tsx");
 
-  assert.match(situation, /mobile:text-\[0\.8rem\]/);
-  assert.match(workflow, /mobile:text-\[0\.8rem\]/);
+  assert.match(situation, /mobile:text-\[1\.1rem\]/);
+  assert.match(workflow, /mobile:text-\[1\.1rem\]/);
 });
 
 test("Audit situation cards keep the full mobile content band", () => {
