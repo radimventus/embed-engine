@@ -17,14 +17,22 @@ export const AUDIT_WHITE = colors.action.onPrimary;
 export const AUDIT_MUTED = colors.border.default;
 
 export const LAND_OPTIONS = [
-  { value: 'owned', label: 'MÁM POZEMEK', description: 'Chci ověřit konkrétní pozemek.' },
-  { value: 'seeking', label: 'HLEDÁM POZEMEK', description: 'Ještě hledám vhodnou lokalitu.' },
+  {
+    value: 'owned',
+    label: 'MÁM POZEMEK',
+    description: 'Chci ověřit konkrétní pozemek.',
+  },
+  {
+    value: 'seeking',
+    label: 'HLEDÁM POZEMEK',
+    description: 'Ještě hledám vhodnou lokalitu.',
+  },
 ] as const;
 
 export type LandOption = (typeof LAND_OPTIONS)[number]['value'];
 
 /** Shared metro stations — icon motif is fixed; copy follows land mode. */
-export type StationMotif = 'house' | 'pin' | 'document' | 'check';
+export type StationMotif = 'house' | 'pin' | 'document' | 'check' | 'search';
 
 export type WorkflowStation = {
   motif: StationMotif;
@@ -32,52 +40,53 @@ export type WorkflowStation = {
   lines: readonly string[];
 };
 
-export const WORKFLOW_BY_LAND: Record<LandOption, readonly WorkflowStation[]> = {
-  owned: [
-    {
-      motif: 'house',
-      title: 'Mám pozemek',
-      lines: ['Získáme informace', 'o vašem pozemku.'],
-    },
-    {
-      motif: 'pin',
-      title: 'Osazení domu',
-      lines: ['Navrhneme optimální', 'umístění domu', 'na pozemku.'],
-    },
-    {
-      motif: 'document',
-      title: 'Stanoviska',
-      lines: ['Prověříme podmínky', 'a regulace.'],
-    },
-    {
-      motif: 'check',
-      title: 'Doporučení',
-      lines: ['Navrhneme dům,', 'který sedí', 'na váš pozemek.'],
-    },
-  ],
-  seeking: [
-    {
-      motif: 'house',
-      title: 'Hledám pozemek',
-      lines: ['Najdeme vhodnou', 'parcelu', 'pro váš záměr.'],
-    },
-    {
-      motif: 'pin',
-      title: 'Lokalita',
-      lines: ['Prověříme lokalitu', 'a její možnosti.'],
-    },
-    {
-      motif: 'document',
-      title: 'Stanoviska',
-      lines: ['Ověříme podmínky', 'a omezení.'],
-    },
-    {
-      motif: 'check',
-      title: 'Doporučení',
-      lines: ['Navrhneme vhodnější dům', 'nebo doporučíme', 'další postup.'],
-    },
-  ],
-};
+export const WORKFLOW_BY_LAND: Record<LandOption, readonly WorkflowStation[]> =
+  {
+    owned: [
+      {
+        motif: 'pin',
+        title: 'Mám pozemek',
+        lines: ['Získáme informace', 'o vašem pozemku.'],
+      },
+      {
+        motif: 'house',
+        title: 'Osazení domu',
+        lines: ['Navrhneme optimální', 'umístění domu', 'na pozemku.'],
+      },
+      {
+        motif: 'document',
+        title: 'Stanoviska',
+        lines: ['Prověříme podmínky', 'a regulace.'],
+      },
+      {
+        motif: 'check',
+        title: 'Doporučení',
+        lines: ['Navrhneme dům,', 'který sedí', 'na váš pozemek.'],
+      },
+    ],
+    seeking: [
+      {
+        motif: 'search',
+        title: 'Hledám pozemek',
+        lines: ['Najdeme vhodnou', 'parcelu', 'pro váš záměr.'],
+      },
+      {
+        motif: 'pin',
+        title: 'Lokalita',
+        lines: ['Prověříme lokalitu', 'a její možnosti.'],
+      },
+      {
+        motif: 'document',
+        title: 'Stanoviska',
+        lines: ['Ověříme podmínky', 'a omezení.'],
+      },
+      {
+        motif: 'check',
+        title: 'Doporučení',
+        lines: ['Navrhneme vhodnější dům', 'nebo doporučíme', 'další postup.'],
+      },
+    ],
+  };
 
 export const AUDIT_INPUT_HEIGHT_PX = 54;
 

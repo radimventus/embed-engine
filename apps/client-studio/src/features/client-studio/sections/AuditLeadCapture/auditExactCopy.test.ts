@@ -31,21 +31,21 @@ describe('Audit exact FORM copy', () => {
     );
   });
 
-  it('does not keep removed pre-form or security-trust copy', () => {
+  it('keeps removed pre-form copy out and restores desktop security trust', () => {
     assert.equal(
       source.includes(
         'Po odeslání vám zašleme další postup a informace potřebné pro zpracování posouzení',
       ),
       false,
     );
-    assert.equal(source.includes('Vaše data jsou u nás v bezpečí.'), false);
+    assert.equal(source.includes('Vaše data jsou u nás v bezpečí.'), true);
     assert.equal(source.includes('Vaše údaje jsou v bezpečí.'), false);
-    assert.equal(
-      source.includes(
-        'Informace použijeme pouze pro účely posouzení. Nesdílíme je s třetími stranami.',
-      ),
-      false,
+    assert.match(
+      source,
+      /Informace použijeme pouze pro účely posouzení\. Nesdílíme je s\s+třetími stranami\./,
     );
-    assert.equal(source.includes('LockIcon'), false);
+    assert.equal(source.includes('LockIcon'), true);
+    assert.match(source, /data-testid="audit-data-trust"/);
+    assert.match(source, /mobile:hidden/);
   });
 });

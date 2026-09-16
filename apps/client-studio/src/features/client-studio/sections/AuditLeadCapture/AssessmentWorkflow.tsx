@@ -14,13 +14,11 @@ type AssessmentWorkflowProps = {
   landOption: LandOption;
 };
 
-const MODE_META: Record<
-  LandOption,
-  { label: string; Icon: typeof HouseIcon }
-> = {
-  owned: { label: 'MÁM POZEMEK', Icon: HouseIcon },
-  seeking: { label: 'HLEDÁM POZEMEK', Icon: SearchIcon },
-};
+const MODE_META: Record<LandOption, { label: string; Icon: typeof HouseIcon }> =
+  {
+    owned: { label: 'MÁM POZEMEK', Icon: HouseIcon },
+    seeking: { label: 'HLEDÁM POZEMEK', Icon: SearchIcon },
+  };
 
 /** Block 3 — metro product; only the active mode branch is visible. */
 export function AssessmentWorkflow({ landOption }: AssessmentWorkflowProps) {
@@ -80,10 +78,19 @@ export function AssessmentWorkflow({ landOption }: AssessmentWorkflowProps) {
       </div>
 
       <div
-        className="relative mt-10"
-        role="list"
-        aria-label="Stanice posouzení"
+        className="mt-6 flex items-center justify-center gap-3 mobile:hidden"
+        data-testid="audit-workflow-mode"
       >
+        <ModeIcon className="h-8 w-8" />
+        <p
+          className="whitespace-nowrap text-center text-xs font-bold tracking-[0.14em]"
+          style={{ color: AUDIT_ACCENT }}
+        >
+          {mode.label}
+        </p>
+      </div>
+
+      <div className="relative mt-8" role="list" aria-label="Stanice posouzení">
         <div
           aria-hidden="true"
           className="pointer-events-none absolute left-[12.5%] right-[37.5%] top-[44px] h-px mobile:hidden"
@@ -96,11 +103,12 @@ export function AssessmentWorkflow({ landOption }: AssessmentWorkflowProps) {
         />
 
         <div className="grid grid-cols-4 gap-4 mobile:hidden">
-          {stations.map((station) => (
+          {stations.map((station, index) => (
             <div
-              key={station.motif}
+              key={`${station.motif}-${station.title}`}
               role="listitem"
-              className="relative z-10 flex flex-col items-center"
+              className="relative z-10 flex flex-col items-center text-center mobile:text-left"
+              data-testid="audit-workflow-step"
             >
               <div
                 className="flex h-[88px] w-[88px] items-center justify-center rounded-full border-2 bg-[#001930]"
@@ -108,41 +116,16 @@ export function AssessmentWorkflow({ landOption }: AssessmentWorkflowProps) {
               >
                 <StationMotifIcon motif={station.motif} className="h-12 w-12" />
               </div>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      <div
-        key={landOption}
-        className="mt-10 grid grid-cols-[10.5rem_1px_1fr] items-stretch gap-x-4 mobile:grid-cols-1 mobile:gap-y-4"
-      >
-        <div className="flex flex-col items-center gap-3 pt-1 mobile:flex-row mobile:justify-center">
-          <ModeIcon className="h-10 w-10" />
-          <p
-            className="whitespace-nowrap text-center text-xs font-bold tracking-[0.14em] mobile:text-left"
-            style={{ color: AUDIT_ACCENT }}
-          >
-            {mode.label}
-          </p>
-        </div>
-
-        <div
-          aria-hidden="true"
-          className="w-px self-stretch mobile:hidden"
-          style={{ backgroundColor: AUDIT_ACCENT }}
-        />
-
-        <div className="grid grid-cols-4 gap-4 mobile:hidden">
-          {stations.map((station, index) => (
-            <div key={station.title} className="text-center mobile:text-left">
-              <p className="text-sm font-semibold tracking-wide">
+              <p className="mt-5 text-sm font-semibold tracking-wide mobile:w-full">
                 <span style={{ color: AUDIT_ACCENT }}>
                   {String(index + 1).padStart(2, '0')}{' '}
                 </span>
                 <span style={{ color: AUDIT_WHITE }}>{station.title}</span>
               </p>
-              <p className="mt-1.5 text-[13px] leading-snug" style={{ color: AUDIT_MUTED }}>
+              <p
+                className="mt-1.5 text-[13px] leading-snug mobile:w-full"
+                style={{ color: AUDIT_MUTED }}
+              >
                 {station.lines.join(' ')}
               </p>
             </div>

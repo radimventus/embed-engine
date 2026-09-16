@@ -11,13 +11,12 @@ function read(name: string): string {
 }
 
 function stripComments(source: string): string {
-  return source
-    .replace(/\/\*[\s\S]*?\*\//g, '')
-    .replace(/^\s*\/\/.*$/gm, '');
+  return source.replace(/\/\*[\s\S]*?\*\//g, '').replace(/^\s*\/\/.*$/gm, '');
 }
 
 describe('Audit GDPR consent UX', () => {
   const form = stripComments(read('AuditContact.tsx'));
+  const dialog = stripComments(read('AuditConsentDialog.tsx'));
   const payload = stripComments(read('durableLeadSubmission.ts'));
 
   it('places GDPR after the compact contact grid', () => {
@@ -40,7 +39,10 @@ describe('Audit GDPR consent UX', () => {
     assert.match(form, /checked=\{gdprConsent\}/);
     assert.match(form, /setGdprConsent\(checked\)/);
     assert.match(form, /data-testid="audit-gdpr-consent-mark"/);
-    assert.match(form, /backgroundColor: gdprConsent \? AUDIT_ACCENT : 'transparent'/);
+    assert.match(
+      form,
+      /backgroundColor: gdprConsent \? AUDIT_ACCENT : 'transparent'/,
+    );
   });
 
   it('blocks POST and submitDurableLead while consent is unchecked', () => {
@@ -53,26 +55,29 @@ describe('Audit GDPR consent UX', () => {
     assert.ok(guard >= 0);
     assert.ok(guard < post);
     assert.match(handler.slice(guard, post), /return;/);
-    assert.equal(handler.slice(guard, post).includes('submitDurableLead'), false);
+    assert.equal(
+      handler.slice(guard, post).includes('submitDurableLead'),
+      false,
+    );
     assert.match(form, /handleCtaClick/);
     assert.match(form, /event\.preventDefault\(\)/);
   });
 
-  it('exposes contextual GDPR guidance from the CTA, not a permanent row', () => {
-    assert.match(form, /Pro odeslání potvrďte souhlas s GDPR\./);
-    assert.match(form, /data-testid="audit-gdpr-guidance"/);
-    assert.match(form, /onMouseEnter/);
-    assert.match(form, /onMouseLeave/);
-    assert.equal(
-      form.includes(
-        'Pro odeslání poptávky potvrďte souhlas se zpracováním osobních údajů',
-      ),
-      false,
-    );
+  it('opens a modal instead of rendering overlapping CTA guidance', () => {
+    assert.match(form, /setConsentDialogOpen\(true\)/);
+    assert.match(form, /<AuditConsentDialog/);
+    assert.equal(form.includes('audit-gdpr-guidance'), false);
+    assert.equal(form.includes('onMouseEnter'), false);
+    assert.match(dialog, /role="dialog"/);
+    assert.match(dialog, /aria-modal="true"/);
+    assert.match(dialog, /Souhlasíte s podmínkami\?/);
+    assert.match(dialog, /data-testid="audit-consent-backdrop"/);
   });
 
   it('keeps the Project privacy link outside the checkbox control label', () => {
-    const controlStart = form.indexOf('data-testid="audit-gdpr-consent-control"');
+    const controlStart = form.indexOf(
+      'data-testid="audit-gdpr-consent-control"',
+    );
     const controlLabelClose = form.indexOf('</label>', controlStart);
     const linkIndex = form.indexOf('data-testid="audit-gdpr-privacy-link"');
 
@@ -95,11 +100,11 @@ describe('Audit GDPR consent UX', () => {
     assert.match(form, /clientOutputVariantForLandOption\(landOption\)/);
     assert.match(form, /setPhase\('success'\)/);
 
-    const tryBlock = form.slice(
-      form.indexOf('try {'),
-      form.indexOf('} catch'),
+    const tryBlock = form.slice(form.indexOf('try {'), form.indexOf('} catch'));
+    assert.ok(
+      tryBlock.indexOf('submitDurableLead') <
+        tryBlock.indexOf("setPhase('success')"),
     );
-    assert.ok(tryBlock.indexOf('submitDurableLead') < tryBlock.indexOf("setPhase('success')"));
     assert.ok(tryBlock.indexOf('submitDurableLead') < tryBlock.indexOf('submitClientOutput'));
     assert.ok(tryBlock.indexOf('submitClientOutput') < tryBlock.indexOf("setPhase('success')"));
     assert.match(payload, /if \(!response\.ok\)/);

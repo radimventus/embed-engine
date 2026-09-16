@@ -1,4 +1,12 @@
-import { useRef, useState, type ChangeEvent, type FormEvent, type MouseEvent } from 'react';
+import {
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  type ChangeEvent,
+  type FormEvent,
+  type MouseEvent,
+} from 'react';
 import { Input } from '@embed-engine/ui';
 
 import { useOptionalDecisionAnalytics } from '../../analytics';
@@ -15,15 +23,14 @@ import {
   AUDIT_WHITE,
   type LandOption,
 } from './audit-panel';
-import { UserIcon } from './AuditIcons';
+import { AuditConsentDialog } from './AuditConsentDialog';
+import { LockIcon, UserIcon } from './AuditIcons';
 import { SuccessState } from './SuccessState';
 import { submitDurableLead } from './durableLeadSubmission';
 import { buildClientOutputSnapshot, clientOutputVariantForLandOption } from '../../client-output/clientOutputSnapshot';
 import { downloadClientOutput, submitClientOutput, type ClientOutputAccepted } from '../../client-output/clientOutputClient';
 
 type LeadPhase = 'idle' | 'loading' | 'success' | 'error';
-
-export const AUDIT_GDPR_GUIDANCE = 'Pro odeslání potvrďte souhlas s GDPR.';
 
 export const AUDIT_POST_SUBMIT_COPY =
   'Po odeslání formuláře se s Vámi spojíme a domluvíme podrobnosti.';
@@ -48,13 +55,13 @@ export function AuditContact({
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
   const [gdprConsent, setGdprConsent] = useState(false);
+  const [consentDialogOpen, setConsentDialogOpen] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [clientOutput, setClientOutput] = useState<ClientOutputAccepted | null>(null);
-  const [ctaHovered, setCtaHovered] = useState(false);
-  const [guidancePinned, setGuidancePinned] = useState(false);
   const contactOpenedRef = useRef(false);
   const idempotencyKeyRef = useRef<string | null>(null);
-  const checkboxRef = useRef<HTMLInputElement>(null);
+  const formRef = useRef<HTMLFormElement>(null);
+  const consentContinuationRef = useRef(false);
 
   const trackContactOpened = () => {
     if (contactOpenedRef.current) {
@@ -64,24 +71,28 @@ export function AuditContact({
     analytics?.conversionStarted('audit-contact-form');
   };
 
-  const showConsentGuidance =
-    !gdprConsent && (ctaHovered || guidancePinned);
+  const closeConsentDialog = useCallback(() => setConsentDialogOpen(false), []);
 
-  const revealConsentGuidance = () => {
-    setGuidancePinned(true);
-    checkboxRef.current?.focus();
-  };
+  useEffect(() => {
+    if (!gdprConsent || !consentContinuationRef.current) return;
+    consentContinuationRef.current = false;
+    formRef.current?.requestSubmit();
+  }, [gdprConsent]);
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setErrorMessage(null);
 
     if (!gdprConsent) {
-      revealConsentGuidance();
+      setConsentDialogOpen(true);
       return;
     }
 
-    if (project?.privacyUrl === undefined || analyticsScope === null || company === null) {
+    if (
+      project?.privacyUrl === undefined ||
+      analyticsScope === null ||
+      company === null
+    ) {
       setPhase('error');
       setErrorMessage(
         'Pro tohoto partnera nejsou dostupné zásady soukromí. Poptávku nelze odeslat.',
@@ -99,8 +110,7 @@ export function AuditContact({
 
     setPhase('loading');
     onPersistLandIntent(landOption);
-    const idempotencyKey =
-      idempotencyKeyRef.current ?? crypto.randomUUID();
+    const idempotencyKey = idempotencyKeyRef.current ?? crypto.randomUUID();
     idempotencyKeyRef.current = idempotencyKey;
 
     let auditPersisted = false;
@@ -141,7 +151,14 @@ export function AuditContact({
       return;
     }
     event.preventDefault();
-    revealConsentGuidance();
+    setConsentDialogOpen(true);
+  };
+
+  const confirmConsentAndContinue = () => {
+    if (consentContinuationRef.current) return;
+    consentContinuationRef.current = true;
+    setConsentDialogOpen(false);
+    setGdprConsent(true);
   };
 
   return (
@@ -156,7 +173,7 @@ export function AuditContact({
           <SuccessState landOption={landOption} onDownload={clientOutput===null?undefined:()=>downloadClientOutput(clientOutput,runtime.experience.house.title)} />
         </div>
       ) : (
-        <form className="mt-5" onSubmit={handleSubmit}>
+        <form ref={formRef} className="mt-5" onSubmit={handleSubmit}>
           <div
             className="grid grid-cols-2 gap-3 mobile:grid-cols-1"
             data-testid="audit-contact-grid"
@@ -174,7 +191,9 @@ export function AuditContact({
                 disabled={phase === 'loading'}
                 className={AUDIT_INPUT_CLASS}
                 style={{ ...AUDIT_INPUT_STYLE, height: AUDIT_INPUT_HEIGHT_PX }}
-                onChange={(event: ChangeEvent<HTMLInputElement>) => setName(event.target.value)}
+                onChange={(event: ChangeEvent<HTMLInputElement>) =>
+                  setName(event.target.value)
+                }
                 onFocus={trackContactOpened}
               />
             </div>
@@ -192,7 +211,9 @@ export function AuditContact({
                 disabled={phase === 'loading'}
                 className={AUDIT_INPUT_CLASS}
                 style={{ ...AUDIT_INPUT_STYLE, height: AUDIT_INPUT_HEIGHT_PX }}
-                onChange={(event: ChangeEvent<HTMLInputElement>) => setEmail(event.target.value)}
+                onChange={(event: ChangeEvent<HTMLInputElement>) =>
+                  setEmail(event.target.value)
+                }
                 onFocus={trackContactOpened}
               />
             </div>
@@ -209,7 +230,9 @@ export function AuditContact({
                 disabled={phase === 'loading'}
                 className={AUDIT_INPUT_CLASS}
                 style={{ ...AUDIT_INPUT_STYLE, height: AUDIT_INPUT_HEIGHT_PX }}
-                onChange={(event: ChangeEvent<HTMLInputElement>) => setPhone(event.target.value)}
+                onChange={(event: ChangeEvent<HTMLInputElement>) =>
+                  setPhone(event.target.value)
+                }
                 onFocus={trackContactOpened}
               />
             </div>
@@ -218,9 +241,6 @@ export function AuditContact({
               <button
                 type="submit"
                 data-testid="audit-contact-submit"
-                aria-describedby={
-                  showConsentGuidance ? 'audit-gdpr-guidance' : undefined
-                }
                 disabled={phase === 'loading'}
                 className="flex w-full items-center justify-center px-4 text-center text-sm font-semibold tracking-wide focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-embed-brand-gold/35 focus-visible:ring-offset-2 focus-visible:ring-offset-[#001930] disabled:cursor-not-allowed"
                 style={{
@@ -232,25 +252,10 @@ export function AuditContact({
                   borderWidth: 0,
                   opacity: phase === 'loading' ? 0.6 : 1,
                 }}
-                onMouseEnter={() => {
-                  if (!gdprConsent) setCtaHovered(true);
-                }}
-                onMouseLeave={() => setCtaHovered(false)}
                 onClick={handleCtaClick}
               >
                 {phase === 'loading' ? 'ODESÍLÁM…' : 'ODESLAT POPTÁVKU →'}
               </button>
-              {showConsentGuidance ? (
-                <span
-                  id="audit-gdpr-guidance"
-                  role="status"
-                  data-testid="audit-gdpr-guidance"
-                  className="pointer-events-none absolute top-[calc(100%+6px)] left-1/2 z-10 -translate-x-1/2 whitespace-nowrap text-xs leading-none"
-                  style={{ color: AUDIT_ACCENT }}
-                >
-                  {AUDIT_GDPR_GUIDANCE}
-                </span>
-              ) : null}
             </div>
           </div>
 
@@ -264,7 +269,6 @@ export function AuditContact({
               data-testid="audit-gdpr-consent-control"
             >
               <input
-                ref={checkboxRef}
                 id="audit-gdpr-consent"
                 type="checkbox"
                 checked={gdprConsent}
@@ -273,9 +277,6 @@ export function AuditContact({
                 onChange={(event: ChangeEvent<HTMLInputElement>) => {
                   const checked = event.target.checked;
                   setGdprConsent(checked);
-                  if (checked) {
-                    setGuidancePinned(false);
-                  }
                 }}
               />
               <span
@@ -286,9 +287,6 @@ export function AuditContact({
                   borderColor: AUDIT_ACCENT,
                   backgroundColor: gdprConsent ? AUDIT_ACCENT : 'transparent',
                   borderRadius: 3,
-                  boxShadow: guidancePinned && !gdprConsent
-                    ? `0 0 0 2px ${AUDIT_ACCENT}66`
-                    : undefined,
                 }}
               >
                 {gdprConsent ? (
@@ -351,22 +349,57 @@ export function AuditContact({
         </p>
       ) : null}
 
-      <div className="mt-5 flex gap-3">
+      <div className="mt-5 grid grid-cols-2 gap-6 mobile:grid-cols-1">
         <div
-          className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border"
-          style={{ borderColor: AUDIT_ACCENT }}
+          className="flex gap-3 mobile:hidden"
+          data-testid="audit-data-trust"
         >
-          <UserIcon className="h-5 w-5" />
+          <div
+            className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border"
+            style={{ borderColor: AUDIT_ACCENT }}
+          >
+            <LockIcon className="h-5 w-5" />
+          </div>
+          <div>
+            <p className="text-sm font-semibold" style={{ color: AUDIT_WHITE }}>
+              Vaše data jsou u nás v bezpečí.
+            </p>
+            <p
+              className="mt-1 text-xs leading-snug"
+              style={{ color: AUDIT_MUTED }}
+            >
+              Informace použijeme pouze pro účely posouzení. Nesdílíme je s
+              třetími stranami.
+            </p>
+          </div>
         </div>
-        <div>
-          <p className="text-sm font-semibold" style={{ color: AUDIT_WHITE }}>
-            Nezávislé posouzení.
-          </p>
-          <p className="mt-1 text-xs leading-snug" style={{ color: AUDIT_MUTED }}>
-            Posouzení je nezávazné. Rozhodnutí je vždy na vás.
-          </p>
+
+        <div className="flex gap-3">
+          <div
+            className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border"
+            style={{ borderColor: AUDIT_ACCENT }}
+          >
+            <UserIcon className="h-5 w-5" />
+          </div>
+          <div>
+            <p className="text-sm font-semibold" style={{ color: AUDIT_WHITE }}>
+              Nezávislé posouzení.
+            </p>
+            <p
+              className="mt-1 text-xs leading-snug"
+              style={{ color: AUDIT_MUTED }}
+            >
+              Posouzení je nezávazné. Rozhodnutí je vždy na vás.
+            </p>
+          </div>
         </div>
       </div>
+
+      <AuditConsentDialog
+        open={consentDialogOpen}
+        onCancel={closeConsentDialog}
+        onConfirm={confirmConsentAndContinue}
+      />
     </div>
   );
 }

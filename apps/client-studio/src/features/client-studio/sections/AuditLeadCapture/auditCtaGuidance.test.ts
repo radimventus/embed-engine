@@ -12,7 +12,7 @@ function form(): string {
     .replace(/^\s*\/\/.*$/gm, '');
 }
 
-describe('Audit CTA consent guidance', () => {
+describe('Audit CTA consent modal', () => {
   const source = form();
 
   it('keeps the gold CTA interactive while consent is unchecked', () => {
@@ -30,31 +30,20 @@ describe('Audit CTA consent guidance', () => {
     assert.match(submit, /backgroundColor: AUDIT_ACCENT/);
   });
 
-  it('shows hover/click/keyboard guidance without a permanent extra row', () => {
-    assert.match(source, /onMouseEnter/);
-    assert.match(source, /onMouseLeave/);
+  it('opens the consent modal from click and form submit', () => {
     assert.match(source, /handleCtaClick/);
-    assert.match(source, /revealConsentGuidance/);
-    assert.match(source, /checkboxRef\.current\?\.focus\(\)/);
     assert.match(source, /onClick=\{handleCtaClick\}/);
     assert.match(source, /onSubmit=\{handleSubmit\}/);
-    assert.match(
-      source,
-      /pointer-events-none absolute top-\[calc\(100%\+6px\)\]/,
-    );
-    assert.match(source, /Pro odeslání potvrďte souhlas s GDPR\./);
-    assert.equal(
-      source.includes(
-        'Pro odeslání poptávky potvrďte souhlas se zpracováním osobních údajů',
-      ),
-      false,
-    );
+    assert.match(source, /setConsentDialogOpen\(true\)/);
+    assert.match(source, /open=\{consentDialogOpen\}/);
+    assert.equal(source.includes('audit-gdpr-guidance'), false);
   });
 
-  it('hides GDPR guidance once consent is checked', () => {
-    assert.match(
-      source,
-      /!gdprConsent && \(ctaHovered \|\| guidancePinned\)/,
-    );
+  it('confirms once and resumes the existing submit flow', () => {
+    assert.match(source, /if \(consentContinuationRef\.current\) return/);
+    assert.match(source, /setGdprConsent\(true\)/);
+    assert.match(source, /formRef\.current\?\.requestSubmit\(\)/);
+    assert.match(source, /onCancel=\{closeConsentDialog\}/);
+    assert.match(source, /onConfirm=\{confirmConsentAndContinue\}/);
   });
 });
