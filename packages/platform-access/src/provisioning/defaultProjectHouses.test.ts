@@ -202,6 +202,10 @@ describe('defaultProjectHouses recovery', () => {
     assert.equal(bungalov.dataMode, 'REFERENCE_DEMO');
     assert.equal(bungalov.packageRoot, BUNGALOV_4KK_REFERENCE_SOURCE.packageRoot);
     assert.equal(bungalov.referenceProvenance?.sourceId, BUNGALOV_4KK_REFERENCE_SOURCE_ID);
+    assert.equal(bungalov.referenceProvenance?.sourceVersion, BUNGALOV_4KK_REFERENCE_SOURCE.version);
+    assert.equal(bungalov.objectType, 'reference-house');
+    assert.equal(bungalov.status, 'published');
+    assert.equal(bungalov.slug, 'bungalov-4kk');
   });
 
   it('binds VPD to patrovy-5kk starter package and LIVE_EMPTY', () => {

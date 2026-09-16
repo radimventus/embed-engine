@@ -39,6 +39,7 @@ import {
   durableProjectCommercialProgramSelectedAt,
   durableProjectLogoUrl,
 } from '../registry/durableProjectConfig';
+import { repairHistoricalReferenceAuthorityHouse } from '../provisioning/defaultProjectHouses';
 
 const DEFAULT_HOUSE_DATA_MODE: HouseDataMode = 'LIVE_EMPTY';
 
@@ -411,6 +412,7 @@ function listPublishedHouseProjections(): readonly CanonicalProjectProjection[] 
  */
 function authorityHouseProjection(
   authorityHouse: CanonicalAuthorityHouse,
+  exactPublished?: CanonicalProjectProjection,
 ): CanonicalProjectProjection | null {
   const registry = getDefaultCompanyRegistry();
 
@@ -430,14 +432,54 @@ function authorityHouseProjection(
     return null;
   }
 
+  const publishedMatch =
+    exactPublished ??
+    listPublishedHouseProjections().find(
+      (projection) =>
+        projection.house?.houseId === authorityHouse.id &&
+        projection.project.projectId === authorityHouse.canonicalProjectId,
+    );
+  const exactPublishedReference =
+    publishedMatch?.house?.houseId === authorityHouse.id &&
+    publishedMatch.project.projectId === authorityHouse.canonicalProjectId &&
+    publishedMatch.house.dataMode === 'REFERENCE_DEMO' &&
+    publishedMatch.house.objectType === 'reference-house'
+      ? publishedMatch.house
+      : null;
+  const supplementedAuthority = repairHistoricalReferenceAuthorityHouse({
+    house:
+      exactPublishedReference === null ||
+      (authorityHouse.dataMode !== undefined &&
+        authorityHouse.dataMode !== 'REFERENCE_DEMO') ||
+      (authorityHouse.objectType !== undefined &&
+        authorityHouse.objectType !== 'reference-house')
+        ? authorityHouse
+        : {
+            ...authorityHouse,
+            slug: authorityHouse.slug ?? exactPublishedReference.slug,
+            packageRoot:
+              authorityHouse.packageRoot ?? exactPublishedReference.packageRoot,
+            objectType:
+              authorityHouse.objectType ?? exactPublishedReference.objectType,
+            dataMode:
+              authorityHouse.dataMode ?? exactPublishedReference.dataMode,
+            referenceProvenance:
+              authorityHouse.referenceProvenance ??
+              exactPublishedReference.referenceProvenance,
+          },
+    companyId: company.id,
+    projectId: project.id,
+    workspaceId: workspace.id,
+  });
+
   const houseStatus =
-    authorityHouse.status === 'published'
+    supplementedAuthority.status === 'published'
       ? 'published'
-      : authorityHouse.status === 'ready'
+      : supplementedAuthority.status === 'ready'
         ? 'ready'
         : 'draft';
 
-  const packageRoot = authorityHouse.packageRoot ?? '';
+  const packageRoot = supplementedAuthority.packageRoot ?? '';
 
   return {
     partner: {
@@ -475,22 +517,22 @@ function authorityHouseProjection(
       privacyUrl: project.privacyUrl,
     },
     house: {
-      houseId: authorityHouse.id,
-      name: authorityHouse.name,
-      slug: authorityHouse.slug ?? authorityHouse.id,
-      objectType: authorityHouse.objectType ?? '',
+      houseId: supplementedAuthority.id,
+      name: supplementedAuthority.name,
+      slug: supplementedAuthority.slug ?? supplementedAuthority.id,
+      objectType: supplementedAuthority.objectType ?? '',
       packageRoot,
       packagePublicRoot:
         packageRoot.trim().length > 0
           ? packageRootToPublicUrl(packageRoot)
           : '',
       dataMode:
-        authorityHouse.dataMode ?? DEFAULT_HOUSE_DATA_MODE,
-      ...(authorityHouse.referenceProvenance === undefined
+        supplementedAuthority.dataMode ?? DEFAULT_HOUSE_DATA_MODE,
+      ...(supplementedAuthority.referenceProvenance === undefined
         ? {}
         : {
             referenceProvenance:
-              authorityHouse.referenceProvenance,
+              supplementedAuthority.referenceProvenance,
           }),
     },
     branding: {
@@ -536,6 +578,12 @@ export function listCanonicalHouses(
           (item) => item.project.projectId === filter,
         );
 
+  const publishedByHouseId = new Map(
+    published
+      .filter((projection) => projection.house !== null)
+      .map((projection) => [projection.house!.houseId, projection] as const),
+  );
+
   const dynamic = getDefaultCompanyRegistry().houses
     .filter(
       (house) =>
@@ -543,7 +591,9 @@ export function listCanonicalHouses(
         filter.length === 0 ||
         house.canonicalProjectId === filter,
     )
-    .map(authorityHouseProjection)
+    .map((house) =>
+      authorityHouseProjection(house, publishedByHouseId.get(house.id)),
+    )
     .filter(
       (
         projection,

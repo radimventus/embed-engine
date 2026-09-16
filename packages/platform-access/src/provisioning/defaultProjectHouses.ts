@@ -1,5 +1,6 @@
 import type { PlatformProject } from '../domain/types';
 import {
+  type CanonicalAuthorityHouse,
   getDefaultCompanyRegistry,
   upsertBuilderProject,
 } from '../registry/companyRegistry';
@@ -131,6 +132,61 @@ export function buildDefaultPartnerVpdHouse(input: {
     description: 'Partner-owned starter draft House for demonstration.',
     dataMode: 'LIVE_EMPTY',
     canonicalProjectId: input.projectId,
+  };
+}
+
+/**
+ * Restores optional reference metadata omitted by historical durable rows.
+ *
+ * Eligibility is deliberately strict: the House id must be the exact
+ * deterministic materialization id for this Company + Project. Explicit
+ * non-reference values remain authoritative, so a partner-owned LIVE_EMPTY
+ * House can never be promoted by this compatibility read.
+ *
+ * The operation is pure and idempotent. It is suitable for the runtime read
+ * repair now and for a future durable backfill without introducing a second
+ * materialization contract.
+ */
+export function repairHistoricalReferenceAuthorityHouse(input: {
+  readonly house: CanonicalAuthorityHouse;
+  readonly companyId: string;
+  readonly projectId: string;
+  readonly workspaceId: string;
+}): CanonicalAuthorityHouse {
+  const { house } = input;
+  if (house.canonicalProjectId !== input.projectId) return house;
+  if (
+    (house.dataMode !== undefined && house.dataMode !== 'REFERENCE_DEMO') ||
+    (house.objectType !== undefined && house.objectType !== 'reference-house')
+  ) {
+    return house;
+  }
+
+  const materialized = buildDefaultReferenceBungalovHouse({
+    companyId: input.companyId,
+    projectId: input.projectId,
+    workspaceId: input.workspaceId,
+  });
+  if (materialized.id !== house.id) return house;
+
+  return {
+    ...house,
+    slug: house.slug === undefined ? materialized.slug : house.slug,
+    packageRoot:
+      house.packageRoot === undefined
+        ? materialized.packageRoot
+        : house.packageRoot,
+    status: house.status === undefined ? materialized.status : house.status,
+    objectType:
+      house.objectType === undefined
+        ? materialized.objectType
+        : house.objectType,
+    dataMode:
+      house.dataMode === undefined ? materialized.dataMode : house.dataMode,
+    referenceProvenance:
+      house.referenceProvenance === undefined
+        ? materialized.referenceProvenance
+        : house.referenceProvenance,
   };
 }
 
