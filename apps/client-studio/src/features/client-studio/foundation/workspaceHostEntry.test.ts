@@ -38,7 +38,7 @@ describe('PT-VR-06 Client Studio boundaries', () => {
     assert.match(mount, /initialLandingOffsetPx={initialLandingOffsetPx}/);
     assert.match(app, /initialLandingOffsetPx={initialLandingOffsetPx}/);
     assert.match(page, /initialLandingOffsetPx = 0/);
-    assert.match(page, /useState\(initialLandingOffsetPx\)/);
+    assert.match(page, /useState\(\s*initialLandingOffsetPx,?\s*\)/);
     const cta = readFileSync(join(here, '../sections/Hero/HeroCTA.tsx'), 'utf8');
     assert.doesNotMatch(cta, /WORKSPACE_LANDING_ADJUSTMENT_PX|workspaceAdjustment/);
   });

@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react";
 
-import { markPinnedNavigationTiming } from "./scrollToSection";
+import { isBeforeHeroTourAnchor, markPinnedNavigationTiming } from "./scrollToSection";
 
 /** Product-tunable input distance; not part of the public UX contract. */
 export const PROGRESSIVE_SCROLL_UNLOCK_THRESHOLD_PX = 160;
@@ -59,21 +59,6 @@ export function applyScrollIntent(
         },
         unlock: false,
       };
-}
-
-export function applyGuardedScrollIntent(
-  state: ProgressiveScrollIntentState,
-  downwardDeltaPx: number,
-  options: {
-    readonly enabled: boolean;
-    readonly settling: boolean;
-    readonly thresholdPx?: number;
-  },
-): { readonly state: ProgressiveScrollIntentState; readonly unlock: boolean } {
-  if (!options.enabled || options.settling) {
-    return { state: EMPTY_SCROLL_INTENT, unlock: false };
-  }
-  return applyScrollIntent(state, downwardDeltaPx, options.thresholdPx);
 }
 
 export function lockScrollIntentUntilIdle(): ProgressiveScrollIntentState {
@@ -154,6 +139,11 @@ function scrollRoot(): HTMLElement | Window {
 }
 
 function currentSceneBoundary(sceneId: string): HTMLElement | null {
+  // HERO and TOUR share the progressive orientation scene, but the existing
+  // HERO CTA is a real reading stop before the TOUR navigation footer.
+  if (sceneId === "journey-scene-orientation" && isBeforeHeroTourAnchor()) {
+    return document.getElementById("hero");
+  }
   return (
     Array.from(
       document.querySelectorAll<HTMLElement>(
@@ -279,13 +269,13 @@ export function useProgressiveScrollUnlock({
   const touchYRef = useRef<number | null>(null);
   const idleTimerRef = useRef<number | null>(null);
   const navigateRef = useRef(onNavigate);
+  const gestureConsumedRef = useRef(false);
+  const lastWheelAtRef = useRef(-Infinity);
   navigateRef.current = onNavigate;
 
   useEffect(() => {
-    if (navigationBlocked) {
-      intentRef.current = EMPTY_DIRECTIONAL_INTENT;
-      return;
-    }
+    intentRef.current = EMPTY_DIRECTIONAL_INTENT;
+    if (navigationBlocked) gestureConsumedRef.current = true;
 
     const root = scrollRoot();
     const eventTarget: EventTarget = root;
@@ -305,6 +295,7 @@ export function useProgressiveScrollUnlock({
       target: EventTarget | null,
     ): boolean => {
       if (signedDeltaPx === 0) return false;
+      if (navigationBlocked || gestureConsumedRef.current) return false;
       const direction = signedDeltaPx > 0 ? "forward" : "backward";
       const available =
         direction === "forward" ? canNavigateForward : canNavigateBackward;
@@ -330,6 +321,7 @@ export function useProgressiveScrollUnlock({
       clearIdleTimer();
       if (result.transition !== null) {
         resetIntent();
+        gestureConsumedRef.current = true;
         markPinnedNavigationTiming("threshold");
         navigateRef.current(result.transition);
         return true;
@@ -342,11 +334,20 @@ export function useProgressiveScrollUnlock({
     };
 
     const onWheel = (event: WheelEvent) => {
+      const now = performance.now();
+      if (now - lastWheelAtRef.current > INTENT_IDLE_RESET_MS) {
+        gestureConsumedRef.current = false;
+        resetIntent();
+      }
+      lastWheelAtRef.current = now;
+      if (navigationBlocked) gestureConsumedRef.current = true;
       if (addIntent(wheelDeltaPx(event, root), event.target)) {
         event.preventDefault();
       }
     };
     const onTouchStart = (event: TouchEvent) => {
+      gestureConsumedRef.current = navigationBlocked;
+      resetIntent();
       touchYRef.current = event.touches[0]?.clientY ?? null;
     };
     const onTouchMove = (event: TouchEvent) => {

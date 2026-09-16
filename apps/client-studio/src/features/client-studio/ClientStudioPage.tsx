@@ -1,5 +1,6 @@
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useState } from "react";
 import { flushSync } from "react-dom";
+import { cancelSectionScroll, heroTourTargetY, isBeforeHeroTourAnchor } from "./foundation/scrollToSection";
 import type { ReactExperienceModel } from "@embed-engine/model";
 
 import { DecisionAnalyticsProvider, JourneySurfaceObserver } from "./analytics";
@@ -16,7 +17,6 @@ import {
   isOrientationSection,
   isPrioritySection,
   isRacioSection,
-  isSectionAtScrollAnchor,
   isSectionScrollReady,
   markPinnedNavigationTiming,
   nextProgressiveSceneId,
@@ -24,7 +24,6 @@ import {
   registerJourneySectionNavigator,
   scrollToSection,
   useActiveSection,
-  usePhysicalScrollLock,
   useProgressiveScrollUnlock,
 } from "./foundation";
 import type { ProgressiveNavigationDirection } from "./foundation";
@@ -58,9 +57,6 @@ type ClientStudioPageProps = {
   onVisibleSceneIdsChange?: (sceneIds: readonly string[]) => void;
 };
 
-export const PROGRESSIVE_PHYSICAL_SCROLL_LOCK_MS = 1000;
-export const PROGRESSIVE_PHYSICAL_SCROLL_LOCK_FAILSAFE_MS = 1500;
-
 /**
  * Decision Session Experience host (ED-DA-04 / CSCB-01).
  *
@@ -89,7 +85,6 @@ export function ClientStudioPage({
     initialLandingOffsetPx,
   );
   const [isSceneTransitioning, setIsSceneTransitioning] = useState(false);
-  const [isPhysicalScrollLocked, setIsPhysicalScrollLocked] = useState(false);
   const visibleSceneIds = scenes
     .slice(0, revealedSceneCount)
     .map((scene) => scene.id);
@@ -100,21 +95,8 @@ export function ClientStudioPage({
   const [requestedSceneId, setRequestedSceneId] = useState<string | null>(null);
   const [snapEnabled, setSnapEnabled] = useState(false);
   const [scrollIntentResetKey, setScrollIntentResetKey] = useState(0);
-  const transitionTimerRef = useRef<number | null>(null);
-  const transitionFailsafeRef = useRef<number | null>(null);
+  useEffect(() => () => cancelSectionScroll(), []);
 
-  useEffect(() => {
-    return () => {
-      if (transitionTimerRef.current !== null) {
-        window.clearTimeout(transitionTimerRef.current);
-      }
-      if (transitionFailsafeRef.current !== null) {
-        window.clearTimeout(transitionFailsafeRef.current);
-      }
-    };
-  }, []);
-
-  usePhysicalScrollLock(isPhysicalScrollLocked);
 
   useEffect(() => {
     onActiveSceneChange?.(activeSceneId);
@@ -153,48 +135,50 @@ export function ClientStudioPage({
     const scrollOffsetPx = pendingSceneScrollOffsetPx;
     let frameId: number | null = null;
     let cancelled = false;
+    let previousTargetTop: number | null = null;
+    const orientation = document.getElementById(scenes[0]!.id);
+    // A short first scene must still have enough scroll range for the historical
+    // HERO landing. This reserve is after the reading/navigation boundary and
+    // disappears as soon as real downstream content supplies the range.
+    if (revealedSceneCount > 1) {
+      orientation?.style.removeProperty("--journey-anchor-reserve");
+    }
 
     const scrollWhenReady = () => {
       if (cancelled) {
         return;
       }
-      if (
-        document.getElementById(sceneId) === null ||
-        !isSectionScrollReady(sceneId)
-      ) {
+      if (document.getElementById(sceneId) === null) {
         frameId = window.requestAnimationFrame(scrollWhenReady);
         return;
       }
-
-      let physicalLockStarted = false;
+      const overlay = document.querySelector<HTMLElement>("[data-embed-overlay-mount]");
+      const orientation = document.getElementById(scenes[0]!.id);
+      if (sceneId === PILOT_SECTION_IDS.socialProof && revealedSceneCount === 1 && orientation) {
+        const targetY = heroTourTargetY() ?? 0;
+        const maximum = overlay ? overlay.scrollHeight - overlay.clientHeight :
+          document.documentElement.scrollHeight - window.innerHeight;
+        const missing = Math.ceil(targetY - maximum);
+        if (missing > 0) {
+          const current = parseFloat(orientation.style.getPropertyValue("--journey-anchor-reserve")) || 0;
+          orientation.style.setProperty("--journey-anchor-reserve", `${current + missing}px`);
+          frameId = window.requestAnimationFrame(scrollWhenReady);
+          return;
+        }
+      }
+      if (!isSectionScrollReady(sceneId)) {
+        frameId = window.requestAnimationFrame(scrollWhenReady);
+        return;
+      }
+      const targetTop = document.getElementById(sceneId)!.getBoundingClientRect().top +
+        (overlay?.scrollTop ?? window.scrollY);
+      if (previousTargetTop === null || Math.abs(previousTargetTop - targetTop) > 0.5) {
+        previousTargetTop = targetTop;
+        frameId = window.requestAnimationFrame(scrollWhenReady);
+        return;
+      }
       const finishTransition = () => {
-        if (transitionTimerRef.current !== null) {
-          window.clearTimeout(transitionTimerRef.current);
-          transitionTimerRef.current = null;
-        }
-        if (transitionFailsafeRef.current !== null) {
-          window.clearTimeout(transitionFailsafeRef.current);
-          transitionFailsafeRef.current = null;
-        }
-        setIsPhysicalScrollLocked(false);
         setIsSceneTransitioning(false);
-      };
-      const beginPhysicalLock = () => {
-        if (physicalLockStarted) return;
-        physicalLockStarted = true;
-        markPinnedNavigationTiming("lock-start");
-        if (transitionTimerRef.current !== null) {
-          window.clearTimeout(transitionTimerRef.current);
-        }
-        setIsPhysicalScrollLocked(true);
-        transitionTimerRef.current = window.setTimeout(
-          finishTransition,
-          PROGRESSIVE_PHYSICAL_SCROLL_LOCK_MS,
-        );
-        transitionFailsafeRef.current = window.setTimeout(
-          finishTransition,
-          PROGRESSIVE_PHYSICAL_SCROLL_LOCK_FAILSAFE_MS,
-        );
       };
       const positionTarget = (
         behavior: ScrollBehavior,
@@ -209,26 +193,12 @@ export function ClientStudioPage({
           },
         });
       };
-      const beginPhysicalLockAtTarget = () => {
-        if (!isSectionAtScrollAnchor(sceneId, scrollOffsetPx)) return false;
-        beginPhysicalLock();
-        return true;
-      };
-      // Fail-safe is longer than the maximum canonical duration. It cancels
-      // the same central animator via an immediate canonical positioning call.
-      transitionTimerRef.current = window.setTimeout(() => {
-        positionTarget("auto", () => {
-          if (!beginPhysicalLockAtTarget()) finishTransition();
-        });
-      }, 1600);
-      positionTarget("smooth", () => {
-        if (!beginPhysicalLockAtTarget()) finishTransition();
-      });
+      positionTarget("smooth", finishTransition);
       setPendingSceneId((current) => (current === sceneId ? null : current));
     };
 
-    // Layout effect runs after the target DOM commits. Start the canonical
-    // animator now so its first changed write lands in the nearest RAF.
+    // Measure committed layout, confirm it on the nearest RAF, then give the
+    // animator one immutable target. No debounce, settle or scrollend wait.
     scrollWhenReady();
     return () => {
       cancelled = true;
@@ -253,19 +223,10 @@ export function ClientStudioPage({
       setSnapEnabled(true);
     }
     setIsSceneTransitioning(true);
-    setIsPhysicalScrollLocked(false);
     setActiveSceneId(sceneId);
     setRequestedSceneId(sceneId);
     setPendingSceneScrollOffsetPx(scrollOffsetPx);
     setPendingSceneId(scrollTargetId);
-    if (transitionTimerRef.current !== null) {
-      window.clearTimeout(transitionTimerRef.current);
-      transitionTimerRef.current = null;
-    }
-    if (transitionFailsafeRef.current !== null) {
-      window.clearTimeout(transitionFailsafeRef.current);
-      transitionFailsafeRef.current = null;
-    }
   };
 
   useEffect(() => {
@@ -318,6 +279,11 @@ export function ClientStudioPage({
 
   const navigateProgressively = (direction: ProgressiveNavigationDirection) => {
     markPinnedNavigationTiming("transition-request");
+    if (direction === "forward" && activeSceneId === scenes[0]!.id && isBeforeHeroTourAnchor()) {
+      const target = canonicalSectionTarget(PILOT_SECTION_IDS.walkthrough);
+      flushSync(() => unlockScene(scenes[0]!.id, target.scrollTargetId, target.scrollOffsetPx));
+      return;
+    }
     const targetScene =
       direction === "forward" ? nextProgressiveScene : previousProgressiveScene;
     if (targetScene === null) return;
@@ -330,7 +296,7 @@ export function ClientStudioPage({
   };
 
   useProgressiveScrollUnlock({
-    navigationBlocked: isSceneTransitioning || isPhysicalScrollLocked,
+    navigationBlocked: isSceneTransitioning,
     canNavigateForward: nextProgressiveScene !== null,
     canNavigateBackward: previousProgressiveScene !== null,
     currentSceneId: activeSceneId ?? scenes[0]!.id,

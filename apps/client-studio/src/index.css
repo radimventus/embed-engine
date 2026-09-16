@@ -106,6 +106,7 @@
 
     [data-journey-scene][data-compact-desktop-end="true"] {
       min-height: 0 !important;
+      padding-bottom: 0 !important;
     }
   }
 

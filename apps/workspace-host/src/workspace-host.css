@@ -289,6 +289,12 @@ body:has(.workspace-shell[data-workspace-surface='client']),
 }
 
 @media (min-width: 1280px) {
+  /* The copyright owns the desktop breathing space inside the Client shell.
+     Mobile reserves remain unchanged; no host spacer may extend past the rail. */
+  .workspace-shell[data-workspace-surface='client'] .workspace-shell__main {
+    padding-bottom: 0;
+  }
+
   .workspace-shell[data-workspace-surface='client']
     [data-studio-shell='sidebar-slot'] {
     position: sticky !important;

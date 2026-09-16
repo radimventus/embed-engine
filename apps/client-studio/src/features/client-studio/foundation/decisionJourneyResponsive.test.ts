@@ -101,7 +101,8 @@ describe("Responsive Decision Journey (RCS-05)", () => {
       /useState<string \| null>\(\s*PILOT_SECTION_IDS\.socialProof,\s*\)/,
     );
     assert.match(page, /isSectionScrollReady\(sceneId\)/);
-    assert.match(page, /scrollToSection\(sceneId, "smooth"\)/);
+    assert.match(page, /scrollToSection\(sceneId, behavior,/);
+    assert.match(page, /positionTarget\("smooth", finishTransition\)/);
   });
 
   it("cancels a superseded deferred scroll before consuming its replacement", () => {
@@ -164,7 +165,8 @@ describe("Responsive Decision Journey (RCS-05)", () => {
     assert.match(page, /document\.getElementById\(sceneId\) === null/);
     assert.match(page, /isSectionScrollReady\(sceneId\)/);
     assert.match(page, /current === sceneId \? null : current/);
-    assert.match(page, /transitionTimerRef\.current = window\.setTimeout/);
+    assert.doesNotMatch(page, /transitionTimerRef|setTimeout/);
+    assert.match(page, /setIsSceneTransitioning\(false\)/);
     assert.match(
       navigation,
       /if \(sectionNavigator !== null\) \{\s*sectionNavigator\(sectionId\);\s*return;/,
@@ -181,7 +183,8 @@ describe("Responsive Decision Journey (RCS-05)", () => {
     assert.match(scene, /env\(safe-area-inset-bottom, 0px\)/);
     assert.doesNotMatch(scene, /UNREVEALED_SCENE_SPACE/);
     assert.doesNotMatch(scene, /reserveScrollSpace/);
-    assert.match(scene, /gap-5 px-section/);
+    assert.match(scene, /flex-col gap-5/);
+    assert.match(scene, /var\(--journey-anchor-reserve, 0px\)/);
     assert.equal(scene.includes("absolute top-0 right-0"), false);
   });
 });

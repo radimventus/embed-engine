@@ -30,6 +30,25 @@ export type ScrollToSectionOptions = {
   readonly onComplete?: () => void;
 };
 
+/** Exact 090cd3b3 HeroCTA runtime geometry (not the generic scene inset).
+ * Social Proof is flush below the sticky header in document and overlay hosts.
+ */
+export function heroTourTargetY(): number | null {
+  const target = document.getElementById("social-proof");
+  if (!target) return null;
+  const header = document.querySelector<HTMLElement>("[data-experience-header]");
+  const offset = Math.ceil(header?.getBoundingClientRect().height ?? 72);
+  const overlay = document.querySelector<HTMLElement>("[data-embed-overlay-mount]");
+  return Math.max(0, (overlay?.scrollTop ?? window.scrollY) +
+    target.getBoundingClientRect().top - (overlay?.getBoundingClientRect().top ?? 0) - offset);
+}
+
+export function isBeforeHeroTourAnchor(): boolean {
+  const to = heroTourTargetY();
+  const overlay = document.querySelector<HTMLElement>("[data-embed-overlay-mount]");
+  return to !== null && (overlay?.scrollTop ?? window.scrollY) < to - 3;
+}
+
 export type PinnedNavigationTimingMark =
   | "threshold"
   | "transition-request"
@@ -86,7 +105,7 @@ export function scrollToSection(
       overlayMount.scrollTop +
       (elementRect.top - containerRect.top) -
       headerOffset;
-    const destination = Math.max(
+    const destination = (sectionId === "social-proof" ? heroTourTargetY() : null) ?? Math.max(
       0,
       nextTop + (options.additionalOffsetPx ?? 0),
     );
@@ -104,7 +123,7 @@ export function scrollToSection(
   } else {
     const top =
       window.scrollY + target.getBoundingClientRect().top - headerOffset;
-    const destination = Math.max(0, top + (options.additionalOffsetPx ?? 0));
+    const destination = (sectionId === "social-proof" ? heroTourTargetY() : null) ?? Math.max(0, top + (options.additionalOffsetPx ?? 0));
     animateScroll(
       window,
       destination,
@@ -279,6 +298,15 @@ type ActiveScroll = {
 
 const activeScrollFrames = new WeakMap<HTMLElement | Window, ActiveScroll>();
 
+export function cancelSectionScroll(): void {
+  const scroller = document.querySelector<HTMLElement>("[data-embed-overlay-mount]") ?? window;
+  const active = activeScrollFrames.get(scroller);
+  if (!active) return;
+  window.cancelAnimationFrame(active.frameId);
+  active.restoreChrome();
+  activeScrollFrames.delete(scroller);
+}
+
 function animateScroll(
   scroller: HTMLElement | Window,
   to: number,
@@ -298,14 +326,24 @@ function animateScroll(
     scroller instanceof Window ? document.documentElement : scroller;
   const previousBehavior = chromeRoot.style.scrollBehavior;
   const previousSnapType = chromeRoot.style.scrollSnapType;
+  const previousAnchor = chromeRoot.style.overflowAnchor;
   chromeRoot.style.scrollBehavior = "auto";
   chromeRoot.style.scrollSnapType = "none";
+  chromeRoot.style.overflowAnchor = "none";
+  // Native wheel/touch scrolling must not race the RAF writer. This ownership
+  // ends synchronously with the last frame, not after a post-arrival timer.
+  const preventNativeScroll = (event: Event) => event.preventDefault();
+  scroller.addEventListener("wheel", preventNativeScroll, { passive: false, capture: true });
+  scroller.addEventListener("touchmove", preventNativeScroll, { passive: false, capture: true });
   let chromeRestored = false;
   const restoreChrome = () => {
     if (chromeRestored) return;
     chromeRestored = true;
     chromeRoot.style.scrollBehavior = previousBehavior;
     chromeRoot.style.scrollSnapType = previousSnapType;
+    chromeRoot.style.overflowAnchor = previousAnchor;
+    scroller.removeEventListener("wheel", preventNativeScroll, true);
+    scroller.removeEventListener("touchmove", preventNativeScroll, true);
   };
   const complete = () => {
     activeScrollFrames.delete(scroller);
@@ -345,7 +383,8 @@ function animateScroll(
     } else {
       scroller.scrollTop = next;
     }
-    if (!firstFrameWritten && Math.abs(next - from) > 0) {
+    const actual = scroller instanceof Window ? scroller.scrollY : scroller.scrollTop;
+    if (!firstFrameWritten && Math.abs(actual - from) > 0) {
       firstFrameWritten = true;
       onFirstFrame?.();
     }

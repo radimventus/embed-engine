@@ -172,25 +172,20 @@ describe("pinned progressive scene navigation", () => {
     assert.match(page, /!isSectionScrollReady\(sceneId\)/);
   });
 
-  it("starts physical lock only from canonical scroll completion", () => {
+  it("releases navigation directly from canonical scroll completion", () => {
     const page = read("../ClientStudioPage.tsx");
     assert.doesNotMatch(page, /addEventListener\("scrollend"/);
-    assert.match(page, /positionTarget\("smooth", \(\) =>/);
-    assert.match(page, /isSectionAtScrollAnchor\(sceneId, scrollOffsetPx\)/);
-    assert.match(page, /setIsPhysicalScrollLocked\(true\)/);
-    const anchorGuard = page.indexOf("if (!isSectionAtScrollAnchor");
-    const lockStart = page.indexOf("beginPhysicalLock();", anchorGuard);
-    assert.ok(anchorGuard > 0 && anchorGuard < lockStart);
+    assert.match(page, /positionTarget\("smooth", finishTransition\)/);
+    assert.match(page, /setIsSceneTransitioning\(false\)/);
+    assert.doesNotMatch(page, /PhysicalLock|setTimeout|lock-start/);
   });
 
-  it("physically blocks wheel and touch for 1000ms", () => {
-    const page = read("../ClientStudioPage.tsx");
-    const lock = read("usePhysicalScrollLock.ts");
-    assert.match(page, /PROGRESSIVE_PHYSICAL_SCROLL_LOCK_MS = 1000/);
-    assert.match(lock, /addEventListener\("wheel"[\s\S]*passive: false/);
-    assert.match(lock, /addEventListener\("touchmove"[\s\S]*passive: false/);
-    assert.match(lock, /preventPhysicalScroll[\s\S]*preventDefault/);
-    assert.doesNotMatch(lock, /overflow/);
+  it("prevents native input from competing only while the RAF owns scrolling", () => {
+    const scroll = read("scrollToSection.ts");
+    assert.match(scroll, /addEventListener\("wheel", preventNativeScroll/);
+    assert.match(scroll, /addEventListener\("touchmove", preventNativeScroll/);
+    assert.match(scroll, /removeEventListener\("wheel", preventNativeScroll/);
+    assert.match(scroll, /restoreChrome\(\);\s*onComplete\?\.\(\)/);
   });
 
   it("blocks momentum and resets intent through transition and lock", () => {
@@ -198,11 +193,11 @@ describe("pinned progressive scene navigation", () => {
     const hook = read("useProgressiveScrollUnlock.ts");
     assert.match(
       page,
-      /navigationBlocked: isSceneTransitioning \|\| isPhysicalScrollLocked/,
+      /navigationBlocked: isSceneTransitioning,/,
     );
     assert.match(
       hook,
-      /if \(navigationBlocked\)[\s\S]*EMPTY_DIRECTIONAL_INTENT/,
+      /if \(navigationBlocked\) gestureConsumedRef.current = true/,
     );
     assert.match(
       page,
@@ -210,11 +205,10 @@ describe("pinned progressive scene navigation", () => {
     );
   });
 
-  it("has an independent physical-lock fail-safe", () => {
+  it("has no post-arrival lock, settle or corrective timer writer", () => {
     const page = read("../ClientStudioPage.tsx");
-    assert.match(page, /PROGRESSIVE_PHYSICAL_SCROLL_LOCK_FAILSAFE_MS = 1500/);
-    assert.match(page, /transitionFailsafeRef\.current = window\.setTimeout/);
-    assert.match(page, /setIsPhysicalScrollLocked\(false\)/);
+    assert.doesNotMatch(page, /FAILSAFE|setTimeout|usePhysicalScrollLock/);
+    assert.match(read("useProgressiveScrollUnlock.ts"), /gestureConsumedRef/);
   });
 
   it("uses one canonical 48px desktop gap for standard scenes", () => {
@@ -347,7 +341,7 @@ describe("pinned progressive scene navigation", () => {
     assert.doesNotMatch(markup, /data-journey-navigation-boundary/);
     assert.match(
       markup,
-      /padding-bottom:max\(20px, env\(safe-area-inset-bottom/,
+      /padding-bottom:calc\(max\(20px, env\(safe-area-inset-bottom/,
     );
     assert.doesNotMatch(markup, /min-height:32px/);
   });

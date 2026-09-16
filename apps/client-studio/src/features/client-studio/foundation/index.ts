@@ -33,12 +33,10 @@ export {
 export type { ScrollToSectionOptions } from "./scrollToSection";
 export { StudioLoading } from "./StudioLoading";
 export { useActiveSection } from "./useActiveSection";
-export { usePhysicalScrollLock } from "./usePhysicalScrollLock";
 export {
   EMPTY_DIRECTIONAL_INTENT,
   PROGRESSIVE_SCROLL_UNLOCK_THRESHOLD_PX,
   applyDirectionalIntent,
-  applyGuardedScrollIntent,
   applyScrollIntent,
   accumulateScrollIntent,
   hasReachedNavigationBoundary,

@@ -132,7 +132,7 @@ export function JourneySceneFrame({
         paddingBottom:
           previousSceneId && !nextSceneId
             ? SCENE_FINAL_SAFE_BOTTOM_SPACE
-            : SCENE_SAFE_BOTTOM_SPACE,
+            : `calc(${SCENE_SAFE_BOTTOM_SPACE} + var(--journey-anchor-reserve, 0px))`,
         opacity: isEntered ? 1 : 0,
         transform: "translateY(0)",
         transition: animateOnMount ? "opacity 1000ms ease" : undefined,
