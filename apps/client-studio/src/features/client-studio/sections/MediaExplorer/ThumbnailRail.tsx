@@ -14,6 +14,7 @@ import { useWalkthrough } from '../../../walkthrough';
 import { useDecisionSessionRuntime } from '../../runtime/DecisionSessionRuntimeProvider';
 import { firstPhotoTimelineIndexForRoom, roomIdForTimelineIndex } from '../../runtime/experienceHouseMedia';
 import { SPATIAL_TERMINAL_MEDIA_THUMBNAIL_GAP_CLASS } from '../spatial-terminal-layout';
+import { DeferredWistia } from './DeferredWistia';
 
 /** Gap between thumbnails inside the visible slot viewport. */
 const DESKTOP_THUMB_GAP_PX = 16;
@@ -170,9 +171,11 @@ function ChevronSpacer() {
 function VideoThumbnailPreview({
   src,
   poster,
+  activated,
 }: {
   src: string;
   poster: string;
+  activated: boolean;
 }) {
   const hasPoster = poster.length > 0;
   const wistia = isWistiaEmbedUrl(src);
@@ -186,12 +189,12 @@ function VideoThumbnailPreview({
       }}
     >
       {wistia ? (
-        <iframe
+        <DeferredWistia
+          key={src}
           src={src}
-          title=""
-          tabIndex={-1}
-          className="pointer-events-none h-full w-full border-0"
-          allow="autoplay; fullscreen"
+          title="Video prohlídky — náhled"
+          surface="thumbnail"
+          activated={activated}
         />
       ) : hasPoster ? (
         <img
@@ -212,13 +215,14 @@ function VideoThumbnailPreview({
       )}
       <span
         aria-hidden="true"
-        className="absolute inset-0 z-10 bg-embed-foreground-primary/10"
+        className="pointer-events-none absolute inset-0 z-10 bg-embed-foreground-primary/10"
       />
     </div>
   );
 }
 
 export function ThumbnailRail() {
+  const [activatedVideos, setActivatedVideos] = useState<ReadonlySet<string>>(() => new Set());
   const { experience } = useDecisionSessionRuntime();
   const gallery = experience.context.roomMedia;
   const {
@@ -451,12 +455,18 @@ export function ThumbnailRail() {
                     backgroundColor: active ? THUMB_INNER_ACTIVE : THUMB_INNER_IDLE,
                     boxSizing: 'border-box',
                   }}
-                  onClick={() => selectMediaIndex(mediaIndex)}
+                  onClick={() => {
+                    selectMediaIndex(mediaIndex);
+                    if (item.kind === 'video' && isWistiaEmbedUrl(item.src)) {
+                      setActivatedVideos(previous => new Set(previous).add(item.src));
+                    }
+                  }}
                 >
                   {item.kind === 'video' ? (
                     <VideoThumbnailPreview
                       src={item.src}
                       poster={item.thumbnailSrc}
+                      activated={activatedVideos.has(item.src)}
                     />
                   ) : (
                     <img

@@ -10,6 +10,7 @@ import { TOUR_VIDEO_MEDIA_ID } from '@embed-engine/platform-access';
 import { MediaLightbox } from './MediaLightbox';
 import { MediaZoomControl } from './MediaZoomControl';
 import { PlayControl } from './PlayControl';
+import { DeferredWistia } from './DeferredWistia';
 import { useMediaSwipeNavigation } from './useMediaSwipeNavigation';
 import { SPATIAL_TERMINAL_MEDIA_VIEWPORT_CLASS } from '../spatial-terminal-layout';
 
@@ -319,19 +320,11 @@ export function MainMedia() {
             }}
           />
         ) : isWistiaVideo ? (
-          <iframe
+          <DeferredWistia
             key={videoKey}
             src={videoSrc}
             title={gallery.title ?? 'Video prohlídka'}
-            className="h-full w-full border-0"
-            allow="autoplay; fullscreen"
-            allowFullScreen
-            onLoad={() => {
-              setMediaPending(false);
-              setHasStartedPlayback(true);
-            }}
-            data-walkthrough-mode={mode}
-            data-media-mode={mediaMode}
+            surface="main"
           />
         ) : (
           <>
@@ -358,7 +351,7 @@ export function MainMedia() {
             {showPlayControl ? <PlayControl onPlay={handlePlay} /> : null}
           </>
         )}
-        {mediaPending && !mediaFailed ? (
+        {mediaPending && !mediaFailed && !isWistiaVideo ? (
           <div
             className="pointer-events-none absolute inset-0 flex items-center justify-center bg-embed-surface-muted/80 text-sm text-embed-foreground-primary/55"
             role="status"
