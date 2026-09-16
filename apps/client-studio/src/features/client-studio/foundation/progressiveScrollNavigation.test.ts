@@ -19,8 +19,11 @@ import {
 import {
   CANONICAL_SCROLL_MAX_DURATION_MS,
   CANONICAL_SCROLL_MIN_DURATION_MS,
+  HERO_TOUR_REFERENCE_DURATION_MS,
   canonicalScrollDurationMs,
   canonicalScrollProgress,
+  heroTourScrollDurationMs,
+  sectionScrollDurationMs,
 } from "./scrollToSection";
 import { canonicalSectionTarget } from "./journeyNavigation";
 import { resolvePinnedSceneTarget } from "./pinnedSceneOrder";
@@ -206,6 +209,28 @@ describe("pinned progressive scene navigation", () => {
     assert.match(scroll, /activeScrollFrames[\s\S]*cancelAnimationFrame/);
     assert.match(scroll, /scrollBehavior = "auto"/);
     assert.match(scroll, /scrollSnapType = "none"/);
+  });
+
+  it("matches the short HERO path to standard pinned perceived velocity", () => {
+    const heroDistance = 605;
+    const standardDistance = 804;
+    const heroDuration = heroTourScrollDurationMs(heroDistance);
+    const standardDuration = canonicalScrollDurationMs(standardDistance);
+
+    assert.equal(HERO_TOUR_REFERENCE_DURATION_MS, 1135);
+    assert.equal(heroDuration, 854);
+    assert.equal(
+      sectionScrollDurationMs("social-proof", heroDistance),
+      heroDuration,
+    );
+    assert.equal(
+      sectionScrollDurationMs("journey-scene-priority", standardDistance),
+      standardDuration,
+    );
+    assert.ok(
+      Math.abs(heroDistance / heroDuration - standardDistance / standardDuration) <
+        0.001,
+    );
   });
 
   it("produces a monotonic smoothstep trajectory without endpoint jumps", () => {

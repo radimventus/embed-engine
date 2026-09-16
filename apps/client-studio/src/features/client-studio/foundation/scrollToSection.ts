@@ -17,6 +17,32 @@ export function canonicalScrollDurationMs(distancePx: number): number {
   );
 }
 
+/**
+ * HERO lands on the compact Social Proof stop. Its shorter path must preserve
+ * the perceived velocity of a representative standard pinned transition
+ * without changing the canonical duration policy used by every other scene.
+ */
+export const HERO_TOUR_REFERENCE_DISTANCE_PX = 804;
+export const HERO_TOUR_REFERENCE_DURATION_MS = canonicalScrollDurationMs(
+  HERO_TOUR_REFERENCE_DISTANCE_PX,
+);
+
+export function heroTourScrollDurationMs(distancePx: number): number {
+  return Math.round(
+    (Math.abs(distancePx) * HERO_TOUR_REFERENCE_DURATION_MS) /
+      HERO_TOUR_REFERENCE_DISTANCE_PX,
+  );
+}
+
+export function sectionScrollDurationMs(
+  sectionId: string,
+  distancePx: number,
+): number {
+  return sectionId === "social-proof"
+    ? heroTourScrollDurationMs(distancePx)
+    : canonicalScrollDurationMs(distancePx);
+}
+
 /** Cubic smoothstep: monotonic, zero velocity at both ends, no midpoint kink. */
 export function canonicalScrollProgress(progress: number): number {
   const bounded = Math.min(1, Math.max(0, progress));
@@ -113,7 +139,10 @@ export function scrollToSection(
       overlayMount,
       destination,
       behavior === "smooth"
-        ? canonicalScrollDurationMs(destination - overlayMount.scrollTop)
+        ? sectionScrollDurationMs(
+            sectionId,
+            destination - overlayMount.scrollTop,
+          )
         : 0,
       reducedMotion,
       canonicalScrollProgress,
@@ -128,7 +157,7 @@ export function scrollToSection(
       window,
       destination,
       behavior === "smooth"
-        ? canonicalScrollDurationMs(destination - window.scrollY)
+        ? sectionScrollDurationMs(sectionId, destination - window.scrollY)
         : 0,
       reducedMotion,
       canonicalScrollProgress,
