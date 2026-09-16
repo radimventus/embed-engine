@@ -99,6 +99,12 @@
     }
   }
 
+  @media (min-width: 1280px) {
+    [data-journey-scene][data-compact-desktop-end='true'] {
+      min-height: 0 !important;
+    }
+  }
+
   .animate-hero-photo-veil {
     transform-origin: left center;
     animation: hero-photo-veil-cycle 14s linear infinite;

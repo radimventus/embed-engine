@@ -11,6 +11,7 @@ import {
   applyScrollIntent,
   accumulateScrollIntent,
   lockScrollIntentUntilIdle,
+  nextProgressiveSceneId,
   hasReachedNavigationBoundary,
   touchDownwardDeltaPx,
 } from "./useProgressiveScrollUnlock";
@@ -63,7 +64,7 @@ describe("progressive scroll navigation", () => {
     assert.match(page, /scrollTargetId = sceneId/);
     assert.match(page, /const handleSceneNavigate[\s\S]*unlockScene\(sceneId\)/);
     assert.match(page, /useProgressiveScrollUnlock\(/);
-    assert.match(page, /unlockScene\(nextScene\.id\)/);
+    assert.match(page, /unlockScene\(nextProgressiveScene\)/);
     assert.equal(page.includes("preserveViewport"), false);
   });
 
@@ -155,5 +156,34 @@ describe("progressive scroll navigation", () => {
     assert.match(hook, /deltaPx <= 0/);
     assert.match(hook, /touchmove/);
     assert.match(hook, /wheel/);
+  });
+
+  it("re-arms forward scroll repeatedly after canonical Back navigation", () => {
+    const page = readFileSync(join(here, "../ClientStudioPage.tsx"), "utf8");
+    const sceneIds = ["orientation", "priority", "racio", "decision"];
+
+    for (let cycle = 0; cycle < 3; cycle += 1) {
+      assert.equal(nextProgressiveSceneId(sceneIds, "racio"), "decision");
+      assert.equal(nextProgressiveSceneId(sceneIds, "decision"), null);
+      assert.equal(nextProgressiveSceneId(sceneIds, "racio"), "decision");
+    }
+
+    assert.match(page, /enabled: nextProgressiveScene !== null/);
+    assert.match(page, /currentSceneId: activeSceneId/);
+    assert.match(page, /setRevealedSceneCount\(\(current\) => Math\.max/);
+    assert.match(page, /settling: isSceneTransitioning/);
+  });
+
+  it("removes only final desktop min-height while preserving compact clipping safety", () => {
+    const page = readFileSync(join(here, "../ClientStudioPage.tsx"), "utf8");
+    const frame = readFileSync(join(here, "JourneySceneFrame.tsx"), "utf8");
+    const css = readFileSync(join(here, "../../../index.css"), "utf8");
+
+    assert.match(page, /sceneId=\{scenes\[3\]!\.id\}[\s\S]*compactDesktopEnd/);
+    assert.match(frame, /data-compact-desktop-end/);
+    assert.match(css, /@media \(min-width: 1280px\)[\s\S]*data-compact-desktop-end='true'[\s\S]*min-height: 0 !important/);
+    assert.match(frame, /minHeight: SCENE_MIN_HEIGHT/);
+    assert.match(frame, /SCENE_SAFE_BOTTOM_SPACE/);
+    assert.match(frame, /SCENE_FINAL_SAFE_BOTTOM_SPACE/);
   });
 });

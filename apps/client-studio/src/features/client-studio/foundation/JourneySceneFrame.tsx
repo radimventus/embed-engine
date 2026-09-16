@@ -12,6 +12,7 @@ type JourneySceneFrameProps = {
   readonly nextSceneId?: string;
   readonly onNavigate?: (sceneId: string) => void;
   readonly animateOnMount?: boolean;
+  readonly compactDesktopEnd?: boolean;
   /** When false, footer sits 30px under content instead of viewport bottom. */
   readonly pinFooterToBottom?: boolean;
   /** Leading footer slot (e.g. Welcome Bridge), top-aligned with nav CTA. */
@@ -37,6 +38,7 @@ export function JourneySceneFrame({
   nextSceneId,
   onNavigate,
   animateOnMount = false,
+  compactDesktopEnd = false,
   pinFooterToBottom = true,
   footerLeading,
   children,
@@ -117,6 +119,7 @@ export function JourneySceneFrame({
     <div
       id={sceneId}
       data-journey-scene={sceneId}
+      data-compact-desktop-end={compactDesktopEnd ? "true" : undefined}
       className="flex w-full snap-start snap-normal flex-col gap-5"
       style={{
         minHeight: SCENE_MIN_HEIGHT,

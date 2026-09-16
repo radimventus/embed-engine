@@ -82,6 +82,16 @@ export function touchDownwardDeltaPx(
   return previousClientY - currentClientY;
 }
 
+export function nextProgressiveSceneId(
+  sceneIds: readonly string[],
+  currentSceneId: string | null,
+): string | null {
+  const currentIndex = currentSceneId === null
+    ? -1
+    : sceneIds.indexOf(currentSceneId);
+  return currentIndex >= 0 ? (sceneIds[currentIndex + 1] ?? null) : null;
+}
+
 type UseProgressiveScrollUnlockOptions = {
   readonly enabled: boolean;
   readonly settling: boolean;

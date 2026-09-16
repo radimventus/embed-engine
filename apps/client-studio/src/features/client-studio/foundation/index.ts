@@ -31,6 +31,7 @@ export {
   accumulateScrollIntent,
   hasReachedNavigationBoundary,
   lockScrollIntentUntilIdle,
+  nextProgressiveSceneId,
   touchDownwardDeltaPx,
   useProgressiveScrollUnlock,
 } from "./useProgressiveScrollUnlock";

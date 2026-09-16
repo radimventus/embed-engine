@@ -15,6 +15,7 @@ import {
   isPrioritySection,
   isRacioSection,
   isSectionScrollReady,
+  nextProgressiveSceneId,
   registerJourneySectionNavigator,
   scrollToSection,
   useActiveSection,
@@ -265,18 +266,22 @@ export function ClientStudioPage({
     unlockScene(sceneId);
   };
 
+  const nextProgressiveScene = nextProgressiveSceneId(
+    scenes.map((scene) => scene.id),
+    activeSceneId,
+  );
+
   useProgressiveScrollUnlock({
-    enabled: revealedSceneCount < scenes.length,
+    enabled: nextProgressiveScene !== null,
     settling: isSceneTransitioning,
-    currentSceneId: scenes[revealedSceneCount - 1]?.id ?? scenes[0]!.id,
+    currentSceneId: activeSceneId ?? scenes[0]!.id,
     progressKey: `${revealedSceneCount}:${scrollIntentResetKey}`,
     onUnlockNext: () => {
-      const nextScene = scenes[revealedSceneCount];
-      if (nextScene === undefined) return;
-      if (revealedSceneCount === 1) {
+      if (nextProgressiveScene === null) return;
+      if (activeSceneId === scenes[0]!.id) {
         welcomeBridge.dismiss();
       }
-      unlockScene(nextScene.id);
+      unlockScene(nextProgressiveScene);
     },
   });
 
@@ -362,6 +367,7 @@ export function ClientStudioPage({
                   {revealedSceneCount >= 4 ? (
                     <JourneySceneFrame
                       sceneId={scenes[3]!.id}
+                      compactDesktopEnd
                       onNavigate={handleSceneNavigate}
                       animateOnMount={revealedSceneCount === 4}
                       pinFooterToBottom={false}
