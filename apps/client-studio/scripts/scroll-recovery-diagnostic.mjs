@@ -14,8 +14,82 @@ await context.route('**/*', route => {
 });
 const page = await context.newPage();
 page.on('pageerror', error => console.error(error.message));
-await page.goto('http://127.0.0.1:4179/?studio=client');
+await page.goto(`${process.env.DIAGNOSTIC_URL ?? 'http://127.0.0.1:4179/'}?studio=client`);
 await page.waitForTimeout(5000);
+if (process.argv.includes('--pacing')) {
+  const measure = async (name,targetSelector,action) => {
+    await page.evaluate(targetSelector => {
+      delete document.documentElement.dataset.pinnedNavigationTiming;
+      const trace={writes:[],frames:[],mutations:[],longTasks:[],layoutShifts:[]};
+      const original=window.scrollTo.bind(window);
+      window.scrollTo=(...args)=>{const before=scrollY;original(...args);trace.writes.push({at:performance.now(),before,after:scrollY,requested:args[0].top,stack:new Error().stack});};
+      const mutationObserver=new MutationObserver(records=>trace.mutations.push({at:performance.now(),count:records.length,records:records.map(record=>({type:record.type,attribute:record.attributeName,target:record.target instanceof Element ? `${record.target.tagName.toLowerCase()}#${record.target.id}.${record.target.className}` : record.target.nodeName}))}));
+      mutationObserver.observe(document.querySelector('[data-guided-journey]'),{childList:true,subtree:true,attributes:true});
+      const observers=[];
+      for(const type of ['longtask','layout-shift']) try {const observer=new PerformanceObserver(list=>{for(const entry of list.getEntries()) trace[type==='longtask'?'longTasks':'layoutShifts'].push({at:entry.startTime,duration:entry.duration,value:entry.value??0});});observer.observe({type,buffered:false});observers.push(observer);} catch {}
+      let previous=performance.now();
+      const sample=at=>{const target=document.querySelector(targetSelector);trace.frames.push({at,interval:at-previous,y:scrollY,targetY:target?scrollY+target.getBoundingClientRect().top:null,height:document.documentElement.scrollHeight});previous=at;if(!JSON.parse(document.documentElement.dataset.pinnedNavigationTiming??'[]').some(mark=>mark.mark==='target-reached'))requestAnimationFrame(sample);};
+      requestAnimationFrame(sample);
+      window.__finishPacing=()=>{mutationObserver.disconnect();observers.forEach(observer=>observer.disconnect());window.scrollTo=original;return trace;};
+    },targetSelector);
+    const actionAt=await page.evaluate(()=>performance.now());
+    await action();
+    await page.waitForFunction(()=>JSON.parse(document.documentElement.dataset.pinnedNavigationTiming??'[]').some(mark=>mark.mark==='target-reached'));
+    const trace=await page.evaluate(()=>window.__finishPacing());
+    const writes=trace.writes;
+    assert.ok(writes.length>10,`${name}: expected RAF writes`);
+    const from=writes[0].before,to=writes.at(-1).after,distance=to-from;
+    const duration=Math.round(Math.min(1320,Math.max(816,768+Math.abs(distance)*.456)));
+    const started=writes.at(-1).at-duration;
+    const errors=writes.map(write=>{const p=Math.min(1,Math.max(0,(write.at-started)/duration));const eased=p*p*(3-2*p);return Math.abs(write.after-(from+distance*eased));});
+    const intervals=writes.slice(1).map((write,index)=>write.at-writes[index].at);
+    const first=writes[0].at,last=writes.at(-1).at;
+    const writeErrors=writes.map(write=>Math.abs(write.after-write.requested));
+    return{name,actionToFirstWriteMs:writes[0].at-actionAt,frames:writes.length,durationMs:last-first,distancePx:distance,interval:{median:[...intervals].sort((a,b)=>a-b)[Math.floor(intervals.length/2)],max:Math.max(...intervals),over20:intervals.filter(value=>value>20).length,over32:intervals.filter(value=>value>32).length,long:intervals.map((value,index)=>({at:writes[index+1].at,value})).filter(item=>item.value>20)},delta:{min:Math.min(...writes.map(write=>Math.abs(write.after-write.before))),max:Math.max(...writes.map(write=>Math.abs(write.after-write.before)))},trajectoryError:{actualVsRequestedMax:Math.max(...writeErrors),theoreticalMax:Math.max(...errors),theoreticalRms:Math.sqrt(errors.reduce((sum,value)=>sum+value*value,0)/errors.length)},targetPositions:[...new Set(trace.frames.filter(frame=>frame.at>=first&&frame.at<=last).map(frame=>frame.targetY))],documentHeights:[...new Set(trace.frames.filter(frame=>frame.at>=first&&frame.at<=last).map(frame=>frame.height))],scrollWriters:[...new Set(writes.map(write=>write.stack.split('\n')[2]))],mutationsBeforeFirstWrite:trace.mutations.filter(item=>item.at<first),mutationsDuringRaf:trace.mutations.filter(item=>item.at>=first&&item.at<=last),longTasksDuringRaf:trace.longTasks.filter(item=>item.at>=first&&item.at<=last),layoutShiftsDuringRaf:trace.layoutShifts.filter(item=>item.at>=first&&item.at<=last)};
+  };
+  await page.locator('[data-tour-back]').click(); await page.waitForTimeout(1500);
+  const results=[];
+  results.push(await measure('HERO→TOUR','#social-proof',()=>page.locator('[data-embed-hero-cta]').click()));
+  results.push(await measure('TOUR→PRIORITY','#journey-scene-priority',()=>page.getByRole('button',{name:'Pokračovat →',exact:true}).click()));
+  results.push(await measure('PRIORITY→RACIO','#journey-scene-racio',()=>page.getByRole('button',{name:'Přeskočit →',exact:true}).click()));
+  for(const result of results){assert.equal(result.targetPositions.length,1,`${result.name}: stable target`);assert.equal(result.documentHeights.length,1,`${result.name}: stable document height`);assert.equal(result.scrollWriters.length,1,`${result.name}: one writer`);}
+  console.log('PACING_PASS',JSON.stringify(results));
+  await browser.close(); process.exit(0);
+}
+if (process.argv.includes('--sequence')) {
+  const resetMarks = () => page.evaluate(() => { delete document.documentElement.dataset.pinnedNavigationTiming; });
+  const waitForArrival = () => page.waitForFunction(() =>
+    JSON.parse(document.documentElement.dataset.pinnedNavigationTiming ?? '[]')
+      .some(mark => mark.mark === 'target-reached'));
+  const current = () => page.evaluate(() => ({
+    active: document.querySelector('[data-current-scene]')?.getAttribute('data-current-scene'),
+    y: scrollY,
+    hero: document.querySelector('#hero').getBoundingClientRect().top,
+    social: document.querySelector('#social-proof').getBoundingClientRect().top,
+    header: document.querySelector('[data-experience-header]').getBoundingClientRect().height,
+  }));
+  await page.getByRole('button',{name:'Pokračovat →',exact:true}).click();
+  await page.waitForTimeout(1500);
+  assert.equal((await current()).active,'journey-scene-priority');
+  await resetMarks(); await page.waitForTimeout(500); await page.mouse.wheel(0,-160); await waitForArrival();
+  const tour = await current();
+  assert.equal(tour.active,'journey-scene-orientation');
+  assert.ok(Math.abs(tour.social-tour.header)<1,'PRIORITY up lands on canonical TOUR/Social Proof');
+  await resetMarks(); await page.waitForTimeout(500); await page.mouse.wheel(0,-160); await waitForArrival();
+  const hero = await current();
+  assert.ok(Math.abs(hero.hero-(hero.header+20))<1,'second up intent lands on canonical HERO anchor');
+  await page.evaluate(() => { const hero=document.querySelector('#hero'); scrollTo({top:scrollY+hero.getBoundingClientRect().bottom-innerHeight,behavior:'instant'}); });
+  await resetMarks(); await page.waitForTimeout(500); await page.mouse.wheel(0,160); await waitForArrival();
+  const tourAgain = await current();
+  assert.ok(Math.abs(tourAgain.social-tourAgain.header)<1,'HERO down lands on TOUR');
+  await page.evaluate(() => { const boundary=document.querySelector('[data-journey-navigation-boundary="journey-scene-orientation"]'); scrollTo({top:scrollY+boundary.getBoundingClientRect().bottom-innerHeight,behavior:'instant'}); });
+  await resetMarks(); await page.waitForTimeout(500); await page.mouse.wheel(0,160); await waitForArrival();
+  const priority = await current();
+  assert.equal(priority.active,'journey-scene-priority');
+  console.log('SEQUENCE_PASS',JSON.stringify({priorityToTour:tour,tourToHero:hero,heroToTour:tourAgain,tourToPriority:priority}));
+  await browser.close();
+  process.exit(0);
+}
 if (process.argv.includes('--ownership')) {
   const cdp = await context.newCDPSession(page);
   await page.evaluate(() => {

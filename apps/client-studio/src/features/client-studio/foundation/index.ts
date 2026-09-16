@@ -18,6 +18,8 @@ export {
 export type { CanonicalSectionTarget } from "./journeyNavigation";
 export { RuntimeBootstrapGate } from "./RuntimeBootstrapGate";
 export { decisionJourneyScenes } from "./decisionJourney";
+export { resolvePinnedSceneTarget } from "./pinnedSceneOrder";
+export type { PinnedSceneTarget } from "./pinnedSceneOrder";
 export {
   CANONICAL_SCROLL_MAX_DURATION_MS,
   CANONICAL_SCROLL_MIN_DURATION_MS,

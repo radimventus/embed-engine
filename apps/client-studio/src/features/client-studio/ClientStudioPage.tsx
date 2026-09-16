@@ -1,7 +1,11 @@
 import { useEffect, useLayoutEffect, useState } from "react";
 import { flushSync } from "react-dom";
-import { cancelSectionScroll, heroTourTargetY, isBeforeHeroTourAnchor } from "./foundation/scrollToSection";
 import type { ReactExperienceModel } from "@embed-engine/model";
+
+import {
+  cancelSectionScroll,
+  heroTourTargetY,
+} from "./foundation/scrollToSection";
 
 import { DecisionAnalyticsProvider, JourneySurfaceObserver } from "./analytics";
 import { BuilderPreviewPersonaApplicator } from "./runtime/BuilderPreviewPersonaApplicator";
@@ -19,8 +23,7 @@ import {
   isRacioSection,
   isSectionScrollReady,
   markPinnedNavigationTiming,
-  nextProgressiveSceneId,
-  previousProgressiveSceneId,
+  resolvePinnedSceneTarget,
   registerJourneySectionNavigator,
   scrollToSection,
   useActiveSection,
@@ -91,6 +94,9 @@ export function ClientStudioPage({
   const observedSceneId = useActiveSection(visibleSceneIds);
   const [activeSceneId, setActiveSceneId] = useState<string | null>(
     scenes[0]?.id ?? null,
+  );
+  const [orientationStop, setOrientationStop] = useState<"hero" | "tour">(
+    "tour",
   );
   const [requestedSceneId, setRequestedSceneId] = useState<string | null>(null);
   const [snapEnabled, setSnapEnabled] = useState(false);
@@ -172,7 +178,10 @@ export function ClientStudioPage({
       }
       const targetTop = document.getElementById(sceneId)!.getBoundingClientRect().top +
         (overlay?.scrollTop ?? window.scrollY);
-      if (previousTargetTop === null || Math.abs(previousTargetTop - targetTop) > 0.5) {
+      if (
+        previousTargetTop === null ||
+        Math.abs(previousTargetTop - targetTop) > 0.5
+      ) {
         previousTargetTop = targetTop;
         frameId = window.requestAnimationFrame(scrollWhenReady);
         return;
@@ -216,6 +225,11 @@ export function ClientStudioPage({
     const nextSceneIndex = scenes.findIndex((scene) => scene.id === sceneId);
     if (nextSceneIndex === -1) {
       return;
+    }
+    if (sceneId === scenes[0]?.id) {
+      setOrientationStop(
+        scrollTargetId === PILOT_SECTION_IDS.hero ? "hero" : "tour",
+      );
     }
     setRevealedSceneCount((current) => Math.max(current, nextSceneIndex + 1));
     setScrollIntentResetKey((current) => current + 1);
@@ -268,37 +282,48 @@ export function ClientStudioPage({
     unlockScene(sceneId);
   };
 
-  const nextProgressiveScene = nextProgressiveSceneId(
-    scenes.map((scene) => scene.id),
-    activeSceneId,
-  );
-  const previousProgressiveScene = previousProgressiveSceneId(
-    scenes.map((scene) => scene.id),
-    activeSceneId,
-  );
+  const nextPinnedTarget = resolvePinnedSceneTarget({
+    direction: "forward",
+    activeSceneId: activeSceneId ?? scenes[0]!.id,
+    orientationSceneId: scenes[0]!.id,
+    sceneIds: scenes.map((scene) => scene.id),
+    orientationStop,
+  });
+  const previousPinnedTarget = resolvePinnedSceneTarget({
+    direction: "backward",
+    activeSceneId: activeSceneId ?? scenes[0]!.id,
+    orientationSceneId: scenes[0]!.id,
+    sceneIds: scenes.map((scene) => scene.id),
+    orientationStop,
+  });
 
   const navigateProgressively = (direction: ProgressiveNavigationDirection) => {
     markPinnedNavigationTiming("transition-request");
-    if (direction === "forward" && activeSceneId === scenes[0]!.id && isBeforeHeroTourAnchor()) {
-      const target = canonicalSectionTarget(PILOT_SECTION_IDS.walkthrough);
-      flushSync(() => unlockScene(scenes[0]!.id, target.scrollTargetId, target.scrollOffsetPx));
-      return;
-    }
-    const targetScene =
-      direction === "forward" ? nextProgressiveScene : previousProgressiveScene;
-    if (targetScene === null) return;
-    if (direction === "forward" && activeSceneId === scenes[0]!.id) {
+    const target =
+      direction === "forward" ? nextPinnedTarget : previousPinnedTarget;
+    if (target === null) return;
+    if (
+      direction === "forward" &&
+      activeSceneId === scenes[0]!.id &&
+      target.activeSceneId !== scenes[0]!.id
+    ) {
       welcomeBridge.dismiss();
     }
     // The wheel/touch threshold is an input event. Commit the newly available
     // target in that same event so the canonical animator owns the next RAF.
-    flushSync(() => unlockScene(targetScene));
+    flushSync(() =>
+      unlockScene(
+        target.activeSceneId,
+        target.scrollTargetId,
+        target.scrollOffsetPx,
+      ),
+    );
   };
 
   useProgressiveScrollUnlock({
     navigationBlocked: isSceneTransitioning,
-    canNavigateForward: nextProgressiveScene !== null,
-    canNavigateBackward: previousProgressiveScene !== null,
+    canNavigateForward: nextPinnedTarget !== null,
+    canNavigateBackward: previousPinnedTarget !== null,
     currentSceneId: activeSceneId ?? scenes[0]!.id,
     progressKey: `${revealedSceneCount}:${scrollIntentResetKey}`,
     onNavigate: navigateProgressively,

@@ -23,6 +23,7 @@ import {
   canonicalScrollProgress,
 } from "./scrollToSection";
 import { canonicalSectionTarget } from "./journeyNavigation";
+import { resolvePinnedSceneTarget } from "./pinnedSceneOrder";
 import { JourneySceneFrame } from "./JourneySceneFrame";
 
 const here = dirname(fileURLToPath(import.meta.url));
@@ -57,6 +58,75 @@ describe("pinned progressive scene navigation", () => {
     assert.equal(nextProgressiveSceneId(ids, "priority"), "racio");
     assert.equal(previousProgressiveSceneId(ids, "priority"), "orientation");
     assert.equal(previousProgressiveSceneId(ids, "orientation"), null);
+  });
+
+  it("requires distinct intents for PRIORITY → TOUR → HERO", () => {
+    const sceneIds = ["orientation", "priority", "racio", "decision"];
+    const threshold = applyDirectionalIntent(EMPTY_DIRECTIONAL_INTENT, -160);
+    assert.equal(threshold.transition, "backward");
+    const tour = resolvePinnedSceneTarget({
+      direction: threshold.transition!,
+      activeSceneId: "priority",
+      orientationSceneId: "orientation",
+      sceneIds,
+      orientationStop: "tour",
+    });
+    assert.deepEqual(tour, {
+      activeSceneId: "orientation",
+      scrollTargetId: "social-proof",
+      scrollOffsetPx: 20,
+    });
+    assert.equal(
+      applyDirectionalIntent(EMPTY_DIRECTIONAL_INTENT, -159).transition,
+      null,
+    );
+    const hero = resolvePinnedSceneTarget({
+      direction: applyDirectionalIntent(EMPTY_DIRECTIONAL_INTENT, -160)
+        .transition!,
+      activeSceneId: tour!.activeSceneId,
+      orientationSceneId: "orientation",
+      sceneIds,
+      orientationStop: "tour",
+    });
+    assert.deepEqual(hero, {
+      activeSceneId: "orientation",
+      scrollTargetId: "hero",
+      scrollOffsetPx: 0,
+    });
+  });
+
+  it("requires distinct intents for HERO → TOUR → PRIORITY", () => {
+    const sceneIds = ["orientation", "priority", "racio", "decision"];
+    const tour = resolvePinnedSceneTarget({
+      direction: applyDirectionalIntent(EMPTY_DIRECTIONAL_INTENT, 160)
+        .transition!,
+      activeSceneId: "orientation",
+      orientationSceneId: "orientation",
+      sceneIds,
+      orientationStop: "hero",
+    });
+    assert.deepEqual(tour, {
+      activeSceneId: "orientation",
+      scrollTargetId: "social-proof",
+      scrollOffsetPx: 20,
+    });
+    assert.equal(
+      applyDirectionalIntent(EMPTY_DIRECTIONAL_INTENT, 159).transition,
+      null,
+    );
+    const priority = resolvePinnedSceneTarget({
+      direction: applyDirectionalIntent(EMPTY_DIRECTIONAL_INTENT, 160)
+        .transition!,
+      activeSceneId: tour!.activeSceneId,
+      orientationSceneId: "orientation",
+      sceneIds,
+      orientationStop: "tour",
+    });
+    assert.deepEqual(priority, {
+      activeSceneId: "priority",
+      scrollTargetId: "priority",
+      scrollOffsetPx: 0,
+    });
   });
 
   it("keeps touch direction consistent with wheel direction", () => {
@@ -103,7 +173,7 @@ describe("pinned progressive scene navigation", () => {
       /const handleSceneNavigate[\s\S]*unlockScene\(sceneId\)/,
     );
     assert.match(page, /const navigateProgressively/);
-    assert.match(page, /unlockScene\(targetScene\)/);
+    assert.match(page, /resolvePinnedSceneTarget/);
     assert.match(page, /onNavigate: navigateProgressively/);
   });
 
@@ -261,7 +331,7 @@ describe("pinned progressive scene navigation", () => {
     );
     assert.match(
       page,
-      /const navigateProgressively[\s\S]*unlockScene\(targetScene\)/,
+      /const navigateProgressively[\s\S]*target\.activeSceneId,[\s\S]*target\.scrollTargetId/,
     );
   });
 

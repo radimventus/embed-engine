@@ -182,14 +182,22 @@ function isAtCurrentSceneStart(
   root: HTMLElement | Window,
   sceneId: string,
 ): boolean {
-  const scene = document.getElementById(sceneId);
+  const isTourStop =
+    sceneId === "journey-scene-orientation" && !isBeforeHeroTourAnchor();
+  const scene =
+    isTourStop
+      ? document.getElementById("social-proof")
+      : document.getElementById(sceneId);
   if (scene === null) return false;
   const viewportTop =
     root instanceof HTMLElement ? root.getBoundingClientRect().top : 0;
   return hasReachedSceneStart(
     scene.getBoundingClientRect().top,
     viewportTop,
-    headerOffsetPx(),
+    isTourStop
+      ? document.querySelector<HTMLElement>("[data-experience-header]")
+          ?.getBoundingClientRect().height ?? 72
+      : headerOffsetPx(),
   );
 }
 
