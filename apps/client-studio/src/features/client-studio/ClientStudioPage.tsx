@@ -379,7 +379,11 @@ export function ClientStudioPage({
                 >
                   <Hero />
                   <ChapterSpacer />
-                  <SpatialTerminal />
+                  <SpatialTerminal
+                    onBack={() =>
+                      unlockScene(scenes[0]!.id, PILOT_SECTION_IDS.hero)
+                    }
+                  />
                 </JourneySceneFrame>
                 {revealedSceneCount >= 2 ? (
                   <PriorityExperienceProvider>

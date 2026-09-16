@@ -2,6 +2,10 @@
  * Smooth scroll to a Decision Journey section anchor (CSCB-01).
  * Aligns the section just below the sticky Experience header when present.
  */
+export const CANONICAL_SCROLL_REFERENCE_DURATION_MS = 600;
+export const CANONICAL_SCROLL_DURATION_MS =
+  CANONICAL_SCROLL_REFERENCE_DURATION_MS * 1.5;
+
 export function scrollToSection(
   sectionId: string,
   behavior: ScrollBehavior = "smooth",
@@ -22,6 +26,10 @@ export function scrollToSection(
   const overlayMount = document.querySelector<HTMLElement>(
     "[data-embed-overlay-mount]",
   );
+  const reducedMotion = window.matchMedia(
+    "(prefers-reduced-motion: reduce)",
+  ).matches;
+  const durationMs = behavior === "smooth" ? CANONICAL_SCROLL_DURATION_MS : 0;
 
   if (overlayMount) {
     const containerRect = overlayMount.getBoundingClientRect();
@@ -30,15 +38,23 @@ export function scrollToSection(
       overlayMount.scrollTop +
       (elementRect.top - containerRect.top) -
       headerOffset;
-    overlayMount.scrollTo({
-      top: Math.max(0, nextTop),
-      left: 0,
-      behavior,
-    });
+    animateScroll(
+      overlayMount,
+      Math.max(0, nextTop),
+      durationMs,
+      reducedMotion,
+      "ease-in-out",
+    );
   } else {
     const top =
       window.scrollY + target.getBoundingClientRect().top - headerOffset;
-    window.scrollTo({ top: Math.max(0, top), left: 0, behavior });
+    animateScroll(
+      window,
+      Math.max(0, top),
+      durationMs,
+      reducedMotion,
+      "ease-in-out",
+    );
   }
 
   if (typeof target.focus === "function") {
@@ -176,6 +192,8 @@ function easeProgress(
     : 1 - (-2 * progress + 2) ** 2 / 2;
 }
 
+const activeScrollFrames = new WeakMap<HTMLElement | Window, number>();
+
 function animateScroll(
   scroller: HTMLElement | Window,
   to: number,
@@ -183,6 +201,11 @@ function animateScroll(
   reducedMotion: boolean,
   easing: "linear" | "ease-in-out",
 ): void {
+  const activeFrame = activeScrollFrames.get(scroller);
+  if (activeFrame !== undefined) {
+    window.cancelAnimationFrame(activeFrame);
+    activeScrollFrames.delete(scroller);
+  }
   const from =
     scroller instanceof Window ? scroller.scrollY : scroller.scrollTop;
 
@@ -192,11 +215,13 @@ function animateScroll(
     } else {
       scroller.scrollTop = to;
     }
+    activeScrollFrames.delete(scroller);
     return;
   }
 
   const delta = to - from;
   if (Math.abs(delta) < 1) {
+    activeScrollFrames.delete(scroller);
     return;
   }
 
@@ -211,9 +236,11 @@ function animateScroll(
       scroller.scrollTop = next;
     }
     if (progress < 1) {
-      window.requestAnimationFrame(tick);
+      activeScrollFrames.set(scroller, window.requestAnimationFrame(tick));
+    } else {
+      activeScrollFrames.delete(scroller);
     }
   };
 
-  window.requestAnimationFrame(tick);
+  activeScrollFrames.set(scroller, window.requestAnimationFrame(tick));
 }

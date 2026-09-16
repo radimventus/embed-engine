@@ -17,6 +17,8 @@ export {
 export { RuntimeBootstrapGate } from "./RuntimeBootstrapGate";
 export { decisionJourneyScenes } from "./decisionJourney";
 export {
+  CANONICAL_SCROLL_DURATION_MS,
+  CANONICAL_SCROLL_REFERENCE_DURATION_MS,
   PRIORITY_BRIDGE_ANCHOR_ID,
   isSectionAtScrollAnchor,
   isSectionScrollReady,

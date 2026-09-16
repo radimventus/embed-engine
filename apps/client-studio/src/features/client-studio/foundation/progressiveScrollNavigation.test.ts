@@ -3,6 +3,8 @@ import { readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { describe, it } from "node:test";
+import { createElement } from "react";
+import { renderToStaticMarkup } from "react-dom/server";
 
 import {
   EMPTY_DIRECTIONAL_INTENT,
@@ -14,6 +16,11 @@ import {
   previousProgressiveSceneId,
   touchDownwardDeltaPx,
 } from "./useProgressiveScrollUnlock";
+import {
+  CANONICAL_SCROLL_DURATION_MS,
+  CANONICAL_SCROLL_REFERENCE_DURATION_MS,
+} from "./scrollToSection";
+import { TourBackNavigation } from "../sections/SpatialTerminal/SpatialTerminal";
 
 const here = dirname(fileURLToPath(import.meta.url));
 const read = (path: string) => readFileSync(join(here, path), "utf8");
@@ -107,6 +114,23 @@ describe("pinned progressive scene navigation", () => {
     );
   });
 
+  it("slows the canonical programmatic transition to 1.5x", () => {
+    const scroll = read("scrollToSection.ts");
+    assert.equal(CANONICAL_SCROLL_REFERENCE_DURATION_MS, 600);
+    assert.equal(CANONICAL_SCROLL_DURATION_MS, 900);
+    assert.equal(
+      CANONICAL_SCROLL_DURATION_MS / CANONICAL_SCROLL_REFERENCE_DURATION_MS,
+      1.5,
+    );
+    assert.match(
+      scroll,
+      /behavior === "smooth" \? CANONICAL_SCROLL_DURATION_MS : 0/,
+    );
+    assert.match(scroll, /animateScroll\([\s\S]*durationMs/);
+    assert.doesNotMatch(scroll, /behavior,\s*\}\)/);
+    assert.match(scroll, /activeScrollFrames[\s\S]*cancelAnimationFrame/);
+  });
+
   it("positions only after target render readiness", () => {
     const page = read("../ClientStudioPage.tsx");
     const ready = page.indexOf("document.getElementById(sceneId) === null");
@@ -181,7 +205,7 @@ describe("pinned progressive scene navigation", () => {
     );
     assert.doesNotMatch(orientation, /standardDesktopGap/);
     assert.match(orientation, /<Hero \/>/);
-    assert.match(orientation, /<SpatialTerminal \/>/);
+    assert.match(orientation, /<SpatialTerminal[\s\S]*onBack=/);
     assert.match(orientation, /ClientStudioWelcomeBridge/);
   });
 
@@ -196,13 +220,46 @@ describe("pinned progressive scene navigation", () => {
     );
   });
 
-  it("provides TOUR to PRIORITY Back through canonical navigation", () => {
+  it("renders the production TOUR Back control", () => {
+    const markup = renderToStaticMarkup(
+      createElement(TourBackNavigation, { onBack: () => undefined }),
+    );
+    assert.match(markup, /data-tour-back=""/);
+    assert.match(markup, /← Zpět/);
+  });
+
+  it("routes production TOUR Back to HERO through canonical unlockScene", () => {
     const page = read("../ClientStudioPage.tsx");
-    const priority = read("../sections/PriorityEngine/PriorityEngine.tsx");
-    assert.match(priority, /onClick=\{onBack\}[\s\S]*← Zpět/);
+    const tour = read("../sections/SpatialTerminal/SpatialTerminal.tsx");
+    assert.match(tour, /<TourBackNavigation onBack=\{onBack\}/);
     assert.match(
       page,
-      /<PriorityEngine[\s\S]*onBack=\{\(\) =>[\s\S]*unlockScene/,
+      /<SpatialTerminal[\s\S]*onBack=\{\(\) =>[\s\S]*unlockScene\([\s\S]*scenes\[0\]!\.id,[\s\S]*PILOT_SECTION_IDS\.hero/,
+    );
+  });
+
+  it("removes the global 300px reserve from desktop only", () => {
+    const css = read("../../../index.css");
+    assert.match(
+      css,
+      /body \{[\s\S]*padding-bottom: max\(20px, env\(safe-area-inset-bottom\)\);[\s\S]*@media \(max-width: 1279px\)[\s\S]*padding-bottom: max\(300px, env\(safe-area-inset-bottom\)\)/,
+    );
+    assert.equal((css.match(/padding-bottom: max\(300px/g) ?? []).length, 1);
+    assert.ok(
+      css.indexOf("@media (max-width: 1279px)") <
+        css.indexOf("padding-bottom: max(300px"),
+    );
+  });
+
+  it("keeps desktop shell and sticky rail on the same document contract", () => {
+    const shell = read("../../../components/layout/AppShell.tsx");
+    const css = read("../../../index.css");
+    assert.match(shell, /data-studio-shell="app"/);
+    assert.match(shell, /data-studio-shell="sidebar-slot"/);
+    assert.match(shell, /h-screen/);
+    assert.match(
+      css,
+      /padding-bottom: max\(20px, env\(safe-area-inset-bottom\)\)/,
     );
   });
 
