@@ -2,13 +2,63 @@
  * Smooth scroll to a Decision Journey section anchor (CSCB-01).
  * Aligns the section just below the sticky Experience header when present.
  */
-export const CANONICAL_SCROLL_REFERENCE_DURATION_MS = 600;
-export const CANONICAL_SCROLL_DURATION_MS =
-  CANONICAL_SCROLL_REFERENCE_DURATION_MS * 1.5;
+export const CANONICAL_SCROLL_MIN_DURATION_MS = 816;
+export const CANONICAL_SCROLL_MAX_DURATION_MS = 1320;
+
+export function canonicalScrollDurationMs(distancePx: number): number {
+  return Math.round(
+    Math.min(
+      CANONICAL_SCROLL_MAX_DURATION_MS,
+      Math.max(
+        CANONICAL_SCROLL_MIN_DURATION_MS,
+        768 + Math.abs(distancePx) * 0.456,
+      ),
+    ),
+  );
+}
+
+/** Cubic smoothstep: monotonic, zero velocity at both ends, no midpoint kink. */
+export function canonicalScrollProgress(progress: number): number {
+  const bounded = Math.min(1, Math.max(0, progress));
+  return bounded * bounded * (3 - 2 * bounded);
+}
+
+export type ScrollToSectionOptions = {
+  /** Moves the target this many pixels above the standard 20px safe inset. */
+  readonly additionalOffsetPx?: number;
+  readonly onFirstFrame?: () => void;
+  readonly onComplete?: () => void;
+};
+
+export type PinnedNavigationTimingMark =
+  | "threshold"
+  | "transition-request"
+  | "first-frame"
+  | "target-reached"
+  | "lock-start";
+
+export function markPinnedNavigationTiming(
+  mark: PinnedNavigationTimingMark,
+): void {
+  if (typeof performance !== "undefined" && "mark" in performance) {
+    const at = performance.now();
+    performance.mark(`client-studio:pinned-${mark}`, { startTime: at });
+    const root = document.documentElement;
+    const previous = root.dataset.pinnedNavigationTiming;
+    const entries = previous
+      ? (JSON.parse(previous) as Array<{ mark: string; at: number }>)
+      : [];
+    root.dataset.pinnedNavigationTiming = JSON.stringify([
+      ...entries.slice(-9),
+      { mark, at },
+    ]);
+  }
+}
 
 export function scrollToSection(
   sectionId: string,
   behavior: ScrollBehavior = "smooth",
+  options: ScrollToSectionOptions = {},
 ): void {
   const target = document.getElementById(sectionId);
   if (target === null) {
@@ -29,8 +79,6 @@ export function scrollToSection(
   const reducedMotion = window.matchMedia(
     "(prefers-reduced-motion: reduce)",
   ).matches;
-  const durationMs = behavior === "smooth" ? CANONICAL_SCROLL_DURATION_MS : 0;
-
   if (overlayMount) {
     const containerRect = overlayMount.getBoundingClientRect();
     const elementRect = target.getBoundingClientRect();
@@ -38,22 +86,35 @@ export function scrollToSection(
       overlayMount.scrollTop +
       (elementRect.top - containerRect.top) -
       headerOffset;
+    const destination = Math.max(
+      0,
+      nextTop + (options.additionalOffsetPx ?? 0),
+    );
     animateScroll(
       overlayMount,
-      Math.max(0, nextTop),
-      durationMs,
+      destination,
+      behavior === "smooth"
+        ? canonicalScrollDurationMs(destination - overlayMount.scrollTop)
+        : 0,
       reducedMotion,
-      "ease-in-out",
+      canonicalScrollProgress,
+      options.onFirstFrame,
+      options.onComplete,
     );
   } else {
     const top =
       window.scrollY + target.getBoundingClientRect().top - headerOffset;
+    const destination = Math.max(0, top + (options.additionalOffsetPx ?? 0));
     animateScroll(
       window,
-      Math.max(0, top),
-      durationMs,
+      destination,
+      behavior === "smooth"
+        ? canonicalScrollDurationMs(destination - window.scrollY)
+        : 0,
       reducedMotion,
-      "ease-in-out",
+      canonicalScrollProgress,
+      options.onFirstFrame,
+      options.onComplete,
     );
   }
 
@@ -114,10 +175,21 @@ export function isSectionAtScrollAnchor(
     "[data-embed-overlay-mount]",
   );
   const viewportTop = overlayMount?.getBoundingClientRect().top ?? 0;
-  const expectedTop = viewportTop + headerOffset - additionalOffsetPx;
-  return (
-    Math.abs(target.getBoundingClientRect().top - expectedTop) <= tolerancePx
+  const currentScrollTop = overlayMount?.scrollTop ?? window.scrollY;
+  const maximumScrollTop = overlayMount
+    ? overlayMount.scrollHeight - overlayMount.clientHeight
+    : document.documentElement.scrollHeight - window.innerHeight;
+  const requestedScrollTop =
+    currentScrollTop +
+    target.getBoundingClientRect().top -
+    viewportTop -
+    headerOffset +
+    additionalOffsetPx;
+  const reachableScrollTop = Math.min(
+    Math.max(0, requestedScrollTop),
+    Math.max(0, maximumScrollTop),
   );
+  return Math.abs(currentScrollTop - reachableScrollTop) <= tolerancePx;
 }
 
 /** Priority chapter bridge block — CAP UX 39 scroll target. */
@@ -167,12 +239,20 @@ export function scrollElementIntoView(
       Math.max(0, nextTop),
       durationMs,
       reducedMotion,
-      easing,
+      (progress) => easeProgress(progress, easing),
+      undefined,
     );
   } else {
     const top =
       window.scrollY + target.getBoundingClientRect().top - headerOffset;
-    animateScroll(window, Math.max(0, top), durationMs, reducedMotion, easing);
+    animateScroll(
+      window,
+      Math.max(0, top),
+      durationMs,
+      reducedMotion,
+      (progress) => easeProgress(progress, easing),
+      undefined,
+    );
   }
 
   if (typeof target.focus === "function") {
@@ -192,20 +272,46 @@ function easeProgress(
     : 1 - (-2 * progress + 2) ** 2 / 2;
 }
 
-const activeScrollFrames = new WeakMap<HTMLElement | Window, number>();
+type ActiveScroll = {
+  readonly frameId: number;
+  readonly restoreChrome: () => void;
+};
+
+const activeScrollFrames = new WeakMap<HTMLElement | Window, ActiveScroll>();
 
 function animateScroll(
   scroller: HTMLElement | Window,
   to: number,
   durationMs: number,
   reducedMotion: boolean,
-  easing: "linear" | "ease-in-out",
+  easing: (progress: number) => number,
+  onFirstFrame?: () => void,
+  onComplete?: () => void,
 ): void {
-  const activeFrame = activeScrollFrames.get(scroller);
-  if (activeFrame !== undefined) {
-    window.cancelAnimationFrame(activeFrame);
+  const activeScroll = activeScrollFrames.get(scroller);
+  if (activeScroll !== undefined) {
+    window.cancelAnimationFrame(activeScroll.frameId);
+    activeScroll.restoreChrome();
     activeScrollFrames.delete(scroller);
   }
+  const chromeRoot =
+    scroller instanceof Window ? document.documentElement : scroller;
+  const previousBehavior = chromeRoot.style.scrollBehavior;
+  const previousSnapType = chromeRoot.style.scrollSnapType;
+  chromeRoot.style.scrollBehavior = "auto";
+  chromeRoot.style.scrollSnapType = "none";
+  let chromeRestored = false;
+  const restoreChrome = () => {
+    if (chromeRestored) return;
+    chromeRestored = true;
+    chromeRoot.style.scrollBehavior = previousBehavior;
+    chromeRoot.style.scrollSnapType = previousSnapType;
+  };
+  const complete = () => {
+    activeScrollFrames.delete(scroller);
+    restoreChrome();
+    onComplete?.();
+  };
   const from =
     scroller instanceof Window ? scroller.scrollY : scroller.scrollTop;
 
@@ -215,32 +321,46 @@ function animateScroll(
     } else {
       scroller.scrollTop = to;
     }
-    activeScrollFrames.delete(scroller);
+    if (Math.abs(to - from) > 0) {
+      onFirstFrame?.();
+    }
+    complete();
     return;
   }
 
   const delta = to - from;
   if (Math.abs(delta) < 1) {
-    activeScrollFrames.delete(scroller);
+    complete();
     return;
   }
 
   const startedAt = performance.now();
+  let firstFrameWritten = false;
 
   const tick = (now: number) => {
     const progress = Math.min(1, (now - startedAt) / durationMs);
-    const next = from + delta * easeProgress(progress, easing);
+    const next = from + delta * easing(progress);
     if (scroller instanceof Window) {
       scroller.scrollTo({ top: next, left: 0, behavior: "auto" });
     } else {
       scroller.scrollTop = next;
     }
+    if (!firstFrameWritten && Math.abs(next - from) > 0) {
+      firstFrameWritten = true;
+      onFirstFrame?.();
+    }
     if (progress < 1) {
-      activeScrollFrames.set(scroller, window.requestAnimationFrame(tick));
+      activeScrollFrames.set(scroller, {
+        frameId: window.requestAnimationFrame(tick),
+        restoreChrome,
+      });
     } else {
-      activeScrollFrames.delete(scroller);
+      complete();
     }
   };
 
-  activeScrollFrames.set(scroller, window.requestAnimationFrame(tick));
+  activeScrollFrames.set(scroller, {
+    frameId: window.requestAnimationFrame(tick),
+    restoreChrome,
+  });
 }

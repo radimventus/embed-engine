@@ -17,10 +17,13 @@ import {
   touchDownwardDeltaPx,
 } from "./useProgressiveScrollUnlock";
 import {
-  CANONICAL_SCROLL_DURATION_MS,
-  CANONICAL_SCROLL_REFERENCE_DURATION_MS,
+  CANONICAL_SCROLL_MAX_DURATION_MS,
+  CANONICAL_SCROLL_MIN_DURATION_MS,
+  canonicalScrollDurationMs,
+  canonicalScrollProgress,
 } from "./scrollToSection";
-import { TourBackNavigation } from "../sections/SpatialTerminal/SpatialTerminal";
+import { canonicalSectionTarget } from "./journeyNavigation";
+import { JourneySceneFrame } from "./JourneySceneFrame";
 
 const here = dirname(fileURLToPath(import.meta.url));
 const read = (path: string) => readFileSync(join(here, path), "utf8");
@@ -112,40 +115,67 @@ describe("pinned progressive scene navigation", () => {
       hook.slice(transition - 180, transition + 80),
       /setTimeout/,
     );
+    assert.match(hook, /markPinnedNavigationTiming\("threshold"\)/);
+    const page = read("../ClientStudioPage.tsx");
+    assert.match(page, /markPinnedNavigationTiming\("transition-request"\)/);
+    assert.doesNotMatch(page, /animateOnMount=\{revealedSceneCount/);
   });
 
-  it("slows the canonical programmatic transition to 1.5x", () => {
+  it("uses one distance-aware canonical RAF animation authority", () => {
     const scroll = read("scrollToSection.ts");
-    assert.equal(CANONICAL_SCROLL_REFERENCE_DURATION_MS, 600);
-    assert.equal(CANONICAL_SCROLL_DURATION_MS, 900);
-    assert.equal(
-      CANONICAL_SCROLL_DURATION_MS / CANONICAL_SCROLL_REFERENCE_DURATION_MS,
-      1.5,
-    );
-    assert.match(
-      scroll,
-      /behavior === "smooth" \? CANONICAL_SCROLL_DURATION_MS : 0/,
-    );
-    assert.match(scroll, /animateScroll\([\s\S]*durationMs/);
-    assert.doesNotMatch(scroll, /behavior,\s*\}\)/);
+    const heroCta = read("../sections/Hero/HeroCTA.tsx");
+    assert.equal(CANONICAL_SCROLL_MIN_DURATION_MS, 816);
+    assert.equal(CANONICAL_SCROLL_MAX_DURATION_MS, 1320);
+    assert.equal(canonicalScrollDurationMs(0), 816);
+    assert.equal(canonicalScrollDurationMs(2_000), 1320);
+    assert.equal(canonicalScrollDurationMs(500), 996);
+    assert.match(scroll, /canonicalScrollDurationMs/);
+    assert.match(scroll, /canonicalScrollProgress/);
+    assert.doesNotMatch(heroCta, /requestAnimationFrame|scrollTop|scrollTo\(/);
+    assert.match(heroCta, /navigateToJourneySection/);
     assert.match(scroll, /activeScrollFrames[\s\S]*cancelAnimationFrame/);
+    assert.match(scroll, /scrollBehavior = "auto"/);
+    assert.match(scroll, /scrollSnapType = "none"/);
+  });
+
+  it("produces a monotonic smoothstep trajectory without endpoint jumps", () => {
+    const samples = Array.from({ length: 101 }, (_, index) =>
+      canonicalScrollProgress(index / 100),
+    );
+    assert.equal(samples[0], 0);
+    assert.equal(samples.at(-1), 1);
+    samples.slice(1).forEach((value, index) => {
+      assert.ok(value > samples[index]!);
+    });
+    assert.ok(samples[1]! < 0.001);
+    assert.ok(1 - samples.at(-2)! < 0.001);
+  });
+
+  it("schedules the first movement frame without a timer delay", () => {
+    const scroll = read("scrollToSection.ts");
+    const start = scroll.indexOf("const startedAt = performance.now()");
+    const firstFrame = scroll.indexOf(
+      "window.requestAnimationFrame(tick)",
+      start,
+    );
+    assert.ok(start > 0 && firstFrame > start);
+    assert.doesNotMatch(scroll.slice(start, firstFrame), /setTimeout/);
+    assert.match(scroll, /onFirstFrame\?\.\(\)/);
+    assert.match(scroll, /markPinnedNavigationTiming/);
   });
 
   it("positions only after target render readiness", () => {
     const page = read("../ClientStudioPage.tsx");
     const ready = page.indexOf("document.getElementById(sceneId) === null");
-    const position = page.indexOf('positionTarget("smooth")');
+    const position = page.indexOf('positionTarget("smooth",');
     assert.ok(ready > 0 && ready < position);
     assert.match(page, /!isSectionScrollReady\(sceneId\)/);
   });
 
   it("starts physical lock only from canonical scroll completion", () => {
     const page = read("../ClientStudioPage.tsx");
-    assert.match(
-      page,
-      /const onScrollEnd = \(\) => \{[\s\S]*beginPhysicalLockAtTarget\(\)/,
-    );
-    assert.match(page, /scrollRoot\.addEventListener\("scrollend"/);
+    assert.doesNotMatch(page, /addEventListener\("scrollend"/);
+    assert.match(page, /positionTarget\("smooth", \(\) =>/);
     assert.match(page, /isSectionAtScrollAnchor\(sceneId, scrollOffsetPx\)/);
     assert.match(page, /setIsPhysicalScrollLocked\(true\)/);
     const anchorGuard = page.indexOf("if (!isSectionAtScrollAnchor");
@@ -205,8 +235,40 @@ describe("pinned progressive scene navigation", () => {
     );
     assert.doesNotMatch(orientation, /standardDesktopGap/);
     assert.match(orientation, /<Hero \/>/);
-    assert.match(orientation, /<SpatialTerminal[\s\S]*onBack=/);
+    assert.match(orientation, /onBack=\{\(\) =>[\s\S]*<SpatialTerminal \/>/);
     assert.match(orientation, /ClientStudioWelcomeBridge/);
+  });
+
+  it("uses the exact same Social Proof composition target for HERO CTA and TOUR navigation", () => {
+    const heroCta = read("../sections/Hero/HeroCTA.tsx");
+    const page = read("../ClientStudioPage.tsx");
+    const buttonTarget = canonicalSectionTarget("walkthrough");
+    const pinnedTarget = canonicalSectionTarget("walkthrough");
+
+    assert.deepEqual(buttonTarget, pinnedTarget);
+    assert.deepEqual(buttonTarget, {
+      scrollTargetId: "social-proof",
+      scrollOffsetPx: 20,
+    });
+    assert.match(
+      heroCta,
+      /navigateToJourneySection\(PILOT_SECTION_IDS\.walkthrough\)/,
+    );
+    assert.match(page, /canonicalSectionTarget\(sectionId\)/);
+    assert.match(page, /additionalOffsetPx: scrollOffsetPx/);
+    assert.doesNotMatch(page, /target\.style\.transform/);
+  });
+
+  it("keeps representative scene button and pinned targets on unlockScene", () => {
+    const page = read("../ClientStudioPage.tsx");
+    assert.match(
+      page,
+      /const handleSceneNavigate[\s\S]*unlockScene\(sceneId\)/,
+    );
+    assert.match(
+      page,
+      /const navigateProgressively[\s\S]*unlockScene\(targetScene\)/,
+    );
   });
 
   it("preserves mobile clipping and safe-area protection", () => {
@@ -222,27 +284,41 @@ describe("pinned progressive scene navigation", () => {
 
   it("renders the production TOUR Back control", () => {
     const markup = renderToStaticMarkup(
-      createElement(TourBackNavigation, { onBack: () => undefined }),
+      createElement(
+        JourneySceneFrame,
+        {
+          sceneId: "journey-scene-orientation",
+          nextSceneId: "journey-scene-interpretation",
+          onBack: () => undefined,
+          footerLeading: createElement("div", null, "Bridge"),
+        },
+        createElement("div", { id: "walkthrough" }, "Tour"),
+      ),
     );
     assert.match(markup, /data-tour-back=""/);
     assert.match(markup, /← Zpět/);
+    assert.match(markup, /Pokračovat →/);
+    assert.equal(
+      (markup.match(/data-journey-navigation-boundary=/g) ?? []).length,
+      1,
+    );
   });
 
   it("routes production TOUR Back to HERO through canonical unlockScene", () => {
     const page = read("../ClientStudioPage.tsx");
     const tour = read("../sections/SpatialTerminal/SpatialTerminal.tsx");
-    assert.match(tour, /<TourBackNavigation onBack=\{onBack\}/);
+    assert.doesNotMatch(tour, /TourBackNavigation|data-tour-back/);
     assert.match(
       page,
-      /<SpatialTerminal[\s\S]*onBack=\{\(\) =>[\s\S]*unlockScene\([\s\S]*scenes\[0\]!\.id,[\s\S]*PILOT_SECTION_IDS\.hero/,
+      /<JourneySceneFrame[\s\S]*onBack=\{\(\) =>[\s\S]*unlockScene\([\s\S]*scenes\[0\]!\.id,[\s\S]*PILOT_SECTION_IDS\.hero[\s\S]*<SpatialTerminal \/>/,
     );
   });
 
-  it("removes the global 300px reserve from desktop only", () => {
+  it("keeps the global reserve on responsive layouts only", () => {
     const css = read("../../../index.css");
     assert.match(
       css,
-      /body \{[\s\S]*padding-bottom: max\(20px, env\(safe-area-inset-bottom\)\);[\s\S]*@media \(max-width: 1279px\)[\s\S]*padding-bottom: max\(300px, env\(safe-area-inset-bottom\)\)/,
+      /body \{[\s\S]*padding-bottom: 0;[\s\S]*@media \(max-width: 1279px\)[\s\S]*padding-bottom: max\(300px, env\(safe-area-inset-bottom\)\)/,
     );
     assert.equal((css.match(/padding-bottom: max\(300px/g) ?? []).length, 1);
     assert.ok(
@@ -257,10 +333,23 @@ describe("pinned progressive scene navigation", () => {
     assert.match(shell, /data-studio-shell="app"/);
     assert.match(shell, /data-studio-shell="sidebar-slot"/);
     assert.match(shell, /h-screen/);
-    assert.match(
-      css,
-      /padding-bottom: max\(20px, env\(safe-area-inset-bottom\)\)/,
+    assert.match(css, /body \{[\s\S]*padding-bottom: 0/);
+  });
+
+  it("renders no empty navigation row after the final footer", () => {
+    const markup = renderToStaticMarkup(
+      createElement(
+        JourneySceneFrame,
+        { sceneId: "journey-scene-decision", compactDesktopEnd: true },
+        createElement("footer", { "data-testid": "audit-final-footer" }),
+      ),
     );
+    assert.doesNotMatch(markup, /data-journey-navigation-boundary/);
+    assert.match(
+      markup,
+      /padding-bottom:max\(20px, env\(safe-area-inset-bottom/,
+    );
+    assert.doesNotMatch(markup, /min-height:32px/);
   });
 
   it("keeps revealed progress monotonic and active scene authoritative", () => {

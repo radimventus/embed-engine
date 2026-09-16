@@ -1,4 +1,5 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { flushSync } from "react-dom";
 import type { ReactExperienceModel } from "@embed-engine/model";
 
 import { DecisionAnalyticsProvider, JourneySurfaceObserver } from "./analytics";
@@ -6,6 +7,7 @@ import { BuilderPreviewPersonaApplicator } from "./runtime/BuilderPreviewPersona
 import { DesktopCanvas } from "./DesktopCanvas";
 import {
   ChapterSpacer,
+  canonicalSectionTarget,
   GuidedJourneyRoot,
   JourneySceneFrame,
   RuntimeBootstrapGate,
@@ -16,6 +18,7 @@ import {
   isRacioSection,
   isSectionAtScrollAnchor,
   isSectionScrollReady,
+  markPinnedNavigationTiming,
   nextProgressiveSceneId,
   previousProgressiveSceneId,
   registerJourneySectionNavigator,
@@ -99,7 +102,6 @@ export function ClientStudioPage({
   const [scrollIntentResetKey, setScrollIntentResetKey] = useState(0);
   const transitionTimerRef = useRef<number | null>(null);
   const transitionFailsafeRef = useRef<number | null>(null);
-  const transitionEndCleanupRef = useRef<(() => void) | null>(null);
 
   useEffect(() => {
     return () => {
@@ -109,7 +111,6 @@ export function ClientStudioPage({
       if (transitionFailsafeRef.current !== null) {
         window.clearTimeout(transitionFailsafeRef.current);
       }
-      transitionEndCleanupRef.current?.();
     };
   }, []);
 
@@ -144,7 +145,7 @@ export function ClientStudioPage({
     }
   }, [activeSceneId, scenes]);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (pendingSceneId === null) {
       return;
     }
@@ -178,14 +179,10 @@ export function ClientStudioPage({
         setIsPhysicalScrollLocked(false);
         setIsSceneTransitioning(false);
       };
-      const scrollRoot =
-        document.querySelector<HTMLElement>("[data-embed-overlay-mount]") ??
-        window;
       const beginPhysicalLock = () => {
         if (physicalLockStarted) return;
         physicalLockStarted = true;
-        transitionEndCleanupRef.current?.();
-        transitionEndCleanupRef.current = null;
+        markPinnedNavigationTiming("lock-start");
         if (transitionTimerRef.current !== null) {
           window.clearTimeout(transitionTimerRef.current);
         }
@@ -199,44 +196,40 @@ export function ClientStudioPage({
           PROGRESSIVE_PHYSICAL_SCROLL_LOCK_FAILSAFE_MS,
         );
       };
-      const target = document.getElementById(sceneId);
-      const positionTarget = (behavior: ScrollBehavior) => {
-        const previousTransform = target?.style.transform;
-        if (target !== null && scrollOffsetPx !== 0) {
-          target.style.transform = `translateY(${scrollOffsetPx}px)`;
-        }
-        scrollToSection(sceneId, behavior);
-        if (target !== null && scrollOffsetPx !== 0) {
-          target.style.transform = previousTransform ?? "";
-        }
+      const positionTarget = (
+        behavior: ScrollBehavior,
+        onComplete?: () => void,
+      ) => {
+        scrollToSection(sceneId, behavior, {
+          additionalOffsetPx: scrollOffsetPx,
+          onFirstFrame: () => markPinnedNavigationTiming("first-frame"),
+          onComplete: () => {
+            markPinnedNavigationTiming("target-reached");
+            onComplete?.();
+          },
+        });
       };
       const beginPhysicalLockAtTarget = () => {
         if (!isSectionAtScrollAnchor(sceneId, scrollOffsetPx)) return false;
         beginPhysicalLock();
         return true;
       };
-      transitionEndCleanupRef.current?.();
-      const onScrollEnd = () => {
-        beginPhysicalLockAtTarget();
-      };
-      scrollRoot.addEventListener("scrollend", onScrollEnd);
-      transitionEndCleanupRef.current = () => {
-        scrollRoot.removeEventListener("scrollend", onScrollEnd);
-      };
-      // Fallback for engines that do not dispatch scrollend: first guarantee
-      // canonical positioning, then start the physical focus lock.
+      // Fail-safe is longer than the maximum canonical duration. It cancels
+      // the same central animator via an immediate canonical positioning call.
       transitionTimerRef.current = window.setTimeout(() => {
-        if (beginPhysicalLockAtTarget()) return;
-        positionTarget("auto");
-        window.requestAnimationFrame(() => {
+        positionTarget("auto", () => {
           if (!beginPhysicalLockAtTarget()) finishTransition();
         });
-      }, 2000);
-      positionTarget("smooth");
+      }, 1600);
+      positionTarget("smooth", () => {
+        if (!beginPhysicalLockAtTarget()) finishTransition();
+      });
       setPendingSceneId((current) => (current === sceneId ? null : current));
     };
 
-    frameId = window.requestAnimationFrame(scrollWhenReady);
+    // Layout effect runs after the target DOM commits. Start the canonical
+    // animator now so its first changed write lands in the nearest RAF.
+    scrollWhenReady();
     return () => {
       cancelled = true;
       if (frameId !== null) {
@@ -265,8 +258,6 @@ export function ClientStudioPage({
     setRequestedSceneId(sceneId);
     setPendingSceneScrollOffsetPx(scrollOffsetPx);
     setPendingSceneId(scrollTargetId);
-    transitionEndCleanupRef.current?.();
-    transitionEndCleanupRef.current = null;
     if (transitionTimerRef.current !== null) {
       window.clearTimeout(transitionTimerRef.current);
       transitionTimerRef.current = null;
@@ -292,7 +283,12 @@ export function ClientStudioPage({
         return;
       }
       if (isOrientationSection(sectionId)) {
-        unlockScene(scenes[0]!.id, sectionId);
+        const target = canonicalSectionTarget(sectionId);
+        unlockScene(
+          scenes[0]!.id,
+          target.scrollTargetId,
+          target.scrollOffsetPx,
+        );
       }
     });
     return () => {
@@ -321,13 +317,16 @@ export function ClientStudioPage({
   );
 
   const navigateProgressively = (direction: ProgressiveNavigationDirection) => {
+    markPinnedNavigationTiming("transition-request");
     const targetScene =
       direction === "forward" ? nextProgressiveScene : previousProgressiveScene;
     if (targetScene === null) return;
     if (direction === "forward" && activeSceneId === scenes[0]!.id) {
       welcomeBridge.dismiss();
     }
-    unlockScene(targetScene);
+    // The wheel/touch threshold is an input event. Commit the newly available
+    // target in that same event so the canonical animator owns the next RAF.
+    flushSync(() => unlockScene(targetScene));
   };
 
   useProgressiveScrollUnlock({
@@ -368,6 +367,9 @@ export function ClientStudioPage({
                   sceneId={scenes[0]!.id}
                   nextSceneId={scenes[1]?.id}
                   onNavigate={handleSceneNavigate}
+                  onBack={() =>
+                    unlockScene(scenes[0]!.id, PILOT_SECTION_IDS.hero)
+                  }
                   pinFooterToBottom={false}
                   footerLeading={
                     <ClientStudioWelcomeBridge
@@ -379,18 +381,13 @@ export function ClientStudioPage({
                 >
                   <Hero />
                   <ChapterSpacer />
-                  <SpatialTerminal
-                    onBack={() =>
-                      unlockScene(scenes[0]!.id, PILOT_SECTION_IDS.hero)
-                    }
-                  />
+                  <SpatialTerminal />
                 </JourneySceneFrame>
                 {revealedSceneCount >= 2 ? (
                   <PriorityExperienceProvider>
                     <JourneySceneFrame
                       sceneId={scenes[1]!.id}
                       onNavigate={handleSceneNavigate}
-                      animateOnMount={revealedSceneCount === 2}
                       standardDesktopGap
                     >
                       <PriorityEngine
@@ -417,7 +414,6 @@ export function ClientStudioPage({
                     previousSceneId={scenes[1]?.id}
                     nextSceneId={scenes[3]?.id}
                     onNavigate={handleSceneNavigate}
-                    animateOnMount={revealedSceneCount === 3}
                     pinFooterToBottom={false}
                     standardDesktopGap
                   >
@@ -429,7 +425,6 @@ export function ClientStudioPage({
                     sceneId={scenes[3]!.id}
                     compactDesktopEnd
                     onNavigate={handleSceneNavigate}
-                    animateOnMount={revealedSceneCount === 4}
                     pinFooterToBottom={false}
                     standardDesktopGap
                   >

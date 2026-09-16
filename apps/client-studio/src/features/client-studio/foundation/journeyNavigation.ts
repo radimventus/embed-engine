@@ -4,6 +4,26 @@ import { scrollToSection } from "./scrollToSection";
 
 export type JourneySectionNavigator = (sectionId: string) => void;
 
+export type CanonicalSectionTarget = {
+  readonly scrollTargetId: string;
+  readonly scrollOffsetPx: number;
+};
+
+/**
+ * Restores the pre-pinned HERO contract from 090cd3b3: Social Proof is flush
+ * below the sticky header, preserving the approved Social Proof + TOUR frame.
+ */
+export function canonicalSectionTarget(
+  sectionId: string,
+): CanonicalSectionTarget {
+  return sectionId === PILOT_SECTION_IDS.walkthrough
+    ? {
+        scrollTargetId: PILOT_SECTION_IDS.socialProof,
+        scrollOffsetPx: 20,
+      }
+    : { scrollTargetId: sectionId, scrollOffsetPx: 0 };
+}
+
 let sectionNavigator: JourneySectionNavigator | null = null;
 
 /**

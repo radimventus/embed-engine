@@ -11,6 +11,8 @@ type JourneySceneFrameProps = {
   readonly previousSceneId?: string;
   readonly nextSceneId?: string;
   readonly onNavigate?: (sceneId: string) => void;
+  /** Canonical internal-scene Back action, rendered in the shared nav row. */
+  readonly onBack?: () => void;
   readonly animateOnMount?: boolean;
   readonly compactDesktopEnd?: boolean;
   readonly standardDesktopGap?: boolean;
@@ -36,6 +38,7 @@ export function JourneySceneFrame({
   previousSceneId,
   nextSceneId,
   onNavigate,
+  onBack,
   animateOnMount = false,
   compactDesktopEnd = false,
   standardDesktopGap = false,
@@ -140,14 +143,24 @@ export function JourneySceneFrame({
       {hasFooterLeading ? (
         <div
           data-journey-navigation-boundary={sceneId}
-          className={`grid grid-cols-[minmax(0,1fr)_auto] items-start gap-5 px-section ${
-            isFooterLeadingVisible ? "mobile:grid-cols-1 mobile:gap-0" : ""
+          className={`${JOURNEY_CTA_FOOTER_ROW_CLASS} ${
+            isFooterLeadingVisible ? "mobile:flex-wrap" : ""
           } ${pinFooterToBottom ? "mt-auto" : ""}`}
         >
+          {onBack ? (
+            <button
+              type="button"
+              data-tour-back=""
+              onClick={onBack}
+              className={`${JOURNEY_CTA_SECONDARY_CLASS} shrink-0 justify-start mobile:w-auto mobile:whitespace-nowrap`}
+            >
+              ← Zpět
+            </button>
+          ) : null}
           <div
             ref={footerLeadingRef}
             data-mobile-journey-bridge=""
-            className="min-w-0"
+            className="min-w-0 flex-1"
           >
             {footerLeading}
           </div>
@@ -163,7 +176,7 @@ export function JourneySceneFrame({
             </button>
           ) : null}
         </div>
-      ) : (
+      ) : previousSceneId || nextSceneId ? (
         <div
           data-journey-navigation-boundary={sceneId}
           className={`${JOURNEY_CTA_FOOTER_ROW_CLASS} mobile:flex-row mobile:flex-nowrap mobile:items-center mobile:[&>*]:min-w-0 mobile:items-center mobile:justify-between mobile:gap-3 ${
@@ -194,7 +207,7 @@ export function JourneySceneFrame({
             </button>
           ) : null}
         </div>
-      )}
+      ) : null}
     </div>
   );
 }

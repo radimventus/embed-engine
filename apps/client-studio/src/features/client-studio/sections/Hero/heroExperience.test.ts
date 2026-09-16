@@ -65,14 +65,17 @@ describe("Hero Experience (CSCB-02 / SR-002) — Reference Hero (PT-HERO-00)", (
     assert.match(content, /HeroCTA/);
     assert.match(cta, /Podívat se dovnitř/);
     assert.match(cta, /PILOT_SECTION_IDS\.socialProof/);
-    assert.match(cta, /data-embed-overlay-mount/);
-    assert.match(cta, /scrollTop/);
+    assert.match(
+      cta,
+      /navigateToJourneySection\(PILOT_SECTION_IDS\.walkthrough\)/,
+    );
+    assert.doesNotMatch(cta, /data-embed-overlay-mount/);
+    assert.doesNotMatch(cta, /scrollTop|requestAnimationFrame/);
     assert.equal(stripComments(cta).includes("scrollIntoView"), false);
     assert.match(image, /useDecisionSessionRuntime/);
     assert.match(image, /context\.hero\.primaryMediaUrl/);
     assert.match(image, /animate-hero-photo-veil/);
   });
-
 
   it("does not render partner implementation metadata inside Hero content", () => {
     const content = read("HeroContent.tsx");
@@ -110,6 +113,9 @@ describe("Hero Experience (CSCB-02 / SR-002) — Reference Hero (PT-HERO-00)", (
     assert.match(socialProof, /w-\[calc\(400%\/3\+1px\)\] shrink-0/);
     assert.match(socialProof, /flexBasis: "25%"/);
     assert.match(socialProof, /index < FEED_VISIBLE_ITEM_COUNT - 1/);
-    assert.doesNotMatch(cta, /WORKSPACE_LANDING_ADJUSTMENT_PX|workspaceAdjustment/);
+    assert.doesNotMatch(
+      cta,
+      /WORKSPACE_LANDING_ADJUSTMENT_PX|workspaceAdjustment/,
+    );
   });
 });

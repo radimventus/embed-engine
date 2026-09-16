@@ -169,7 +169,7 @@ body,
 body {
   box-sizing: border-box;
   overflow-y: auto;
-  padding-bottom: max(20px, env(safe-area-inset-bottom));
+  padding-bottom: 0;
 }
 
 @media (max-width: 1279px) {

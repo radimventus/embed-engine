@@ -7,6 +7,7 @@ export {
   JOURNEY_CTA_SECONDARY_CLASS,
 } from "./journeyCta";
 export {
+  canonicalSectionTarget,
   isDecisionSection,
   isOrientationSection,
   isPrioritySection,
@@ -14,17 +15,22 @@ export {
   navigateToJourneySection,
   registerJourneySectionNavigator,
 } from "./journeyNavigation";
+export type { CanonicalSectionTarget } from "./journeyNavigation";
 export { RuntimeBootstrapGate } from "./RuntimeBootstrapGate";
 export { decisionJourneyScenes } from "./decisionJourney";
 export {
-  CANONICAL_SCROLL_DURATION_MS,
-  CANONICAL_SCROLL_REFERENCE_DURATION_MS,
+  CANONICAL_SCROLL_MAX_DURATION_MS,
+  CANONICAL_SCROLL_MIN_DURATION_MS,
   PRIORITY_BRIDGE_ANCHOR_ID,
+  canonicalScrollDurationMs,
+  canonicalScrollProgress,
   isSectionAtScrollAnchor,
+  markPinnedNavigationTiming,
   isSectionScrollReady,
   scrollElementIntoView,
   scrollToSection,
 } from "./scrollToSection";
+export type { ScrollToSectionOptions } from "./scrollToSection";
 export { StudioLoading } from "./StudioLoading";
 export { useActiveSection } from "./useActiveSection";
 export { usePhysicalScrollLock } from "./usePhysicalScrollLock";

@@ -1,5 +1,7 @@
 import { useEffect, useRef } from "react";
 
+import { markPinnedNavigationTiming } from "./scrollToSection";
+
 /** Product-tunable input distance; not part of the public UX contract. */
 export const PROGRESSIVE_SCROLL_UNLOCK_THRESHOLD_PX = 160;
 
@@ -328,6 +330,7 @@ export function useProgressiveScrollUnlock({
       clearIdleTimer();
       if (result.transition !== null) {
         resetIntent();
+        markPinnedNavigationTiming("threshold");
         navigateRef.current(result.transition);
         return true;
       }
