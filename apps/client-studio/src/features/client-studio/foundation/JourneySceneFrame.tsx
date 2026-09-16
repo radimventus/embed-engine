@@ -139,6 +139,7 @@ export function JourneySceneFrame({
       {children}
       {hasFooterLeading ? (
         <div
+          data-journey-navigation-boundary={sceneId}
           className={`grid grid-cols-[minmax(0,1fr)_auto] items-start gap-5 px-section ${
             isFooterLeadingVisible
               ? "mobile:grid-cols-1 mobile:gap-0"
@@ -162,6 +163,7 @@ export function JourneySceneFrame({
         </div>
       ) : (
         <div
+          data-journey-navigation-boundary={sceneId}
           className={`${JOURNEY_CTA_FOOTER_ROW_CLASS} mobile:flex-row mobile:flex-nowrap mobile:items-center mobile:[&>*]:min-w-0 mobile:items-center mobile:justify-between mobile:gap-3 ${
             pinFooterToBottom ? "mt-auto" : ""
           }`}

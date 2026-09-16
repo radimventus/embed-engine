@@ -69,6 +69,7 @@ export function touchDownwardDeltaPx(
 
 type UseProgressiveScrollUnlockOptions = {
   readonly enabled: boolean;
+  readonly currentSceneId: string;
   readonly progressKey: string | number;
   readonly onUnlockNext: () => void;
   readonly thresholdPx?: number;
@@ -81,22 +82,30 @@ function scrollRoot(): HTMLElement | Window {
   );
 }
 
-function isAtBottom(root: HTMLElement | Window): boolean {
-  if (root instanceof HTMLElement) {
-    return (
-      root.scrollTop + root.clientHeight >=
-      root.scrollHeight - BOTTOM_TOLERANCE_PX
-    );
-  }
-
-  const documentHeight = Math.max(
-    document.documentElement.scrollHeight,
-    document.body.scrollHeight,
-  );
+function currentSceneBoundary(sceneId: string): HTMLElement | null {
   return (
-    window.scrollY + window.innerHeight >=
-    documentHeight - BOTTOM_TOLERANCE_PX
+    Array.from(
+      document.querySelectorAll<HTMLElement>(
+        "[data-journey-navigation-boundary]",
+      ),
+    ).find(
+      (element) => element.dataset.journeyNavigationBoundary === sceneId,
+    ) ?? document.getElementById(sceneId)
   );
+}
+
+function isAtCurrentSceneBoundary(
+  root: HTMLElement | Window,
+  sceneId: string,
+): boolean {
+  const boundary = currentSceneBoundary(sceneId);
+  if (boundary === null) return false;
+  const viewportBottom =
+    root instanceof HTMLElement
+      ? root.getBoundingClientRect().bottom
+      : window.innerHeight;
+  return boundary.getBoundingClientRect().bottom <=
+    viewportBottom + BOTTOM_TOLERANCE_PX;
 }
 
 function nestedScrollerCanContinue(
@@ -143,6 +152,7 @@ function wheelDeltaPx(event: WheelEvent, root: HTMLElement | Window): number {
  */
 export function useProgressiveScrollUnlock({
   enabled,
+  currentSceneId,
   progressKey,
   onUnlockNext,
   thresholdPx = PROGRESSIVE_SCROLL_UNLOCK_THRESHOLD_PX,
@@ -197,7 +207,7 @@ export function useProgressiveScrollUnlock({
         return;
       }
       if (
-        !isAtBottom(root) ||
+        !isAtCurrentSceneBoundary(root, currentSceneId) ||
         nestedScrollerCanContinue(target, root)
       ) {
         resetIntent();
@@ -251,5 +261,5 @@ export function useProgressiveScrollUnlock({
       eventTarget.removeEventListener("touchend", onTouchEnd as EventListener);
       eventTarget.removeEventListener("touchcancel", onTouchEnd as EventListener);
     };
-  }, [enabled, progressKey, thresholdPx]);
+  }, [currentSceneId, enabled, progressKey, thresholdPx]);
 }

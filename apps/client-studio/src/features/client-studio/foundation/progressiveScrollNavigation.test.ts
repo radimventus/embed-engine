@@ -58,30 +58,44 @@ describe("progressive scroll navigation", () => {
   it("routes buttons and scroll through the same canonical unlock", () => {
     const page = readFileSync(join(here, "../ClientStudioPage.tsx"), "utf8");
     assert.match(page, /const unlockScene =/);
+    assert.match(page, /scrollTargetId = sceneId/);
     assert.match(page, /const handleSceneNavigate[\s\S]*unlockScene\(sceneId\)/);
     assert.match(page, /useProgressiveScrollUnlock\(/);
-    assert.match(page, /unlockScene\(nextScene\.id, nextScene\.id, 0, true\)/);
+    assert.match(page, /unlockScene\(nextScene\.id\)/);
+    assert.equal(page.includes("preserveViewport"), false);
   });
 
-  it("reveals on scroll without scheduling a viewport move", () => {
+  it("positions only after the newly unlocked scene is available", () => {
     const page = readFileSync(join(here, "../ClientStudioPage.tsx"), "utf8");
-    const unlockStart = page.indexOf("const unlockScene =");
-    const navigatorStart = page.indexOf("useEffect(() => {", unlockStart);
-    const unlock = page.slice(unlockStart, navigatorStart);
-    const preserveGuard = unlock.indexOf("if (preserveViewport)");
-    const pendingScroll = unlock.indexOf("setPendingSceneId");
+    const readiness = page.indexOf("document.getElementById(sceneId) === null");
+    const positioning = page.indexOf('scrollToSection(sceneId, "smooth")');
 
-    assert.ok(preserveGuard > 0);
-    assert.ok(preserveGuard < pendingScroll);
-    assert.match(unlock, /setRevealedSceneCount/);
+    assert.ok(readiness > 0);
+    assert.ok(readiness < positioning);
+    assert.match(page, /!isSectionScrollReady\(sceneId\)/);
+    assert.match(page, /window\.requestAnimationFrame\(scrollWhenReady\)/);
   });
 
-  it("counts intent only at the boundary and protects nested scrollers", () => {
+  it("uses the current scene navigation boundary instead of document bottom", () => {
     const hook = readFileSync(join(here, "useProgressiveScrollUnlock.ts"), "utf8");
-    assert.match(hook, /!isAtBottom\(root\)/);
+    const frame = readFileSync(join(here, "JourneySceneFrame.tsx"), "utf8");
+
+    assert.match(frame, /data-journey-navigation-boundary=\{sceneId\}/);
+    assert.match(hook, /currentSceneBoundary\(sceneId\)/);
+    assert.match(hook, /!isAtCurrentSceneBoundary\(root, currentSceneId\)/);
+    assert.match(hook, /boundary\.getBoundingClientRect\(\)\.bottom/);
+    assert.equal(hook.includes("document.documentElement.scrollHeight"), false);
+    assert.equal(hook.includes("document.body.scrollHeight"), false);
+  });
+
+  it("protects nested scrollers and keeps momentum locked after positioning", () => {
+    const hook = readFileSync(join(here, "useProgressiveScrollUnlock.ts"), "utf8");
+    const page = readFileSync(join(here, "../ClientStudioPage.tsx"), "utf8");
+
     assert.match(hook, /nestedScrollerCanContinue\(target, root\)/);
     assert.match(hook, /intentRef\.current\.lockedUntilIdle/);
     assert.match(hook, /releaseAfterIdle\(\)/);
+    assert.match(page, /setScrollIntentResetKey\(\(current\) => current \+ 1\)/);
     assert.match(hook, /deltaPx <= 0/);
     assert.match(hook, /touchmove/);
     assert.match(hook, /wheel/);

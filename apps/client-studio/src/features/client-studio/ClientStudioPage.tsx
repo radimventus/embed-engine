@@ -184,16 +184,12 @@ export function ClientStudioPage({
     sceneId: string,
     scrollTargetId = sceneId,
     scrollOffsetPx = 0,
-    preserveViewport = false,
   ) => {
     const nextSceneIndex = scenes.findIndex((scene) => scene.id === sceneId);
     if (nextSceneIndex === -1) {
       return;
     }
     setRevealedSceneCount((current) => Math.max(current, nextSceneIndex + 1));
-    if (preserveViewport) {
-      return;
-    }
     setScrollIntentResetKey((current) => current + 1);
     if (sceneId !== scenes[0]?.id) {
       setSnapEnabled(true);
@@ -247,6 +243,7 @@ export function ClientStudioPage({
 
   useProgressiveScrollUnlock({
     enabled: revealedSceneCount < scenes.length,
+    currentSceneId: scenes[revealedSceneCount - 1]?.id ?? scenes[0]!.id,
     progressKey: `${revealedSceneCount}:${scrollIntentResetKey}`,
     onUnlockNext: () => {
       const nextScene = scenes[revealedSceneCount];
@@ -254,7 +251,7 @@ export function ClientStudioPage({
       if (revealedSceneCount === 1) {
         welcomeBridge.dismiss();
       }
-      unlockScene(nextScene.id, nextScene.id, 0, true);
+      unlockScene(nextScene.id);
     },
   });
 
