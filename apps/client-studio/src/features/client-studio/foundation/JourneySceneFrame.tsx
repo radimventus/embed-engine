@@ -12,7 +12,6 @@ type JourneySceneFrameProps = {
   readonly nextSceneId?: string;
   readonly onNavigate?: (sceneId: string) => void;
   readonly animateOnMount?: boolean;
-  readonly reserveScrollSpace?: boolean;
   /** When false, footer sits 30px under content instead of viewport bottom. */
   readonly pinFooterToBottom?: boolean;
   /** Leading footer slot (e.g. Welcome Bridge), top-aligned with nav CTA. */
@@ -22,9 +21,10 @@ type JourneySceneFrameProps = {
 
 const SCENE_MIN_HEIGHT =
   "calc(100dvh - var(--experience-header-height, 72px))";
-const SCENE_CTA_GAP = "20px";
-const UNREVEALED_SCENE_SPACE =
-  "calc(20px + 100dvh - var(--experience-header-height, 72px))";
+const SCENE_SAFE_BOTTOM_SPACE =
+  "max(20px, env(safe-area-inset-bottom, 0px))";
+const SCENE_FINAL_SAFE_BOTTOM_SPACE =
+  "max(40px, env(safe-area-inset-bottom, 0px))";
 
 /**
  * Scene shell for one guided stop in the Decision Journey.
@@ -37,7 +37,6 @@ export function JourneySceneFrame({
   nextSceneId,
   onNavigate,
   animateOnMount = false,
-  reserveScrollSpace = false,
   pinFooterToBottom = true,
   footerLeading,
   children,
@@ -121,15 +120,11 @@ export function JourneySceneFrame({
       className="flex w-full snap-start snap-normal flex-col gap-5"
       style={{
         minHeight: SCENE_MIN_HEIGHT,
-        // Before the next scene is revealed, retain only the space needed to
-        // expose the CTA above mobile navigation.
-        paddingBottom: reserveScrollSpace
-          ? UNREVEALED_SCENE_SPACE
-          : nextSceneId
-            ? SCENE_CTA_GAP
-            : previousSceneId
-              ? "40px"
-              : "0px",
+        // Layout safety lives after the navigation marker and therefore does
+        // not move the progressive navigation boundary.
+        paddingBottom: previousSceneId && !nextSceneId
+          ? SCENE_FINAL_SAFE_BOTTOM_SPACE
+          : SCENE_SAFE_BOTTOM_SPACE,
         opacity: isEntered ? 1 : 0,
         transform: "translateY(0)",
         transition: animateOnMount ? "opacity 1000ms ease" : undefined,

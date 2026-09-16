@@ -50,6 +50,8 @@ type ClientStudioPageProps = {
   onVisibleSceneIdsChange?: (sceneIds: readonly string[]) => void;
 };
 
+export const PROGRESSIVE_NAVIGATION_SETTLE_MS = 900;
+
 /**
  * Decision Session Experience host (ED-DA-04 / CSCB-01).
  *
@@ -149,6 +151,7 @@ export function ClientStudioPage({
         return;
       }
 
+      let settleStarted = false;
       const finishTransition = () => {
         if (transitionTimerRef.current !== null) {
           window.clearTimeout(transitionTimerRef.current);
@@ -156,9 +159,30 @@ export function ClientStudioPage({
         }
         setIsSceneTransitioning(false);
       };
+      const scrollRoot =
+        document.querySelector<HTMLElement>("[data-embed-overlay-mount]") ??
+        window;
+      const beginSettle = () => {
+        if (settleStarted) return;
+        settleStarted = true;
+        transitionEndCleanupRef.current?.();
+        transitionEndCleanupRef.current = null;
+        if (transitionTimerRef.current !== null) {
+          window.clearTimeout(transitionTimerRef.current);
+        }
+        transitionTimerRef.current = window.setTimeout(
+          finishTransition,
+          PROGRESSIVE_NAVIGATION_SETTLE_MS,
+        );
+      };
       transitionEndCleanupRef.current?.();
-      transitionEndCleanupRef.current = null;
-      transitionTimerRef.current = window.setTimeout(finishTransition, 2000);
+      const onScrollEnd = () => beginSettle();
+      scrollRoot.addEventListener("scrollend", onScrollEnd, { once: true });
+      transitionEndCleanupRef.current = () => {
+        scrollRoot.removeEventListener("scrollend", onScrollEnd);
+      };
+      // Fallback for engines that do not dispatch scrollend.
+      transitionTimerRef.current = window.setTimeout(beginSettle, 2000);
       const target = document.getElementById(sceneId);
       const previousTransform = target?.style.transform;
       if (target !== null && scrollOffsetPx !== 0) {
@@ -243,6 +267,7 @@ export function ClientStudioPage({
 
   useProgressiveScrollUnlock({
     enabled: revealedSceneCount < scenes.length,
+    settling: isSceneTransitioning,
     currentSceneId: scenes[revealedSceneCount - 1]?.id ?? scenes[0]!.id,
     progressKey: `${revealedSceneCount}:${scrollIntentResetKey}`,
     onUnlockNext: () => {
@@ -284,7 +309,6 @@ export function ClientStudioPage({
                     sceneId={scenes[0]!.id}
                     nextSceneId={scenes[1]?.id}
                     onNavigate={handleSceneNavigate}
-                    reserveScrollSpace={revealedSceneCount === 1}
                     pinFooterToBottom={false}
                     footerLeading={
                       <ClientStudioWelcomeBridge

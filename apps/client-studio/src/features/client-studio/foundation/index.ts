@@ -26,8 +26,10 @@ export { StudioLoading } from "./StudioLoading";
 export { useActiveSection } from "./useActiveSection";
 export {
   PROGRESSIVE_SCROLL_UNLOCK_THRESHOLD_PX,
+  applyGuardedScrollIntent,
   applyScrollIntent,
   accumulateScrollIntent,
+  hasReachedNavigationBoundary,
   lockScrollIntentUntilIdle,
   touchDownwardDeltaPx,
   useProgressiveScrollUnlock,

@@ -172,13 +172,15 @@ describe("Responsive Decision Journey (RCS-05)", () => {
     assert.doesNotMatch(ambientSocialProof, /IntersectionObserver/);
   });
 
-  it("keeps scene CTA space in flow while the next scene is unrevealed", () => {
+  it("keeps viewport-safe CTA space independent of scene navigation", () => {
     const scene = readSource(
       "src/features/client-studio/foundation/JourneySceneFrame.tsx",
     );
 
-    assert.match(scene, /const SCENE_CTA_GAP = "20px"/);
-    assert.match(scene, /const UNREVEALED_SCENE_SPACE/);
+    assert.match(scene, /const SCENE_SAFE_BOTTOM_SPACE/);
+    assert.match(scene, /env\(safe-area-inset-bottom, 0px\)/);
+    assert.doesNotMatch(scene, /UNREVEALED_SCENE_SPACE/);
+    assert.doesNotMatch(scene, /reserveScrollSpace/);
     assert.match(scene, /gap-5 px-section/);
     assert.equal(scene.includes("absolute top-0 right-0"), false);
   });
