@@ -45,7 +45,7 @@ describe("Responsive Decision Journey (RCS-05)", () => {
     assert.doesNotMatch(bridge, /priority-continue-to-racio/);
   });
 
-  it("reveals Racio only from the completed Priority bridge", () => {
+  it("keeps the completed Priority bridge on the canonical Racio unlock path", () => {
     const page = readSource("src/features/client-studio/ClientStudioPage.tsx");
     const engine = readSource(
       "src/features/client-studio/sections/PriorityEngine/PriorityEngine.tsx",
@@ -58,7 +58,7 @@ describe("Responsive Decision Journey (RCS-05)", () => {
       page,
       /if \(isRacioSection\(sectionId\) && revealedSceneCount >= 3\)/,
     );
-    assert.match(page, /enterScene\(scenes\[2\]!\.id\)/);
+    assert.match(page, /unlockScene\(scenes\[2\]!\.id\)/);
     assert.match(engine, /onContinueToRacio/);
     assert.match(engine, /phase === "complete"/);
     assert.match(engine, /priority-racio-controls/);

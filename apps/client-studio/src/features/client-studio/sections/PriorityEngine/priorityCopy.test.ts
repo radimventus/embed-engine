@@ -228,7 +228,7 @@ describe("TASK 64 Priority copy contract", () => {
     assert.match(engine, /onContinueToRacio/);
     assert.match(engine, /<PriorityRacioBridge onContinue=\{onContinueToRacio\} \/>/);
     assert.match(page, /onContinueToRacio=\{\(\) => \{/);
-    assert.match(page, /enterScene\(scenes\[2\]!\.id\)/);
+    assert.match(page, /unlockScene\(scenes\[2\]!\.id\)/);
     assert.match(page, /<AIAdvisor \/>/);
   });
 });

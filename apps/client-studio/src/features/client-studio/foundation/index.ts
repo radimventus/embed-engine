@@ -24,6 +24,14 @@ export {
 } from "./scrollToSection";
 export { StudioLoading } from "./StudioLoading";
 export { useActiveSection } from "./useActiveSection";
+export {
+  PROGRESSIVE_SCROLL_UNLOCK_THRESHOLD_PX,
+  applyScrollIntent,
+  accumulateScrollIntent,
+  lockScrollIntentUntilIdle,
+  touchDownwardDeltaPx,
+  useProgressiveScrollUnlock,
+} from "./useProgressiveScrollUnlock";
 export { createFrameScheduler } from "./scheduleOnAnimationFrame";
 export {
   PRODUCTION_VALIDATION_WIDTHS_PX,

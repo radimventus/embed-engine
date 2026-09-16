@@ -18,6 +18,7 @@ import {
   registerJourneySectionNavigator,
   scrollToSection,
   useActiveSection,
+  useProgressiveScrollUnlock,
 } from "./foundation";
 import { LegacyCommandExperience } from "./legacy/LegacyCommandExperience";
 import { AIAdvisor } from "./sections/AIAdvisor/AIAdvisor";
@@ -85,6 +86,7 @@ export function ClientStudioPage({
   );
   const [requestedSceneId, setRequestedSceneId] = useState<string | null>(null);
   const [snapEnabled, setSnapEnabled] = useState(false);
+  const [scrollIntentResetKey, setScrollIntentResetKey] = useState(0);
   const transitionTimerRef = useRef<number | null>(null);
   const transitionEndCleanupRef = useRef<(() => void) | null>(null);
 
@@ -178,22 +180,27 @@ export function ClientStudioPage({
     };
   }, [pendingSceneId, pendingSceneScrollOffsetPx, revealedSceneCount]);
 
-  const enterScene = (
+  const unlockScene = (
     sceneId: string,
     scrollTargetId = sceneId,
     scrollOffsetPx = 0,
+    preserveViewport = false,
   ) => {
     const nextSceneIndex = scenes.findIndex((scene) => scene.id === sceneId);
     if (nextSceneIndex === -1) {
       return;
     }
+    setRevealedSceneCount((current) => Math.max(current, nextSceneIndex + 1));
+    if (preserveViewport) {
+      return;
+    }
+    setScrollIntentResetKey((current) => current + 1);
     if (sceneId !== scenes[0]?.id) {
       setSnapEnabled(true);
     }
     setIsSceneTransitioning(true);
     setActiveSceneId(sceneId);
     setRequestedSceneId(sceneId);
-    setRevealedSceneCount((current) => Math.max(current, nextSceneIndex + 1));
     setPendingSceneScrollOffsetPx(scrollOffsetPx);
     setPendingSceneId(scrollTargetId);
     transitionEndCleanupRef.current?.();
@@ -207,19 +214,19 @@ export function ClientStudioPage({
   useEffect(() => {
     registerJourneySectionNavigator((sectionId) => {
       if (isDecisionSection(sectionId) && revealedSceneCount >= 4) {
-        enterScene(scenes[3]!.id, sectionId);
+        unlockScene(scenes[3]!.id, sectionId);
         return;
       }
       if (isPrioritySection(sectionId)) {
-        enterScene(scenes[1]!.id, sectionId);
+        unlockScene(scenes[1]!.id, sectionId);
         return;
       }
       if (isRacioSection(sectionId) && revealedSceneCount >= 3) {
-        enterScene(scenes[2]!.id, sectionId);
+        unlockScene(scenes[2]!.id, sectionId);
         return;
       }
       if (isOrientationSection(sectionId)) {
-        enterScene(scenes[0]!.id, sectionId);
+        unlockScene(scenes[0]!.id, sectionId);
       }
     });
     return () => {
@@ -231,12 +238,25 @@ export function ClientStudioPage({
     config: CLIENT_STUDIO_WELCOME_BRIDGE_CONFIG,
     isTourActive: revealedSceneCount === 1,
     prioritySceneId: scenes[1]?.id ?? "journey-scene-interpretation",
-    onEnterPriority: enterScene,
+    onEnterPriority: unlockScene,
   });
 
   const handleSceneNavigate = (sceneId: string) => {
-    enterScene(sceneId);
+    unlockScene(sceneId);
   };
+
+  useProgressiveScrollUnlock({
+    enabled: revealedSceneCount < scenes.length,
+    progressKey: `${revealedSceneCount}:${scrollIntentResetKey}`,
+    onUnlockNext: () => {
+      const nextScene = scenes[revealedSceneCount];
+      if (nextScene === undefined) return;
+      if (revealedSceneCount === 1) {
+        welcomeBridge.dismiss();
+      }
+      unlockScene(nextScene.id, nextScene.id, 0, true);
+    },
+  });
 
   return (
     <DecisionAnalyticsProvider>
@@ -290,7 +310,7 @@ export function ClientStudioPage({
                       >
                         <PriorityEngine
                           onBack={() =>
-                            enterScene(
+                            unlockScene(
                               scenes[0]!.id,
                               PILOT_SECTION_IDS.socialProof,
                               20,
@@ -298,7 +318,7 @@ export function ClientStudioPage({
                           }
                           onContinueToRacio={() => {
                             if (PILOT_FLAGS.showAiAdvisor) {
-                              enterScene(scenes[2]!.id);
+                              unlockScene(scenes[2]!.id);
                             }
                           }}
                           showRacioBridge={revealedSceneCount < 3}
@@ -326,7 +346,7 @@ export function ClientStudioPage({
                       pinFooterToBottom={false}
                     >
                       <AuditLeadCapture
-                        onBack={() => enterScene(scenes[2]!.id)}
+                        onBack={() => unlockScene(scenes[2]!.id)}
                       />
                     </JourneySceneFrame>
                   ) : null}
