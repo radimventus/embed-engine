@@ -54,7 +54,10 @@ function realCase(input: {
   };
 }
 
-function referenceCase(id: string): HouseOperationalCase {
+function referenceCase(
+  id: string,
+  score: number | null = null,
+): HouseOperationalCase {
   return {
     ...realCase({ id }),
     origin: "REFERENCE",
@@ -63,6 +66,7 @@ function referenceCase(id: string): HouseOperationalCase {
     processingStatus: "new",
     profilZajemce: {
       ...realCase({ id }).profilZajemce,
+      score,
       readinessScore: null,
       decisionSessionId: null,
     },
@@ -111,10 +115,44 @@ describe("TASK 71 Manager Intelligence", () => {
       cases: [],
     });
 
-    assert.equal(result.preData, true);
+    assert.equal(result.dataState, "EMPTY");
     assert.equal(result.realProfileCount, 0);
     assert.equal(result.averageReadiness, null);
     assert.deepEqual(result.recommendations, []);
+  });
+
+  it("distinguishes EMPTY, REFERENCE and LIVE without mixing profile counts", () => {
+    const empty = managerHouseIntelligence({
+      houseId: "live-empty",
+      houseName: "Live empty",
+      cases: [],
+    });
+    const reference = managerHouseIntelligence({
+      houseId: "solidpro-reference",
+      houseName: "SolidPro reference",
+      cases: [
+        referenceCase("ref-1", 88),
+        referenceCase("ref-2", 72),
+        referenceCase("ref-3", 64),
+      ],
+    });
+    const live = managerHouseIntelligence({
+      houseId: "live-house",
+      houseName: "Live house",
+      cases: [realCase({ id: "lead-1", score: 80 }), referenceCase("demo", 20)],
+    });
+
+    assert.equal(empty.dataState, "EMPTY");
+    assert.equal(reference.dataState, "REFERENCE");
+    assert.equal(reference.realProfileCount, 0);
+    assert.equal(reference.referenceProfileCount, 3);
+    assert.equal(reference.measuredReadinessCount, 3);
+    assert.equal(reference.averageReadiness, (88 + 72 + 64) / 3);
+    assert.equal(live.dataState, "LIVE");
+    assert.equal(live.realProfileCount, 1);
+    assert.equal(live.referenceProfileCount, 1);
+    assert.equal(live.measuredReadinessCount, 1);
+    assert.equal(live.averageReadiness, 80);
   });
 
   it("preserves House identity in Project aggregation", () => {

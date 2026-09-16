@@ -71,6 +71,8 @@ export type ManagerProfilePeriods = {
   readonly yearToDate: number;
 };
 
+export type ManagerDataState = "EMPTY" | "REFERENCE" | "LIVE";
+
 export type ManagerHouseIntelligence = {
   readonly houseId: string;
   readonly houseName: string;
@@ -88,17 +90,18 @@ export type ManagerHouseIntelligence = {
   readonly media: readonly ManagerMediaInsight[];
   readonly video: readonly ManagerVideoInsight[];
   readonly recommendations: readonly ManagerRecommendation[];
-  readonly preData: boolean;
+  readonly dataState: ManagerDataState;
 };
 
 export type ManagerProjectHouseComparison = {
   readonly houseId: string;
   readonly houseName: string;
   readonly realProfileCount: number;
+  readonly referenceProfileCount: number;
   readonly measuredReadinessCount: number;
   readonly averageReadiness: number | null;
   readonly highReadinessCount: number;
-  readonly preData: boolean;
+  readonly dataState: ManagerDataState;
 };
 
 export type ManagerProjectIntelligence = {
@@ -332,9 +335,18 @@ export function managerHouseIntelligence(input: {
   const referenceCases = input.cases.filter(
     (item) => item.origin === "REFERENCE",
   );
+  const dataState: ManagerDataState =
+    realCases.length > 0
+      ? "LIVE"
+      : referenceCases.length > 0
+        ? "REFERENCE"
+        : "EMPTY";
+  // LIVE operational analytics must never be contaminated by demo profiles.
+  // Reference cases become the analytical source only while no real Lead exists.
+  const analyticalCases = dataState === "LIVE" ? realCases : referenceCases;
 
   const snapshotMap = new Map<string, OperationalDecisionSnapshot>();
-  for (const item of realCases) {
+  for (const item of analyticalCases) {
     const decisionSessionId = item.decisionSessionId;
     if (decisionSessionId === null) continue;
 
@@ -351,8 +363,12 @@ export function managerHouseIntelligence(input: {
     }
   }
 
-  const scores = realCases
-    .map(measuredScore)
+  const scores = analyticalCases
+    .map((item) =>
+      item.origin === "REFERENCE"
+        ? item.profilZajemce.score
+        : measuredScore(item),
+    )
     .filter((score): score is number => score !== null);
 
   const distribution = emptyDistribution();
@@ -363,7 +379,7 @@ export function managerHouseIntelligence(input: {
     { label: string; profiles: Set<string>; importance: number[] }
   >();
 
-  for (const item of realCases) {
+  for (const item of analyticalCases) {
     for (const priority of item.profilZajemce.priorities) {
       const current = priorityMap.get(priority.id) ?? {
         label: priority.label,
@@ -428,7 +444,7 @@ export function managerHouseIntelligence(input: {
   let chatProfiles = 0;
   let tourReturnProfiles = 0;
 
-  for (const item of realCases) {
+  for (const item of analyticalCases) {
     const events = eventsFor(item, snapshotMap);
 
     let hasTour = false;
@@ -567,6 +583,15 @@ export function managerHouseIntelligence(input: {
       }
     }
 
+    if (item.origin === "REFERENCE") {
+      const modules = item.profilZajemce.journey.map((step) => step.module);
+      hasTour = modules.some(
+        (module) =>
+          module === "Úvodní prohlídka" || module === "Navigátor domu",
+      );
+      hasPriority = modules.includes("Prioritní prohlídka");
+    }
+
     if (hasTour) tourProfiles += 1;
     if (hasPriority) priorityProfiles += 1;
     if (hasFaq) faqProfiles += 1;
@@ -640,7 +665,7 @@ export function managerHouseIntelligence(input: {
     faqProfiles,
     chatProfiles,
     tourReturnProfiles,
-    convertedProfiles: realCases.filter(
+    convertedProfiles: analyticalCases.filter(
       (item) => item.conversion.status === "accepted",
     ).length,
   };
@@ -654,12 +679,12 @@ export function managerHouseIntelligence(input: {
     houseId: input.houseId,
     houseName: input.houseName,
     realProfileCount: realCases.length,
-    profilePeriods: profilePeriods(realCases, input.now ?? new Date()),
+    profilePeriods: profilePeriods(analyticalCases, input.now ?? new Date()),
     referenceProfileCount: referenceCases.length,
     measuredReadinessCount: scores.length,
     averageReadiness,
     readinessDistribution: distribution,
-    acceptedCaseCount: realCases.filter(
+    acceptedCaseCount: analyticalCases.filter(
       (item) => item.processingStatus === "accepted",
     ).length,
     trajectory,
@@ -669,13 +694,13 @@ export function managerHouseIntelligence(input: {
     media,
     video,
     recommendations: buildRecommendations({
-      realProfileCount: realCases.length,
+      realProfileCount: analyticalCases.length,
       priorities,
       faq,
       rooms,
       trajectory,
     }),
-    preData: realCases.length === 0,
+    dataState,
   };
 }
 
@@ -700,10 +725,11 @@ export function managerProjectIntelligence(
       houseId: house.houseId,
       houseName: house.houseName,
       realProfileCount: house.realProfileCount,
+      referenceProfileCount: house.referenceProfileCount,
       measuredReadinessCount: house.measuredReadinessCount,
       averageReadiness: house.averageReadiness,
       highReadinessCount: house.readinessDistribution["75-100"],
-      preData: house.preData,
+      dataState: house.dataState,
     })),
     totalRealProfiles: houses.reduce(
       (sum, house) => sum + house.realProfileCount,

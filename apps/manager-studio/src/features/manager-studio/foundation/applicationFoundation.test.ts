@@ -385,7 +385,8 @@ describe("Application Foundation (MSCB-01)", () => {
 
     assert.match(workCenter, /useHouseOperationalCases/);
 
-    assert.match(workCenter, /intelligence\.preData/);
+    assert.match(workCenter, /intelligence\.dataState === "EMPTY"/);
+    assert.match(workCenter, /intelligence\.dataState === "REFERENCE"/);
 
     assert.match(workCenter, /manager-operational-empty/);
 
@@ -396,10 +397,7 @@ describe("Application Foundation (MSCB-01)", () => {
       /rozhodovací trajektorii a podklady pro\s+zlepšení zákaznické zkušenosti/,
     );
 
-    assert.match(
-      workCenter,
-      /Žádné metriky ani doporučení nejsou dopočítávány z referenčních\s+dat/,
-    );
+    assert.match(workCenter, /Nejde o skutečná provozní data partnera/);
 
     assert.doesNotMatch(workCenter, /Ukázkové metriky/);
   });

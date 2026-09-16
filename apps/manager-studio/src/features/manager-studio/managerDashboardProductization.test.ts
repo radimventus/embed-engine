@@ -72,13 +72,11 @@ describe("TASK 71B Manager Intelligence productization", () => {
   it("keeps truthful pre-data and canonical Manager Intelligence authority", () => {
     const source = read("ManagerWorkCenterHome.tsx");
 
-    assert.match(source, /intelligence\.preData/);
+    assert.match(source, /intelligence\.dataState === "EMPTY"/);
+    assert.match(source, /intelligence\.dataState === "REFERENCE"/);
     assert.match(source, /useHouseOperationalCases/);
     assert.match(source, /managerHouseIntelligence/);
     assert.match(source, /managerProjectIntelligence/);
-    assert.match(
-      source,
-      /Žádné metriky ani doporučení nejsou dopočítávány z referenčních\s+dat/,
-    );
+    assert.match(source, /Nejde o skutečná provozní data partnera/);
   });
 });

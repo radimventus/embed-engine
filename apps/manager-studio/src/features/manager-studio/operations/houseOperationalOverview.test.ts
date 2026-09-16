@@ -10,6 +10,7 @@ import {
   DSE_COMPANY_ID,
   DSE_FIRST_DRAFT_HOUSE_ID,
   aggregateHouseOperations,
+  managerHouseIntelligence,
   selectHouseOperationalCases,
   selectScopedOperationalCases,
 } from "@embed-engine/platform-access";
@@ -31,6 +32,47 @@ describe("Manager House operational aggregates", () => {
     assert.equal(aggregate.caseCount, 3);
     assert.equal(aggregate.convertedCount, 3);
     assert.equal(aggregate.highIntentCount, 2);
+    const intelligence = managerHouseIntelligence({
+      houseId: DSE_BUNGALOV_4KK_HOUSE_ID,
+      houseName: "BUNGALOV 4KK",
+      cases,
+    });
+    assert.equal(intelligence.dataState, "REFERENCE");
+    assert.equal(intelligence.realProfileCount, 0);
+    assert.equal(intelligence.referenceProfileCount, 3);
+  });
+
+  it("uses the reference state for durable-only SolidPro and AC Modular identities", () => {
+    for (const scope of [
+      {
+        companyId: "company-solidpro-s-r-o",
+        projectId: "project-solidpro",
+        houseId:
+          "reference-v1-company-solidpro-s-r-o-project-solidpro-bungalov-4kk",
+        houseName: "BUNGALOV 4KK",
+      },
+      {
+        companyId: "company-ac-modular",
+        projectId: "project-ac-modular",
+        houseId: "modern-4kk",
+        houseName: "MODERN 4KK",
+      },
+    ]) {
+      const cases = selectHouseOperationalCases({
+        ...scope,
+        dataMode: "REFERENCE_DEMO",
+        durableLeads: [],
+      });
+      const intelligence = managerHouseIntelligence({
+        houseId: scope.houseId,
+        houseName: scope.houseName,
+        cases,
+      });
+      assert.equal(cases.length, 3);
+      assert.equal(intelligence.dataState, "REFERENCE");
+      assert.equal(intelligence.realProfileCount, 0);
+      assert.equal(intelligence.referenceProfileCount, 3);
+    }
   });
 
   it("shows VPD as zero-record pre-data", () => {
@@ -101,7 +143,9 @@ describe("Manager House operational aggregates", () => {
       "utf8",
     );
     assert.match(workCenter, /useHouseOperationalCases/);
-    assert.match(workCenter, /intelligence\.preData/);
+    assert.match(workCenter, /intelligence\.dataState === "EMPTY"/);
+    assert.match(workCenter, /intelligence\.dataState === "REFERENCE"/);
+    assert.match(workCenter, /Referenční \/ demo data/);
     assert.doesNotMatch(workCenter, /Pokles ve kroku Finance/);
     assert.doesNotMatch(workCenter, /value="1000"/);
     assert.doesNotMatch(workCenter, /Ukázkové metriky/);

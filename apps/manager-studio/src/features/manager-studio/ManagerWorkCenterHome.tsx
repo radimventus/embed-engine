@@ -107,7 +107,7 @@ export function ManagerWorkCenterHome() {
           decisionSnapshots: operational.decisionSessions,
         }));
 
-  if (intelligence.preData) {
+  if (intelligence.dataState === "EMPTY") {
     return (
       <section
         id="manager-work-center"
@@ -132,8 +132,7 @@ export function ManagerWorkCenterHome() {
                 Stav bez dat
               </p>
               <p className="mt-2 text-sm font-semibold text-[var(--platform-navy)]">
-                Žádné metriky ani doporučení nejsou dopočítávány z referenčních
-                dat.
+                Zatím nejsou dostupná reálná ani referenční data.
               </p>
             </div>
           </div>
@@ -144,6 +143,10 @@ export function ManagerWorkCenterHome() {
 
   const measured = intelligence.measuredReadinessCount;
   const highReadiness = intelligence.readinessDistribution["75-100"];
+  const isReference = intelligence.dataState === "REFERENCE";
+  const analyticalProfileCount = isReference
+    ? intelligence.referenceProfileCount
+    : intelligence.realProfileCount;
 
   const lossSignals = [
     {
@@ -151,7 +154,7 @@ export function ManagerWorkCenterHome() {
       label: "PROHLÍDKA",
       value: lossOfInterestIndex(
         intelligence.trajectory.tourProfiles,
-        intelligence.realProfileCount,
+        analyticalProfileCount,
       ),
     },
     {
@@ -159,7 +162,7 @@ export function ManagerWorkCenterHome() {
       label: "Priority",
       value: lossOfInterestIndex(
         intelligence.trajectory.priorityProfiles,
-        intelligence.realProfileCount,
+        analyticalProfileCount,
       ),
     },
     {
@@ -167,7 +170,7 @@ export function ManagerWorkCenterHome() {
       label: "OTÁZKY",
       value: lossOfInterestIndex(
         intelligence.trajectory.faqProfiles,
-        intelligence.realProfileCount,
+        analyticalProfileCount,
       ),
     },
     {
@@ -175,7 +178,7 @@ export function ManagerWorkCenterHome() {
       label: "KONVERZACE",
       value: lossOfInterestIndex(
         intelligence.trajectory.chatProfiles,
-        intelligence.realProfileCount,
+        analyticalProfileCount,
       ),
     },
     {
@@ -183,13 +186,29 @@ export function ManagerWorkCenterHome() {
       label: "Návrat do prohlídky",
       value: lossOfInterestIndex(
         intelligence.trajectory.tourReturnProfiles,
-        intelligence.realProfileCount,
+        analyticalProfileCount,
       ),
     },
   ] as const;
 
   return (
     <section id="manager-work-center" className="mb-8 space-y-6">
+      {isReference ? (
+        <PlatformCard
+          title="Referenční manažerský přehled"
+          description="Ukázková analytika nad referenčními profily tohoto domu. Nejde o skutečná provozní data partnera."
+          action={
+            <PlatformStatusBadge tone="gold">
+              Referenční / demo data
+            </PlatformStatusBadge>
+          }
+        >
+          <p className="text-sm text-[var(--platform-navy)] opacity-75">
+            Přehled ukazuje, jak bude Manager Studio pracovat s profily,
+            prioritami a rozhodovacími signály po zahájení reálného provozu.
+          </p>
+        </PlatformCard>
+      ) : null}
       <div className="grid gap-5 min-[1180px]:grid-cols-[minmax(0,1fr)_280px]">
         <div className="min-w-0 space-y-6">
           <ExecutiveDashboard
@@ -202,7 +221,11 @@ export function ManagerWorkCenterHome() {
             <div className="grid gap-5 min-[900px]:grid-cols-2">
               <PlatformCard
                 title="Připravenost zákazníků"
-                description="Distribuce skutečně měřených Profilů podle Indexu připravenosti."
+                description={
+                  isReference
+                    ? "Ukázková distribuce referenčních Profilů podle demonstračního skóre."
+                    : "Distribuce skutečně měřených Profilů podle Indexu připravenosti."
+                }
                 action={
                   <PlatformStatusBadge tone="gold">
                     Kvalita zájemců
@@ -231,7 +254,11 @@ export function ManagerWorkCenterHome() {
           <section id="manager-trajectory">
             <PlatformCard
               title="Rozhodovací trajektorie"
-              description="Skutečně zachycené rozhodovací signály. Nejde o pouhou anonymní návštěvnost."
+              description={
+                isReference
+                  ? "Ukázkové rozhodovací signály z referenčních profilů."
+                  : "Skutečně zachycené rozhodovací signály. Nejde o pouhou anonymní návštěvnost."
+              }
             >
               <TrajectoryVisual intelligence={intelligence} />
             </PlatformCard>
@@ -254,7 +281,11 @@ export function ManagerWorkCenterHome() {
 
               <PlatformCard
                 title="Index ztráty zájmu"
-                description="Podíl skutečných profilů bez zachyceného signálu v dané oblasti. Nejde o prokázaný sekvenční pokles zájmu."
+                description={
+                  isReference
+                    ? "Ukázkový podíl referenčních profilů bez zachyceného signálu v dané oblasti."
+                    : "Podíl skutečných profilů bez zachyceného signálu v dané oblasti. Nejde o prokázaný sekvenční pokles zájmu."
+                }
                 action={
                   <PlatformStatusBadge tone="gold">
                     Signál oslabení
@@ -298,7 +329,9 @@ export function ManagerWorkCenterHome() {
                             </td>
 
                             <td className="py-3 pr-4">
-                              {house.realProfileCount}
+                              {house.dataState === "REFERENCE"
+                                ? `${house.referenceProfileCount} (demo)`
+                                : house.realProfileCount}
                             </td>
 
                             <td className="py-3 pr-4 font-semibold">
@@ -306,9 +339,11 @@ export function ManagerWorkCenterHome() {
                             </td>
 
                             <td className="py-3">
-                              {house.preData
+                              {house.dataState === "EMPTY"
                                 ? "Zatím bez dat"
-                                : house.highReadinessCount}
+                                : house.dataState === "REFERENCE"
+                                  ? `${house.highReadinessCount} (demo)`
+                                  : house.highReadinessCount}
                             </td>
                           </tr>
                         ))}
@@ -432,6 +467,10 @@ function ExecutiveDashboard({
   readonly measured: number;
   readonly highReadiness: number;
 }) {
+  const isReference = intelligence.dataState === "REFERENCE";
+  const profileCount = isReference
+    ? intelligence.referenceProfileCount
+    : intelligence.realProfileCount;
   return (
     <PlatformCard
       title="Jak si projekt vede a co změnit"
@@ -460,13 +499,15 @@ function ExecutiveDashboard({
       <div className="grid gap-3 tablet:grid-cols-2 min-[900px]:grid-cols-4">
         <MetricBox
           label="Profily zájemce"
-          value={String(intelligence.realProfileCount)}
-          detail="reálné obchodní případy"
+          value={String(profileCount)}
+          detail={
+            isReference ? "referenční demo profily" : "reálné obchodní případy"
+          }
         />
         <MetricBox
           label="Ø Index připravenosti"
           value={formatPercent(intelligence.averageReadiness)}
-          detail={`${measured} měřených profilů`}
+          detail={`${measured} ${isReference ? "referenčních" : "měřených"} profilů`}
         />
         <MetricBox
           label="Vysoká připravenost"
@@ -476,7 +517,11 @@ function ExecutiveDashboard({
         <MetricBox
           label="Konverze"
           value={String(intelligence.trajectory.convertedProfiles)}
-          detail="zachycené konverzní případy"
+          detail={
+            isReference
+              ? "ukázkové konverzní případy"
+              : "zachycené konverzní případy"
+          }
         />
       </div>
     </PlatformCard>
