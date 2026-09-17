@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react";
 
-import { isBeforeHeroTourAnchor, markPinnedNavigationTiming } from "./scrollToSection";
+import { markPinnedNavigationTiming } from "./scrollToSection";
 
 /** Product-tunable input distance; not part of the public UX contract. */
 export const PROGRESSIVE_SCROLL_UNLOCK_THRESHOLD_PX = 160;
@@ -126,7 +126,9 @@ type UseProgressiveScrollUnlockOptions = {
   readonly navigationBlocked: boolean;
   readonly canNavigateForward: boolean;
   readonly canNavigateBackward: boolean;
-  readonly currentSceneId: string;
+  readonly currentSceneStartId: string;
+  readonly currentSceneBoundaryId: string;
+  readonly currentSceneScrollOffsetPx: number;
   readonly progressKey: string | number;
   readonly onNavigate: (direction: ProgressiveNavigationDirection) => void;
   readonly thresholdPx?: number;
@@ -138,28 +140,23 @@ function scrollRoot(): HTMLElement | Window {
   );
 }
 
-function currentSceneBoundary(sceneId: string): HTMLElement | null {
-  // HERO and TOUR share the progressive orientation scene, but the existing
-  // HERO CTA is a real reading stop before the TOUR navigation footer.
-  if (sceneId === "journey-scene-orientation" && isBeforeHeroTourAnchor()) {
-    return document.getElementById("hero");
-  }
+function currentSceneBoundary(boundaryId: string): HTMLElement | null {
   return (
     Array.from(
       document.querySelectorAll<HTMLElement>(
         "[data-journey-navigation-boundary]",
       ),
     ).find(
-      (element) => element.dataset.journeyNavigationBoundary === sceneId,
-    ) ?? document.getElementById(sceneId)
+      (element) => element.dataset.journeyNavigationBoundary === boundaryId,
+    ) ?? document.getElementById(boundaryId)
   );
 }
 
 function isAtCurrentSceneBoundary(
   root: HTMLElement | Window,
-  sceneId: string,
+  boundaryId: string,
 ): boolean {
-  const boundary = currentSceneBoundary(sceneId);
+  const boundary = currentSceneBoundary(boundaryId);
   if (boundary === null) return false;
   const viewportBottom =
     root instanceof HTMLElement
@@ -180,24 +177,17 @@ function headerOffsetPx(): number {
 
 function isAtCurrentSceneStart(
   root: HTMLElement | Window,
-  sceneId: string,
+  startId: string,
+  scrollOffsetPx: number,
 ): boolean {
-  const isTourStop =
-    sceneId === "journey-scene-orientation" && !isBeforeHeroTourAnchor();
-  const scene =
-    isTourStop
-      ? document.getElementById("social-proof")
-      : document.getElementById(sceneId);
+  const scene = document.getElementById(startId);
   if (scene === null) return false;
   const viewportTop =
     root instanceof HTMLElement ? root.getBoundingClientRect().top : 0;
   return hasReachedSceneStart(
     scene.getBoundingClientRect().top,
     viewportTop,
-    isTourStop
-      ? document.querySelector<HTMLElement>("[data-experience-header]")
-          ?.getBoundingClientRect().height ?? 72
-      : headerOffsetPx(),
+    headerOffsetPx() - scrollOffsetPx,
   );
 }
 
@@ -268,7 +258,9 @@ export function useProgressiveScrollUnlock({
   navigationBlocked,
   canNavigateForward,
   canNavigateBackward,
-  currentSceneId,
+  currentSceneStartId,
+  currentSceneBoundaryId,
+  currentSceneScrollOffsetPx,
   progressKey,
   onNavigate,
   thresholdPx = PROGRESSIVE_SCROLL_UNLOCK_THRESHOLD_PX,
@@ -309,8 +301,12 @@ export function useProgressiveScrollUnlock({
         direction === "forward" ? canNavigateForward : canNavigateBackward;
       const atReadingBoundary =
         direction === "forward"
-          ? isAtCurrentSceneBoundary(root, currentSceneId)
-          : isAtCurrentSceneStart(root, currentSceneId);
+          ? isAtCurrentSceneBoundary(root, currentSceneBoundaryId)
+          : isAtCurrentSceneStart(
+              root,
+              currentSceneStartId,
+              currentSceneScrollOffsetPx,
+            );
       if (
         !available ||
         !atReadingBoundary ||
@@ -411,7 +407,9 @@ export function useProgressiveScrollUnlock({
   }, [
     canNavigateBackward,
     canNavigateForward,
-    currentSceneId,
+    currentSceneBoundaryId,
+    currentSceneScrollOffsetPx,
+    currentSceneStartId,
     navigationBlocked,
     progressKey,
     thresholdPx,

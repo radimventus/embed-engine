@@ -7,6 +7,10 @@ export type PinnedSceneTarget = {
   readonly scrollOffsetPx: number;
 };
 
+export type ActivePinnedSceneStop = PinnedSceneTarget & {
+  readonly readingBoundaryId: string;
+};
+
 type ResolvePinnedSceneTargetOptions = {
   readonly direction: ProgressiveNavigationDirection;
   readonly activeSceneId: string;
@@ -14,6 +18,41 @@ type ResolvePinnedSceneTargetOptions = {
   readonly sceneIds: readonly string[];
   readonly orientationStop: "hero" | "tour";
 };
+
+type ResolveActivePinnedSceneStopOptions = Omit<
+  ResolvePinnedSceneTargetOptions,
+  "direction"
+>;
+
+/** Explicit geometry for the currently pinned canonical navigation stop. */
+export function resolveActivePinnedSceneStop({
+  activeSceneId,
+  orientationSceneId,
+  orientationStop,
+}: ResolveActivePinnedSceneStopOptions): ActivePinnedSceneStop {
+  if (activeSceneId === orientationSceneId && orientationStop === "hero") {
+    return {
+      activeSceneId,
+      scrollTargetId: PILOT_SECTION_IDS.hero,
+      scrollOffsetPx: 0,
+      readingBoundaryId: PILOT_SECTION_IDS.hero,
+    };
+  }
+  if (activeSceneId === orientationSceneId) {
+    return {
+      activeSceneId,
+      scrollTargetId: PILOT_SECTION_IDS.socialProof,
+      scrollOffsetPx: 20,
+      readingBoundaryId: orientationSceneId,
+    };
+  }
+  return {
+    activeSceneId,
+    scrollTargetId: activeSceneId,
+    scrollOffsetPx: 0,
+    readingBoundaryId: activeSceneId,
+  };
+}
 
 /**
  * Canonical pinned order. HERO and TOUR are separate navigation stops even

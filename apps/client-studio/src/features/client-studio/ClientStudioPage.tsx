@@ -2,10 +2,7 @@ import { useEffect, useLayoutEffect, useState } from "react";
 import { flushSync } from "react-dom";
 import type { ReactExperienceModel } from "@embed-engine/model";
 
-import {
-  cancelSectionScroll,
-  heroTourTargetY,
-} from "./foundation/scrollToSection";
+import { cancelSectionScroll } from "./foundation/scrollToSection";
 
 import { DecisionAnalyticsProvider, JourneySurfaceObserver } from "./analytics";
 import { BuilderPreviewPersonaApplicator } from "./runtime/BuilderPreviewPersonaApplicator";
@@ -23,9 +20,11 @@ import {
   isRacioSection,
   isSectionScrollReady,
   markPinnedNavigationTiming,
+  resolveActivePinnedSceneStop,
   resolvePinnedSceneTarget,
   registerJourneySectionNavigator,
   scrollToSection,
+  sectionScrollTargetY,
   useActiveSection,
   useProgressiveScrollUnlock,
 } from "./foundation";
@@ -133,38 +132,6 @@ export function ClientStudioPage({
   }, [activeSceneId, scenes]);
 
   useLayoutEffect(() => {
-    const orientation = document.getElementById(scenes[0]!.id);
-    if (orientation === null) {
-      return;
-    }
-    if (revealedSceneCount > 1) {
-      orientation.style.removeProperty("--journey-anchor-reserve");
-      return;
-    }
-
-    // Keep the canonical Social Proof stop reachable while the orientation
-    // scene is the only revealed scene. This is stable scene geometry, not
-    // part of the one-shot Workspace landing or any later navigation request.
-    const targetY = heroTourTargetY() ?? 0;
-    const overlay = document.querySelector<HTMLElement>(
-      "[data-embed-overlay-mount]",
-    );
-    const maximum = overlay
-      ? overlay.scrollHeight - overlay.clientHeight
-      : document.documentElement.scrollHeight - window.innerHeight;
-    const current =
-      parseFloat(
-        orientation.style.getPropertyValue("--journey-anchor-reserve"),
-      ) || 0;
-    const reserve = Math.max(0, current + Math.ceil(targetY - maximum));
-    if (reserve > 0) {
-      orientation.style.setProperty("--journey-anchor-reserve", `${reserve}px`);
-    } else {
-      orientation.style.removeProperty("--journey-anchor-reserve");
-    }
-  }, [revealedSceneCount, scenes]);
-
-  useLayoutEffect(() => {
     if (initialLandingSceneId === null) {
       return;
     }
@@ -173,18 +140,66 @@ export function ClientStudioPage({
     let cancelled = false;
     let previousTargetTop: number | null = null;
 
+    const ensureInitialReachability = (): boolean => {
+      const orientation = document.getElementById(scenes[0]!.id);
+      const navigationBoundary = Array.from(
+        document.querySelectorAll<HTMLElement>(
+          "[data-journey-navigation-boundary]",
+        ),
+      ).find(
+        (element) =>
+          element.dataset.journeyNavigationBoundary === scenes[0]!.id,
+      );
+      if (orientation === null || navigationBoundary === undefined) {
+        return false;
+      }
+      const landingTargetY =
+        sectionScrollTargetY(sceneId, initialLandingOffsetPx) ?? 0;
+      const overlay = document.querySelector<HTMLElement>(
+        "[data-embed-overlay-mount]",
+      );
+      const viewportBottom =
+        overlay?.getBoundingClientRect().bottom ?? window.innerHeight;
+      const boundaryTargetY =
+        (overlay?.scrollTop ?? window.scrollY) +
+        navigationBoundary.getBoundingClientRect().bottom -
+        viewportBottom;
+      const requiredMaximum = Math.max(landingTargetY, boundaryTargetY);
+      const maximum = overlay
+        ? overlay.scrollHeight - overlay.clientHeight
+        : document.documentElement.scrollHeight - window.innerHeight;
+      const current =
+        parseFloat(
+          orientation.style.getPropertyValue("--journey-anchor-reserve"),
+        ) || 0;
+      const reserve = Math.max(
+        0,
+        current + Math.ceil(requiredMaximum - maximum),
+      );
+      if (reserve > 0) {
+        orientation.style.setProperty(
+          "--journey-anchor-reserve",
+          `${reserve}px`,
+        );
+      }
+      return true;
+    };
+
     const scrollWhenReady = () => {
       if (cancelled) {
         return;
       }
-      if (document.getElementById(sceneId) === null) {
+      if (
+        document.getElementById(sceneId) === null ||
+        !ensureInitialReachability()
+      ) {
         frameId = window.requestAnimationFrame(scrollWhenReady);
         return;
       }
       const overlay = document.querySelector<HTMLElement>(
         "[data-embed-overlay-mount]",
       );
-      if (!isSectionScrollReady(sceneId)) {
+      if (!isSectionScrollReady(sceneId, initialLandingOffsetPx)) {
         frameId = window.requestAnimationFrame(scrollWhenReady);
         return;
       }
@@ -228,6 +243,14 @@ export function ClientStudioPage({
   }, [initialLandingOffsetPx, initialLandingSceneId, scenes]);
 
   useLayoutEffect(() => {
+    if (revealedSceneCount > 1) {
+      document
+        .getElementById(scenes[0]!.id)
+        ?.style.removeProperty("--journey-anchor-reserve");
+    }
+  }, [revealedSceneCount, scenes]);
+
+  useLayoutEffect(() => {
     if (pendingSceneId === null) {
       return;
     }
@@ -243,7 +266,7 @@ export function ClientStudioPage({
       }
       if (
         document.getElementById(sceneId) === null ||
-        !isSectionScrollReady(sceneId)
+        !isSectionScrollReady(sceneId, scrollOffsetPx)
       ) {
         frameId = window.requestAnimationFrame(scrollWhenReady);
         return;
@@ -363,6 +386,12 @@ export function ClientStudioPage({
     sceneIds: scenes.map((scene) => scene.id),
     orientationStop,
   });
+  const activePinnedStop = resolveActivePinnedSceneStop({
+    activeSceneId: activeSceneId ?? scenes[0]!.id,
+    orientationSceneId: scenes[0]!.id,
+    sceneIds: scenes.map((scene) => scene.id),
+    orientationStop,
+  });
 
   const navigateProgressively = (direction: ProgressiveNavigationDirection) => {
     markPinnedNavigationTiming("transition-request");
@@ -391,7 +420,9 @@ export function ClientStudioPage({
     navigationBlocked: isSceneTransitioning,
     canNavigateForward: nextPinnedTarget !== null,
     canNavigateBackward: previousPinnedTarget !== null,
-    currentSceneId: activeSceneId ?? scenes[0]!.id,
+    currentSceneStartId: activePinnedStop.scrollTargetId,
+    currentSceneBoundaryId: activePinnedStop.readingBoundaryId,
+    currentSceneScrollOffsetPx: activePinnedStop.scrollOffsetPx,
     progressKey: `${revealedSceneCount}:${scrollIntentResetKey}`,
     onNavigate: navigateProgressively,
   });

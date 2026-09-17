@@ -18,23 +18,26 @@ export {
 export type { CanonicalSectionTarget } from "./journeyNavigation";
 export { RuntimeBootstrapGate } from "./RuntimeBootstrapGate";
 export { decisionJourneyScenes } from "./decisionJourney";
-export { resolvePinnedSceneTarget } from "./pinnedSceneOrder";
-export type { PinnedSceneTarget } from "./pinnedSceneOrder";
+export {
+  resolveActivePinnedSceneStop,
+  resolvePinnedSceneTarget,
+} from "./pinnedSceneOrder";
+export type {
+  ActivePinnedSceneStop,
+  PinnedSceneTarget,
+} from "./pinnedSceneOrder";
 export {
   CANONICAL_SCROLL_MAX_DURATION_MS,
   CANONICAL_SCROLL_MIN_DURATION_MS,
-  HERO_TOUR_REFERENCE_DISTANCE_PX,
-  HERO_TOUR_REFERENCE_DURATION_MS,
   PRIORITY_BRIDGE_ANCHOR_ID,
   canonicalScrollDurationMs,
   canonicalScrollProgress,
-  heroTourScrollDurationMs,
   isSectionAtScrollAnchor,
   markPinnedNavigationTiming,
   isSectionScrollReady,
   scrollElementIntoView,
   scrollToSection,
-  sectionScrollDurationMs,
+  sectionScrollTargetY,
 } from "./scrollToSection";
 export type { ScrollToSectionOptions } from "./scrollToSection";
 export { StudioLoading } from "./StudioLoading";

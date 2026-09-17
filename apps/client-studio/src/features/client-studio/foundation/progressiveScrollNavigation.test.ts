@@ -19,14 +19,14 @@ import {
 import {
   CANONICAL_SCROLL_MAX_DURATION_MS,
   CANONICAL_SCROLL_MIN_DURATION_MS,
-  HERO_TOUR_REFERENCE_DURATION_MS,
   canonicalScrollDurationMs,
   canonicalScrollProgress,
-  heroTourScrollDurationMs,
-  sectionScrollDurationMs,
 } from "./scrollToSection";
 import { canonicalSectionTarget } from "./journeyNavigation";
-import { resolvePinnedSceneTarget } from "./pinnedSceneOrder";
+import {
+  resolveActivePinnedSceneStop,
+  resolvePinnedSceneTarget,
+} from "./pinnedSceneOrder";
 import { JourneySceneFrame } from "./JourneySceneFrame";
 
 const here = dirname(fileURLToPath(import.meta.url));
@@ -211,25 +211,61 @@ describe("pinned progressive scene navigation", () => {
     assert.match(scroll, /scrollSnapType = "none"/);
   });
 
-  it("matches the short HERO path to standard pinned perceived velocity", () => {
-    const heroDistance = 605;
-    const standardDistance = 804;
-    const heroDuration = heroTourScrollDurationMs(heroDistance);
-    const standardDuration = canonicalScrollDurationMs(standardDistance);
+  it("uses the same generic duration and target pipeline for every stop", () => {
+    const scroll = read("scrollToSection.ts");
+    assert.equal(canonicalScrollDurationMs(605), 1044);
+    assert.equal(canonicalScrollDurationMs(804), 1135);
+    assert.doesNotMatch(scroll, /heroTour|HERO_TOUR/);
+    assert.doesNotMatch(scroll, /sectionId === ["']social-proof["']/);
+    assert.match(
+      scroll,
+      /const destination = sectionScrollTargetY[\s\S]*canonicalScrollDurationMs/,
+    );
+  });
 
-    assert.equal(HERO_TOUR_REFERENCE_DURATION_MS, 1135);
-    assert.equal(heroDuration, 854);
-    assert.equal(
-      sectionScrollDurationMs("social-proof", heroDistance),
-      heroDuration,
+  it("describes HERO, TOUR and standard stops without animation branches", () => {
+    const common = {
+      orientationSceneId: "orientation",
+      sceneIds: ["orientation", "priority"],
+    } as const;
+    assert.deepEqual(
+      resolveActivePinnedSceneStop({
+        ...common,
+        activeSceneId: "orientation",
+        orientationStop: "hero",
+      }),
+      {
+        activeSceneId: "orientation",
+        scrollTargetId: "hero",
+        scrollOffsetPx: 0,
+        readingBoundaryId: "hero",
+      },
     );
-    assert.equal(
-      sectionScrollDurationMs("journey-scene-priority", standardDistance),
-      standardDuration,
+    assert.deepEqual(
+      resolveActivePinnedSceneStop({
+        ...common,
+        activeSceneId: "orientation",
+        orientationStop: "tour",
+      }),
+      {
+        activeSceneId: "orientation",
+        scrollTargetId: "social-proof",
+        scrollOffsetPx: 20,
+        readingBoundaryId: "orientation",
+      },
     );
-    assert.ok(
-      Math.abs(heroDistance / heroDuration - standardDistance / standardDuration) <
-        0.001,
+    assert.deepEqual(
+      resolveActivePinnedSceneStop({
+        ...common,
+        activeSceneId: "priority",
+        orientationStop: "tour",
+      }),
+      {
+        activeSceneId: "priority",
+        scrollTargetId: "priority",
+        scrollOffsetPx: 0,
+        readingBoundaryId: "priority",
+      },
     );
   });
 
@@ -271,7 +307,7 @@ describe("pinned progressive scene navigation", () => {
       laterPath,
     );
     assert.ok(ready > 0 && ready < position);
-    assert.match(page, /!isSectionScrollReady\(sceneId\)/);
+    assert.match(page, /!isSectionScrollReady\(sceneId, scrollOffsetPx\)/);
   });
 
   it("releases navigation directly from canonical scroll completion", () => {
@@ -296,10 +332,7 @@ describe("pinned progressive scene navigation", () => {
   it("blocks momentum and resets intent through transition and lock", () => {
     const page = read("../ClientStudioPage.tsx");
     const hook = read("useProgressiveScrollUnlock.ts");
-    assert.match(
-      page,
-      /navigationBlocked: isSceneTransitioning,/,
-    );
+    assert.match(page, /navigationBlocked: isSceneTransitioning,/);
     assert.match(
       hook,
       /if \(navigationBlocked\) gestureConsumedRef.current = true/,
@@ -355,7 +388,21 @@ describe("pinned progressive scene navigation", () => {
     );
     assert.match(page, /canonicalSectionTarget\(sectionId\)/);
     assert.match(page, /additionalOffsetPx: scrollOffsetPx/);
+    assert.match(page, /currentSceneStartId: activePinnedStop\.scrollTargetId/);
     assert.doesNotMatch(page, /target\.style\.transform/);
+  });
+
+  it("keeps initial landing reserve out of later HERO and TOUR navigation", () => {
+    const page = read("../ClientStudioPage.tsx");
+    const initialPath = page.indexOf("if (initialLandingSceneId === null)");
+    const laterPath = page.indexOf("if (pendingSceneId === null)");
+    assert.ok(initialPath > 0 && laterPath > initialPath);
+    assert.match(page.slice(initialPath, laterPath), /journey-anchor-reserve/);
+    assert.match(page.slice(initialPath, laterPath), /requiredMaximum/);
+    assert.doesNotMatch(
+      page.slice(laterPath),
+      /sectionScrollTargetY|initialLandingOffsetPx/,
+    );
   });
 
   it("keeps representative scene button and pinned targets on unlockScene", () => {
@@ -454,7 +501,8 @@ describe("pinned progressive scene navigation", () => {
   it("keeps revealed progress monotonic and active scene authoritative", () => {
     const page = read("../ClientStudioPage.tsx");
     assert.match(page, /setRevealedSceneCount\(\(current\) => Math\.max/);
-    assert.match(page, /currentSceneId: activeSceneId/);
+    assert.match(page, /activeSceneId: activeSceneId/);
+    assert.match(page, /currentSceneStartId: activePinnedStop\.scrollTargetId/);
     assert.match(page, /setActiveSceneId\(sceneId\)/);
   });
 });

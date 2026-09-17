@@ -17,32 +17,6 @@ export function canonicalScrollDurationMs(distancePx: number): number {
   );
 }
 
-/**
- * HERO lands on the compact Social Proof stop. Its shorter path must preserve
- * the perceived velocity of a representative standard pinned transition
- * without changing the canonical duration policy used by every other scene.
- */
-export const HERO_TOUR_REFERENCE_DISTANCE_PX = 804;
-export const HERO_TOUR_REFERENCE_DURATION_MS = canonicalScrollDurationMs(
-  HERO_TOUR_REFERENCE_DISTANCE_PX,
-);
-
-export function heroTourScrollDurationMs(distancePx: number): number {
-  return Math.round(
-    (Math.abs(distancePx) * HERO_TOUR_REFERENCE_DURATION_MS) /
-      HERO_TOUR_REFERENCE_DISTANCE_PX,
-  );
-}
-
-export function sectionScrollDurationMs(
-  sectionId: string,
-  distancePx: number,
-): number {
-  return sectionId === "social-proof"
-    ? heroTourScrollDurationMs(distancePx)
-    : canonicalScrollDurationMs(distancePx);
-}
-
 /** Cubic smoothstep: monotonic, zero velocity at both ends, no midpoint kink. */
 export function canonicalScrollProgress(progress: number): number {
   const bounded = Math.min(1, Math.max(0, progress));
@@ -56,23 +30,28 @@ export type ScrollToSectionOptions = {
   readonly onComplete?: () => void;
 };
 
-/** Exact 090cd3b3 HeroCTA runtime geometry (not the generic scene inset).
- * Social Proof is flush below the sticky header in document and overlay hosts.
- */
-export function heroTourTargetY(): number | null {
-  const target = document.getElementById("social-proof");
+/** Resolves every canonical stop against the same header/inset geometry. */
+export function sectionScrollTargetY(
+  sectionId: string,
+  additionalOffsetPx = 0,
+): number | null {
+  const target = document.getElementById(sectionId);
   if (!target) return null;
-  const header = document.querySelector<HTMLElement>("[data-experience-header]");
-  const offset = Math.ceil(header?.getBoundingClientRect().height ?? 72);
-  const overlay = document.querySelector<HTMLElement>("[data-embed-overlay-mount]");
-  return Math.max(0, (overlay?.scrollTop ?? window.scrollY) +
-    target.getBoundingClientRect().top - (overlay?.getBoundingClientRect().top ?? 0) - offset);
-}
-
-export function isBeforeHeroTourAnchor(): boolean {
-  const to = heroTourTargetY();
-  const overlay = document.querySelector<HTMLElement>("[data-embed-overlay-mount]");
-  return to !== null && (overlay?.scrollTop ?? window.scrollY) < to - 3;
+  const header = document.querySelector<HTMLElement>(
+    "[data-experience-header]",
+  );
+  const offset = Math.ceil(header?.getBoundingClientRect().height ?? 0) + 20;
+  const overlay = document.querySelector<HTMLElement>(
+    "[data-embed-overlay-mount]",
+  );
+  return Math.max(
+    0,
+    (overlay?.scrollTop ?? window.scrollY) +
+      target.getBoundingClientRect().top -
+      (overlay?.getBoundingClientRect().top ?? 0) -
+      offset +
+      additionalOffsetPx,
+  );
 }
 
 export type PinnedNavigationTimingMark =
@@ -110,39 +89,23 @@ export function scrollToSection(
     return;
   }
 
-  const header = document.querySelector<HTMLElement>(
-    "[data-experience-header]",
-  );
-  const safeOffset = 20;
-  const headerOffset = header
-    ? Math.ceil(header.getBoundingClientRect().height) + safeOffset
-    : safeOffset;
-
   const overlayMount = document.querySelector<HTMLElement>(
     "[data-embed-overlay-mount]",
   );
   const reducedMotion = window.matchMedia(
     "(prefers-reduced-motion: reduce)",
   ).matches;
+  const destination = sectionScrollTargetY(
+    sectionId,
+    options.additionalOffsetPx,
+  );
+  if (destination === null) return;
   if (overlayMount) {
-    const containerRect = overlayMount.getBoundingClientRect();
-    const elementRect = target.getBoundingClientRect();
-    const nextTop =
-      overlayMount.scrollTop +
-      (elementRect.top - containerRect.top) -
-      headerOffset;
-    const destination = (sectionId === "social-proof" ? heroTourTargetY() : null) ?? Math.max(
-      0,
-      nextTop + (options.additionalOffsetPx ?? 0),
-    );
     animateScroll(
       overlayMount,
       destination,
       behavior === "smooth"
-        ? sectionScrollDurationMs(
-            sectionId,
-            destination - overlayMount.scrollTop,
-          )
+        ? canonicalScrollDurationMs(destination - overlayMount.scrollTop)
         : 0,
       reducedMotion,
       canonicalScrollProgress,
@@ -150,14 +113,11 @@ export function scrollToSection(
       options.onComplete,
     );
   } else {
-    const top =
-      window.scrollY + target.getBoundingClientRect().top - headerOffset;
-    const destination = (sectionId === "social-proof" ? heroTourTargetY() : null) ?? Math.max(0, top + (options.additionalOffsetPx ?? 0));
     animateScroll(
       window,
       destination,
       behavior === "smooth"
-        ? sectionScrollDurationMs(sectionId, destination - window.scrollY)
+        ? canonicalScrollDurationMs(destination - window.scrollY)
         : 0,
       reducedMotion,
       canonicalScrollProgress,
@@ -175,19 +135,15 @@ export function scrollToSection(
  * A newly revealed scene can exist before its content contributes to the
  * scroll range. Wait to scroll until the requested header offset is reachable.
  */
-export function isSectionScrollReady(sectionId: string): boolean {
+export function isSectionScrollReady(
+  sectionId: string,
+  additionalOffsetPx = 0,
+): boolean {
   const target = document.getElementById(sectionId);
   if (target === null) {
     return false;
   }
 
-  const header = document.querySelector<HTMLElement>(
-    "[data-experience-header]",
-  );
-  const safeOffset = 20;
-  const headerOffset = header
-    ? Math.ceil(header.getBoundingClientRect().height) + safeOffset
-    : safeOffset;
   const overlayMount = document.querySelector<HTMLElement>(
     "[data-embed-overlay-mount]",
   );
@@ -196,11 +152,8 @@ export function isSectionScrollReady(sectionId: string): boolean {
     return true;
   }
 
-  const containerRect = overlayMount.getBoundingClientRect();
-  const targetTop =
-    overlayMount.scrollTop +
-    (target.getBoundingClientRect().top - containerRect.top) -
-    headerOffset;
+  const targetTop = sectionScrollTargetY(sectionId, additionalOffsetPx);
+  if (targetTop === null) return false;
   const maximumScrollTop =
     overlayMount.scrollHeight - overlayMount.clientHeight;
   return targetTop <= maximumScrollTop;
@@ -328,7 +281,8 @@ type ActiveScroll = {
 const activeScrollFrames = new WeakMap<HTMLElement | Window, ActiveScroll>();
 
 export function cancelSectionScroll(): void {
-  const scroller = document.querySelector<HTMLElement>("[data-embed-overlay-mount]") ?? window;
+  const scroller =
+    document.querySelector<HTMLElement>("[data-embed-overlay-mount]") ?? window;
   const active = activeScrollFrames.get(scroller);
   if (!active) return;
   window.cancelAnimationFrame(active.frameId);
@@ -362,8 +316,14 @@ function animateScroll(
   // Native wheel/touch scrolling must not race the RAF writer. This ownership
   // ends synchronously with the last frame, not after a post-arrival timer.
   const preventNativeScroll = (event: Event) => event.preventDefault();
-  scroller.addEventListener("wheel", preventNativeScroll, { passive: false, capture: true });
-  scroller.addEventListener("touchmove", preventNativeScroll, { passive: false, capture: true });
+  scroller.addEventListener("wheel", preventNativeScroll, {
+    passive: false,
+    capture: true,
+  });
+  scroller.addEventListener("touchmove", preventNativeScroll, {
+    passive: false,
+    capture: true,
+  });
   let chromeRestored = false;
   const restoreChrome = () => {
     if (chromeRestored) return;
@@ -412,7 +372,8 @@ function animateScroll(
     } else {
       scroller.scrollTop = next;
     }
-    const actual = scroller instanceof Window ? scroller.scrollY : scroller.scrollTop;
+    const actual =
+      scroller instanceof Window ? scroller.scrollY : scroller.scrollTop;
     if (!firstFrameWritten && Math.abs(actual - from) > 0) {
       firstFrameWritten = true;
       onFirstFrame?.();

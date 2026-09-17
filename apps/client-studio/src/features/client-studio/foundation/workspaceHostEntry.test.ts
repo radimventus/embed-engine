@@ -48,12 +48,9 @@ describe('PT-VR-06 Client Studio boundaries', () => {
     const laterEffect = page.indexOf('if (pendingSceneId === null)');
     const reserve = page.indexOf('"--journey-anchor-reserve"');
     assert.ok(
-      reserve > 0 && reserve < initialEffect && initialEffect < laterEffect,
+      initialEffect > 0 && reserve > initialEffect && reserve < laterEffect,
     );
-    assert.doesNotMatch(
-      page.slice(initialEffect, laterEffect),
-      /journey-anchor-reserve/,
-    );
+    assert.match(page.slice(initialEffect, laterEffect), /journey-anchor-reserve/);
     assert.doesNotMatch(page.slice(laterEffect), /initialLandingOffsetPx/);
     const cta = readFileSync(join(here, '../sections/Hero/HeroCTA.tsx'), 'utf8');
     assert.doesNotMatch(cta, /WORKSPACE_LANDING_ADJUSTMENT_PX|workspaceAdjustment/);

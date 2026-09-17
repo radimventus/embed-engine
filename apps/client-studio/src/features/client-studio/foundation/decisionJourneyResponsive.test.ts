@@ -100,7 +100,10 @@ describe("Responsive Decision Journey (RCS-05)", () => {
       page,
       /useState<\s*string \| null\s*>\(PILOT_SECTION_IDS\.socialProof\)/,
     );
-    assert.match(page, /isSectionScrollReady\(sceneId\)/);
+    assert.match(
+      page,
+      /isSectionScrollReady\(sceneId, initialLandingOffsetPx\)/,
+    );
     assert.match(page, /scrollToSection\(sceneId, behavior,/);
     assert.match(page, /positionTarget\("smooth"\)/);
     assert.match(page, /setInitialLandingSceneId/);
@@ -165,7 +168,7 @@ describe("Responsive Decision Journey (RCS-05)", () => {
 
     assert.match(page, /const \[requestedSceneId, setRequestedSceneId\]/);
     assert.match(page, /document\.getElementById\(sceneId\) === null/);
-    assert.match(page, /isSectionScrollReady\(sceneId\)/);
+    assert.match(page, /isSectionScrollReady\(sceneId, scrollOffsetPx\)/);
     assert.match(page, /current === sceneId \? null : current/);
     assert.doesNotMatch(page, /transitionTimerRef|setTimeout/);
     assert.match(page, /setIsSceneTransitioning\(false\)/);
