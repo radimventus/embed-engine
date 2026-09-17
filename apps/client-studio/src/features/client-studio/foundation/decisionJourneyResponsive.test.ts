@@ -98,11 +98,13 @@ describe("Responsive Decision Journey (RCS-05)", () => {
 
     assert.match(
       page,
-      /useState<string \| null>\(\s*PILOT_SECTION_IDS\.socialProof,\s*\)/,
+      /useState<\s*string \| null\s*>\(PILOT_SECTION_IDS\.socialProof\)/,
     );
     assert.match(page, /isSectionScrollReady\(sceneId\)/);
     assert.match(page, /scrollToSection\(sceneId, behavior,/);
-    assert.match(page, /positionTarget\("smooth", finishTransition\)/);
+    assert.match(page, /positionTarget\("smooth"\)/);
+    assert.match(page, /setInitialLandingSceneId/);
+    assert.match(page, /useState<string \| null>\(null\)/);
   });
 
   it("cancels a superseded deferred scroll before consuming its replacement", () => {

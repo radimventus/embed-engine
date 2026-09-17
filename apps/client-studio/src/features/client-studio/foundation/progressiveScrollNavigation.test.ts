@@ -261,8 +261,15 @@ describe("pinned progressive scene navigation", () => {
 
   it("positions only after target render readiness", () => {
     const page = read("../ClientStudioPage.tsx");
-    const ready = page.indexOf("document.getElementById(sceneId) === null");
-    const position = page.indexOf('positionTarget("smooth",');
+    const laterPath = page.indexOf("if (pendingSceneId === null)");
+    const ready = page.indexOf(
+      "document.getElementById(sceneId) === null",
+      laterPath,
+    );
+    const position = page.indexOf(
+      'scrollToSection(sceneId, "smooth",',
+      laterPath,
+    );
     assert.ok(ready > 0 && ready < position);
     assert.match(page, /!isSectionScrollReady\(sceneId\)/);
   });
@@ -270,7 +277,10 @@ describe("pinned progressive scene navigation", () => {
   it("releases navigation directly from canonical scroll completion", () => {
     const page = read("../ClientStudioPage.tsx");
     assert.doesNotMatch(page, /addEventListener\("scrollend"/);
-    assert.match(page, /positionTarget\("smooth", finishTransition\)/);
+    assert.match(
+      page,
+      /scrollToSection\(sceneId, "smooth", \{[\s\S]*setIsSceneTransitioning\(false\)/,
+    );
     assert.match(page, /setIsSceneTransitioning\(false\)/);
     assert.doesNotMatch(page, /PhysicalLock|setTimeout|lock-start/);
   });

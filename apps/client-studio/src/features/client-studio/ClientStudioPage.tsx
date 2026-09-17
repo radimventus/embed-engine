@@ -81,12 +81,12 @@ export function ClientStudioPage({
 }: ClientStudioPageProps) {
   const scenes = decisionJourneyScenes();
   const [revealedSceneCount, setRevealedSceneCount] = useState(1);
-  const [pendingSceneId, setPendingSceneId] = useState<string | null>(
-    PILOT_SECTION_IDS.socialProof,
-  );
-  const [pendingSceneScrollOffsetPx, setPendingSceneScrollOffsetPx] = useState(
-    initialLandingOffsetPx,
-  );
+  const [initialLandingSceneId, setInitialLandingSceneId] = useState<
+    string | null
+  >(PILOT_SECTION_IDS.socialProof);
+  const [pendingSceneId, setPendingSceneId] = useState<string | null>(null);
+  const [pendingSceneScrollOffsetPx, setPendingSceneScrollOffsetPx] =
+    useState(0);
   const [isSceneTransitioning, setIsSceneTransitioning] = useState(false);
   const visibleSceneIds = scenes
     .slice(0, revealedSceneCount)
@@ -102,7 +102,6 @@ export function ClientStudioPage({
   const [snapEnabled, setSnapEnabled] = useState(false);
   const [scrollIntentResetKey, setScrollIntentResetKey] = useState(0);
   useEffect(() => () => cancelSectionScroll(), []);
-
 
   useEffect(() => {
     onActiveSceneChange?.(activeSceneId);
@@ -134,21 +133,45 @@ export function ClientStudioPage({
   }, [activeSceneId, scenes]);
 
   useLayoutEffect(() => {
-    if (pendingSceneId === null) {
+    const orientation = document.getElementById(scenes[0]!.id);
+    if (orientation === null) {
       return;
     }
-    const sceneId = pendingSceneId;
-    const scrollOffsetPx = pendingSceneScrollOffsetPx;
+    if (revealedSceneCount > 1) {
+      orientation.style.removeProperty("--journey-anchor-reserve");
+      return;
+    }
+
+    // Keep the canonical Social Proof stop reachable while the orientation
+    // scene is the only revealed scene. This is stable scene geometry, not
+    // part of the one-shot Workspace landing or any later navigation request.
+    const targetY = heroTourTargetY() ?? 0;
+    const overlay = document.querySelector<HTMLElement>(
+      "[data-embed-overlay-mount]",
+    );
+    const maximum = overlay
+      ? overlay.scrollHeight - overlay.clientHeight
+      : document.documentElement.scrollHeight - window.innerHeight;
+    const current =
+      parseFloat(
+        orientation.style.getPropertyValue("--journey-anchor-reserve"),
+      ) || 0;
+    const reserve = Math.max(0, current + Math.ceil(targetY - maximum));
+    if (reserve > 0) {
+      orientation.style.setProperty("--journey-anchor-reserve", `${reserve}px`);
+    } else {
+      orientation.style.removeProperty("--journey-anchor-reserve");
+    }
+  }, [revealedSceneCount, scenes]);
+
+  useLayoutEffect(() => {
+    if (initialLandingSceneId === null) {
+      return;
+    }
+    const sceneId = initialLandingSceneId;
     let frameId: number | null = null;
     let cancelled = false;
     let previousTargetTop: number | null = null;
-    const orientation = document.getElementById(scenes[0]!.id);
-    // A short first scene must still have enough scroll range for the historical
-    // HERO landing. This reserve is after the reading/navigation boundary and
-    // disappears as soon as real downstream content supplies the range.
-    if (revealedSceneCount > 1) {
-      orientation?.style.removeProperty("--journey-anchor-reserve");
-    }
 
     const scrollWhenReady = () => {
       if (cancelled) {
@@ -158,25 +181,15 @@ export function ClientStudioPage({
         frameId = window.requestAnimationFrame(scrollWhenReady);
         return;
       }
-      const overlay = document.querySelector<HTMLElement>("[data-embed-overlay-mount]");
-      const orientation = document.getElementById(scenes[0]!.id);
-      if (sceneId === PILOT_SECTION_IDS.socialProof && revealedSceneCount === 1 && orientation) {
-        const targetY = heroTourTargetY() ?? 0;
-        const maximum = overlay ? overlay.scrollHeight - overlay.clientHeight :
-          document.documentElement.scrollHeight - window.innerHeight;
-        const missing = Math.ceil(targetY - maximum);
-        if (missing > 0) {
-          const current = parseFloat(orientation.style.getPropertyValue("--journey-anchor-reserve")) || 0;
-          orientation.style.setProperty("--journey-anchor-reserve", `${current + missing}px`);
-          frameId = window.requestAnimationFrame(scrollWhenReady);
-          return;
-        }
-      }
+      const overlay = document.querySelector<HTMLElement>(
+        "[data-embed-overlay-mount]",
+      );
       if (!isSectionScrollReady(sceneId)) {
         frameId = window.requestAnimationFrame(scrollWhenReady);
         return;
       }
-      const targetTop = document.getElementById(sceneId)!.getBoundingClientRect().top +
+      const targetTop =
+        document.getElementById(sceneId)!.getBoundingClientRect().top +
         (overlay?.scrollTop ?? window.scrollY);
       if (
         previousTargetTop === null ||
@@ -186,15 +199,12 @@ export function ClientStudioPage({
         frameId = window.requestAnimationFrame(scrollWhenReady);
         return;
       }
-      const finishTransition = () => {
-        setIsSceneTransitioning(false);
-      };
       const positionTarget = (
         behavior: ScrollBehavior,
         onComplete?: () => void,
       ) => {
         scrollToSection(sceneId, behavior, {
-          additionalOffsetPx: scrollOffsetPx,
+          additionalOffsetPx: initialLandingOffsetPx,
           onFirstFrame: () => markPinnedNavigationTiming("first-frame"),
           onComplete: () => {
             markPinnedNavigationTiming("target-reached");
@@ -202,12 +212,12 @@ export function ClientStudioPage({
           },
         });
       };
-      positionTarget("smooth", finishTransition);
-      setPendingSceneId((current) => (current === sceneId ? null : current));
+      positionTarget("smooth");
+      setInitialLandingSceneId((current) =>
+        current === sceneId ? null : current,
+      );
     };
 
-    // Measure committed layout, confirm it on the nearest RAF, then give the
-    // animator one immutable target. No debounce, settle or scrollend wait.
     scrollWhenReady();
     return () => {
       cancelled = true;
@@ -215,7 +225,64 @@ export function ClientStudioPage({
         window.cancelAnimationFrame(frameId);
       }
     };
-  }, [pendingSceneId, pendingSceneScrollOffsetPx, revealedSceneCount]);
+  }, [initialLandingOffsetPx, initialLandingSceneId, scenes]);
+
+  useLayoutEffect(() => {
+    if (pendingSceneId === null) {
+      return;
+    }
+    const sceneId = pendingSceneId;
+    const scrollOffsetPx = pendingSceneScrollOffsetPx;
+    let frameId: number | null = null;
+    let cancelled = false;
+    let previousTargetTop: number | null = null;
+
+    const scrollWhenReady = () => {
+      if (cancelled) {
+        return;
+      }
+      if (
+        document.getElementById(sceneId) === null ||
+        !isSectionScrollReady(sceneId)
+      ) {
+        frameId = window.requestAnimationFrame(scrollWhenReady);
+        return;
+      }
+      const overlay = document.querySelector<HTMLElement>(
+        "[data-embed-overlay-mount]",
+      );
+      const targetTop =
+        document.getElementById(sceneId)!.getBoundingClientRect().top +
+        (overlay?.scrollTop ?? window.scrollY);
+      if (
+        previousTargetTop === null ||
+        Math.abs(previousTargetTop - targetTop) > 0.5
+      ) {
+        previousTargetTop = targetTop;
+        frameId = window.requestAnimationFrame(scrollWhenReady);
+        return;
+      }
+      scrollToSection(sceneId, "smooth", {
+        additionalOffsetPx: scrollOffsetPx,
+        onFirstFrame: () => markPinnedNavigationTiming("first-frame"),
+        onComplete: () => {
+          markPinnedNavigationTiming("target-reached");
+          setIsSceneTransitioning(false);
+        },
+      });
+      setPendingSceneId((current) => (current === sceneId ? null : current));
+    };
+
+    // Later CTA and pinned navigation only wait for their canonical target.
+    // Workspace initial landing reserve/offset state never enters this path.
+    scrollWhenReady();
+    return () => {
+      cancelled = true;
+      if (frameId !== null) {
+        window.cancelAnimationFrame(frameId);
+      }
+    };
+  }, [pendingSceneId, pendingSceneScrollOffsetPx]);
 
   const unlockScene = (
     sceneId: string,
