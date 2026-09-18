@@ -506,3 +506,17 @@ describe("pinned progressive scene navigation", () => {
     assert.match(page, /setActiveSceneId\(sceneId\)/);
   });
 });
+
+
+describe("JourneySceneFrame visibility", () => {
+  it("does not poll layout during scrolling", () => {
+    const source = readFileSync(
+      new URL("./JourneySceneFrame.tsx", import.meta.url),
+      "utf8",
+    );
+
+    assert.doesNotMatch(source, /setInterval\s*\(\s*updateVisibility/);
+    assert.match(source, /new MutationObserver\s*\(\s*updateVisibility\s*\)/);
+    assert.match(source, /new ResizeObserver\s*\(\s*updateVisibility\s*\)/);
+  });
+});

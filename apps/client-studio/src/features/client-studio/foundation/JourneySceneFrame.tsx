@@ -92,12 +92,9 @@ export function JourneySceneFrame({
     const resizeObserver = new ResizeObserver(updateVisibility);
     resizeObserver.observe(root);
 
-    const timer = window.setInterval(updateVisibility, 120);
-
     return () => {
       mutationObserver.disconnect();
       resizeObserver.disconnect();
-      window.clearInterval(timer);
     };
   }, [hasFooterLeading]);
 
