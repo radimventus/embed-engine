@@ -78,11 +78,13 @@ export function ClientStudioPage({
   onActiveSceneChange,
   onVisibleSceneIdsChange,
 }: ClientStudioPageProps) {
+  void initialLandingOffsetPx;
   const scenes = decisionJourneyScenes();
   const [revealedSceneCount, setRevealedSceneCount] = useState(1);
   const [initialLandingSceneId, setInitialLandingSceneId] = useState<
     string | null
   >(PILOT_SECTION_IDS.socialProof);
+  const initialLandingCanonicalOffsetPx = 20;
   const [pendingSceneId, setPendingSceneId] = useState<string | null>(null);
   const [pendingSceneScrollOffsetPx, setPendingSceneScrollOffsetPx] =
     useState(0);
@@ -95,7 +97,7 @@ export function ClientStudioPage({
     scenes[0]?.id ?? null,
   );
   const [orientationStop, setOrientationStop] = useState<"hero" | "tour">(
-    "tour",
+    "hero",
   );
   const [requestedSceneId, setRequestedSceneId] = useState<string | null>(null);
   const [snapEnabled, setSnapEnabled] = useState(false);
@@ -154,7 +156,7 @@ export function ClientStudioPage({
         return false;
       }
       const landingTargetY =
-        sectionScrollTargetY(sceneId, initialLandingOffsetPx) ?? 0;
+        sectionScrollTargetY(sceneId, initialLandingCanonicalOffsetPx) ?? 0;
       const overlay = document.querySelector<HTMLElement>(
         "[data-embed-overlay-mount]",
       );
@@ -199,7 +201,7 @@ export function ClientStudioPage({
       const overlay = document.querySelector<HTMLElement>(
         "[data-embed-overlay-mount]",
       );
-      if (!isSectionScrollReady(sceneId, initialLandingOffsetPx)) {
+      if (!isSectionScrollReady(sceneId, initialLandingCanonicalOffsetPx)) {
         frameId = window.requestAnimationFrame(scrollWhenReady);
         return;
       }
@@ -219,7 +221,7 @@ export function ClientStudioPage({
         onComplete?: () => void,
       ) => {
         scrollToSection(sceneId, behavior, {
-          additionalOffsetPx: initialLandingOffsetPx,
+          additionalOffsetPx: initialLandingCanonicalOffsetPx,
           onFirstFrame: () => markPinnedNavigationTiming("first-frame"),
           onComplete: () => {
             markPinnedNavigationTiming("target-reached");
@@ -240,7 +242,7 @@ export function ClientStudioPage({
         window.cancelAnimationFrame(frameId);
       }
     };
-  }, [initialLandingOffsetPx, initialLandingSceneId, scenes]);
+  }, [initialLandingSceneId, scenes]);
 
   useLayoutEffect(() => {
     if (revealedSceneCount > 1) {

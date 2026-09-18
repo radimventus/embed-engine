@@ -392,16 +392,30 @@ describe("pinned progressive scene navigation", () => {
     assert.doesNotMatch(page, /target\.style\.transform/);
   });
 
-  it("keeps initial landing reserve out of later HERO and TOUR navigation", () => {
+  it("keeps initial and later TOUR navigation on one canonical stop", () => {
     const page = read("../ClientStudioPage.tsx");
-    const initialPath = page.indexOf("if (initialLandingSceneId === null)");
-    const laterPath = page.indexOf("if (pendingSceneId === null)");
-    assert.ok(initialPath > 0 && laterPath > initialPath);
-    assert.match(page.slice(initialPath, laterPath), /journey-anchor-reserve/);
-    assert.match(page.slice(initialPath, laterPath), /requiredMaximum/);
-    assert.doesNotMatch(
-      page.slice(laterPath),
-      /sectionScrollTargetY|initialLandingOffsetPx/,
+
+    assert.match(
+      page,
+      /const \[orientationStop, setOrientationStop\] = useState<"hero" \| "tour">\(\s*"hero",\s*\)/,
+    );
+    assert.match(page, /const initialLandingCanonicalOffsetPx = 20/);
+    assert.match(
+      page,
+      /sectionScrollTargetY\(sceneId, initialLandingCanonicalOffsetPx\)/,
+    );
+    assert.match(
+      page,
+      /isSectionScrollReady\(sceneId, initialLandingCanonicalOffsetPx\)/,
+    );
+    assert.match(
+      page,
+      /additionalOffsetPx: initialLandingCanonicalOffsetPx/,
+    );
+    const pinned = read("./pinnedSceneOrder.ts");
+    assert.match(
+      pinned,
+      /scrollTargetId: PILOT_SECTION_IDS\.socialProof,[\s\S]*scrollOffsetPx: 20/,
     );
   });
 
