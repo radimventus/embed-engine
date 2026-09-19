@@ -74,7 +74,11 @@ describe("Hero Experience (CSCB-02 / SR-002) — Reference Hero (PT-HERO-00)", (
     assert.equal(stripComments(cta).includes("scrollIntoView"), false);
     assert.match(image, /useDecisionSessionRuntime/);
     assert.match(image, /context\.hero\.primaryMediaUrl/);
-    assert.match(image, /animate-hero-photo-veil/);
+    // Keep the visual photo veil, but never animate it during the initial
+    // HERO → TOUR landing: first-paint animation competes with scroll rendering.
+    assert.match(image, /bg-white\/65/);
+    assert.match(image, /bg-white\/45/);
+    assert.doesNotMatch(image, /animate-hero-photo-veil/);
   });
 
   it("does not render partner implementation metadata inside Hero content", () => {
