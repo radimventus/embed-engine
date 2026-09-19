@@ -103,7 +103,20 @@ export function ClientStudioSidebar({
           ?.sectionId ?? null);
 
   const [menuOpen, setMenuOpen] = useState(false);
-  const binding = resolveClientRuntimeBinding();
+  // The orientation observer changes only the active navigation dot while the
+  // viewport crosses HERO / TOUR. Resolving the canonical binding reads the
+  // cross-port Workspace registry, so keep that unrelated work out of those
+  // scroll-driven renders. The session scope changes whenever the binding can
+  // legitimately change (Project / House switch).
+  const binding = useMemo(
+    () => resolveClientRuntimeBinding(),
+    [
+      session?.projectId,
+      session?.activeHouseId,
+      session?.workspaceContext?.projectId,
+      session?.workspaceContext?.activeHouseId,
+    ],
+  );
   const activeProjectId =
     binding.runtimeProjectId ?? resolveClientActiveProjectId(session?.projectId);
   const houses = useMemo(

@@ -474,6 +474,7 @@ export function ThumbnailRail() {
                       alt=""
                       loading="lazy"
                       decoding="sync"
+                      data-initial-scroll-media="true"
                       className="h-full w-full object-cover"
                       style={{
                         borderRadius: THUMB_INNER_RADIUS_PX,

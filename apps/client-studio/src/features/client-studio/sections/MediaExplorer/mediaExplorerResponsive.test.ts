@@ -4,6 +4,8 @@ import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { describe, it } from 'node:test';
 
+import { prepareInitialScrollMedia } from './initialScrollMediaReadiness';
+
 const here = dirname(fileURLToPath(import.meta.url));
 const clientStudioRoot = join(here, '../../../../..');
 
@@ -55,5 +57,80 @@ describe('Responsive Media Explorer (RCS-04)', () => {
     assert.match(lightbox, /safe-area|100dvh/);
     assert.match(play, /touch-manipulation/);
     assert.equal(rail.includes('presentation-assets'), false);
+  });
+
+  it('marks lazy photo thumbnails for pre-animation decode readiness', () => {
+    const rail = read('ThumbnailRail.tsx');
+    const deferredWistia = read('DeferredWistia.tsx');
+    const readiness = read('initialScrollMediaReadiness.ts');
+
+    assert.match(rail, /data-initial-scroll-media="true"/);
+    assert.match(deferredWistia, /data-initial-scroll-media="true"/);
+    assert.match(rail, /loading="lazy"/);
+    assert.match(rail, /decoding="sync"/);
+    assert.match(readiness, /image\.complete && image\.naturalWidth > 0/);
+    assert.match(readiness, /image\.decode\(\)/);
+    assert.doesNotMatch(readiness, /addEventListener\(['"]load/);
+  });
+
+  it('settles readiness only after loaded decodes and ignores unloaded lazy images', async () => {
+    let releaseDecode: (() => void) | undefined;
+    let loadedDecodeCalls = 0;
+    let unloadedDecodeCalls = 0;
+    const loaded = {
+      complete: true,
+      naturalWidth: 220,
+      loading: 'lazy',
+      decode: () => {
+        loadedDecodeCalls += 1;
+        return new Promise<void>((resolve) => {
+          releaseDecode = resolve;
+        });
+      },
+    };
+    const unloaded = {
+      complete: false,
+      naturalWidth: 0,
+      loading: 'lazy',
+      decode: () => {
+        unloadedDecodeCalls += 1;
+        return Promise.resolve();
+      },
+    };
+    let eagerDecodeCalls = 0;
+    let releaseEagerDecode: (() => void) | undefined;
+    const eager = {
+      complete: false,
+      naturalWidth: 0,
+      loading: 'eager',
+      decode: () => {
+        eagerDecodeCalls += 1;
+        return new Promise<void>((resolve) => {
+          releaseEagerDecode = resolve;
+        });
+      },
+    };
+    const root = {
+      querySelectorAll: () => [loaded, unloaded, eager],
+    } as unknown as ParentNode;
+    let ready = false;
+    const preparation = prepareInitialScrollMedia(root).then(() => {
+      ready = true;
+    });
+
+    await Promise.resolve();
+    assert.equal(ready, false);
+    assert.equal(loadedDecodeCalls, 1);
+    assert.equal(unloadedDecodeCalls, 0);
+    assert.equal(eagerDecodeCalls, 1);
+
+    assert.ok(releaseDecode);
+    releaseDecode();
+    await Promise.resolve();
+    assert.equal(ready, false);
+    assert.ok(releaseEagerDecode);
+    releaseEagerDecode();
+    await preparation;
+    assert.equal(ready, true);
   });
 });

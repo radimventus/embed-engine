@@ -21,7 +21,18 @@ export function ClientStudioMobileNav() {
   const [isOpen, setIsOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
 
-  const binding = resolveClientRuntimeBinding();
+  // Scroll state changes only the compact navigation chrome. Avoid reopening
+  // and decoding the cross-port Workspace registry on that render path; the
+  // canonical binding is invalidated by the actual Project / House scope.
+  const binding = useMemo(
+    () => resolveClientRuntimeBinding(),
+    [
+      session?.projectId,
+      session?.activeHouseId,
+      session?.workspaceContext?.projectId,
+      session?.workspaceContext?.activeHouseId,
+    ],
+  );
   const activeProjectId =
     binding.runtimeProjectId ?? resolveClientActiveProjectId(session?.projectId);
   const houses = useMemo(

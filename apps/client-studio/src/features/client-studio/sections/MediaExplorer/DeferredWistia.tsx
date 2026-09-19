@@ -50,6 +50,7 @@ export function DeferredWistia({ src, title, activated, surface }: {
         className="wistia_embed absolute inset-0 h-full w-full border-0"
         allow="autoplay; fullscreen" allowFullScreen /> : null}
       {!ready ? <img src={WISTIA_POSTER} alt={title} decoding="async"
+        data-initial-scroll-media="true"
         className="pointer-events-none absolute inset-0 h-full w-full object-cover" /> : null}
       {activated === undefined && !ready ? <button type="button"
         aria-label={active ? 'Načítám video' : 'Přehrát video'} aria-busy={active}

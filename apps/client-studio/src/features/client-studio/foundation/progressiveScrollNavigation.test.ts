@@ -537,6 +537,26 @@ describe("JourneySceneFrame visibility", () => {
 
 
 describe("initial canonical landing state", () => {
+  it("finishes loaded thumbnail readiness before starting the canonical animation clock", () => {
+    const page = read("../ClientStudioPage.tsx");
+    const initialPath = page.indexOf("if (initialLandingSceneId === null)");
+    const laterPath = page.indexOf("if (pendingSceneId === null)");
+    const initial = page.slice(initialPath, laterPath);
+    const preparation = initial.indexOf(
+      "prepareInitialScrollMedia().then",
+    );
+    const animation = initial.indexOf('positionTarget("smooth")');
+
+    assert.ok(preparation > 0);
+    assert.ok(animation > preparation);
+    assert.match(initial, /thumbnailDecodeReady = true/);
+    assert.match(
+      initial,
+      /thumbnailDecodeReady = true;[\s\S]*requestAnimationFrame\(scrollWhenReady\)/,
+    );
+    assert.doesNotMatch(initial, /setTimeout/);
+  });
+
   it("commits TOUR logical state only after initial canonical landing completes", () => {
     const page = read("../ClientStudioPage.tsx");
 

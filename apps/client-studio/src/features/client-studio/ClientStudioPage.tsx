@@ -38,6 +38,7 @@ import { AuditLeadCapture } from "./sections/AuditLeadCapture/AuditLeadCapture";
 import { PriorityEngine } from "./sections/PriorityEngine/PriorityEngine";
 import { PriorityExperienceProvider } from "./sections/PriorityEngine/PriorityExperienceProvider";
 import { SpatialTerminal } from "./sections/SpatialTerminal/SpatialTerminal";
+import { prepareInitialScrollMedia } from "./sections/MediaExplorer/initialScrollMediaReadiness";
 import { WalkthroughProvider } from "../walkthrough";
 import { PILOT_FLAGS, PILOT_SECTION_IDS } from "./pilot/pilotVocabulary";
 import {
@@ -141,6 +142,8 @@ export function ClientStudioPage({
     let frameId: number | null = null;
     let cancelled = false;
     let previousTargetTop: number | null = null;
+    let thumbnailDecodeReady = false;
+    let thumbnailDecodePreparation: Promise<void> | null = null;
 
     const ensureInitialReachability = (): boolean => {
       const orientation = document.getElementById(scenes[0]!.id);
@@ -214,6 +217,19 @@ export function ClientStudioPage({
       ) {
         previousTargetTop = targetTop;
         frameId = window.requestAnimationFrame(scrollWhenReady);
+        return;
+      }
+      if (!thumbnailDecodeReady) {
+        if (thumbnailDecodePreparation === null) {
+          thumbnailDecodePreparation = prepareInitialScrollMedia().then(
+            () => {
+              thumbnailDecodeReady = true;
+              if (!cancelled) {
+                frameId = window.requestAnimationFrame(scrollWhenReady);
+              }
+            },
+          );
+        }
         return;
       }
       const positionTarget = (
