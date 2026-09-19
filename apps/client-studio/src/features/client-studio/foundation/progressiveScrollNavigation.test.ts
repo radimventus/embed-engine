@@ -534,3 +534,30 @@ describe("JourneySceneFrame visibility", () => {
     assert.match(source, /new ResizeObserver\s*\(\s*updateVisibility\s*\)/);
   });
 });
+
+
+describe("initial canonical landing state", () => {
+  it("commits TOUR logical state only after initial canonical landing completes", () => {
+    const page = read("../ClientStudioPage.tsx");
+
+    assert.match(
+      page,
+      /const \[orientationStop, setOrientationStop\] = useState<"hero" \| "tour">\(\s*"hero",\s*\)/,
+    );
+
+    const initialPath = page.indexOf("if (initialLandingSceneId === null)");
+    const laterPath = page.indexOf("if (pendingSceneId === null)");
+    assert.ok(initialPath > 0 && laterPath > initialPath);
+
+    const initial = page.slice(initialPath, laterPath);
+
+    assert.match(
+      initial,
+      /onComplete:\s*\(\)\s*=>\s*\{[\s\S]*setOrientationStop\("tour"\)/,
+    );
+    assert.match(
+      initial,
+      /setScrollIntentResetKey\(\(current\) => current \+ 1\)/,
+    );
+  });
+});

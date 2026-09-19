@@ -473,7 +473,7 @@ export function ThumbnailRail() {
                       src={item.thumbnailSrc}
                       alt=""
                       loading="lazy"
-                      decoding="async"
+                      decoding="sync"
                       className="h-full w-full object-cover"
                       style={{
                         borderRadius: THUMB_INNER_RADIUS_PX,

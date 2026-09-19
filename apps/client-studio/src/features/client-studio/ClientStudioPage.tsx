@@ -157,7 +157,7 @@ export function ClientStudioPage({
       }
       const landingTargetY =
         sectionScrollTargetY(sceneId, initialLandingCanonicalOffsetPx) ?? 0;
-      const overlay = document.querySelector<HTMLElement>(
+            const overlay = document.querySelector<HTMLElement>(
         "[data-embed-overlay-mount]",
       );
       const viewportBottom =
@@ -198,13 +198,13 @@ export function ClientStudioPage({
         frameId = window.requestAnimationFrame(scrollWhenReady);
         return;
       }
-      const overlay = document.querySelector<HTMLElement>(
-        "[data-embed-overlay-mount]",
-      );
       if (!isSectionScrollReady(sceneId, initialLandingCanonicalOffsetPx)) {
         frameId = window.requestAnimationFrame(scrollWhenReady);
         return;
       }
+      const overlay = document.querySelector<HTMLElement>(
+        "[data-embed-overlay-mount]",
+      );
       const targetTop =
         document.getElementById(sceneId)!.getBoundingClientRect().top +
         (overlay?.scrollTop ?? window.scrollY);
@@ -225,6 +225,10 @@ export function ClientStudioPage({
           onFirstFrame: () => markPinnedNavigationTiming("first-frame"),
           onComplete: () => {
             markPinnedNavigationTiming("target-reached");
+                        // Initial physical landing has now actually reached canonical TOUR.
+            // Commit the logical stop only after target arrival.
+            setOrientationStop("tour");
+            setScrollIntentResetKey((current) => current + 1);
             onComplete?.();
           },
         });
