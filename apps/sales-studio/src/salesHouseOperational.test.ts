@@ -14,7 +14,12 @@ import {
   selectScopedOperationalCases,
 } from '@embed-engine/platform-access';
 
-import { findSalesCaseForContactHouse, formatLandIntentPill, toSalesClients } from './sales/salesClients.ts';
+import {
+  findSalesCaseForContactHouse,
+  formatIndexPripravenosti,
+  formatLandIntentPill,
+  toSalesClients,
+} from './sales/salesClients.ts';
 
 const here = dirname(fileURLToPath(import.meta.url));
 
@@ -50,7 +55,74 @@ describe('Sales House operational desk', () => {
       bungalov.every((client) => client.houses[0]?.id === DSE_BUNGALOV_4KK_HOUSE_ID),
       true,
     );
+    assert.deepEqual(
+      bungalov
+        .map((client) => client.houses[0]?.readinessScore)
+        .filter((value): value is number => typeof value === 'number')
+        .sort((left, right) => right - left),
+      [88, 72, 64],
+    );
+    assert.equal(
+      bungalov.every(
+        (client) =>
+          formatIndexPripravenosti(client.houses[0]?.readinessScore ?? null) !==
+          'Zatím neměřeno',
+      ),
+      true,
+    );
     assert.deepEqual(vpd, []);
+  });
+
+  it('keeps reference display values isolated from LIVE_EMPTY and other scopes', () => {
+    const realUnmeasured = toSalesClients(
+      selectHouseOperationalCases({
+        companyId: DSE_COMPANY_ID,
+        projectId: DSE_CANONICAL_PROJECT_ID,
+        houseId: DSE_FIRST_DRAFT_HOUSE_ID,
+        houseName: 'VÁŠ PRVNÍ DŮM',
+        dataMode: 'LIVE_EMPTY',
+        durableLeads: [
+          {
+            leadId: 'lead-unmeasured',
+            companyId: DSE_COMPANY_ID,
+            projectId: DSE_CANONICAL_PROJECT_ID,
+            houseId: DSE_FIRST_DRAFT_HOUSE_ID,
+            createdAt: '2026-08-20T10:00:00.000Z',
+            source: 'EMBED',
+            intent: 'audit',
+            status: 'accepted',
+            processingStatus: 'new',
+            contact: {
+              name: 'Nezměřený Lead',
+              email: 'unmeasured@example.cz',
+              phone: null,
+            },
+            decisionSessionId: null,
+          },
+        ],
+      }),
+    );
+    const otherProject = toSalesClients(
+      selectHouseOperationalCases({
+        companyId: DSE_COMPANY_ID,
+        projectId: 'project-other',
+        houseId: 'house-other',
+        houseName: 'JINÝ DŮM',
+        dataMode: 'LIVE_EMPTY',
+        durableLeads: [],
+      }),
+    );
+
+    assert.equal(realUnmeasured.length, 1);
+    assert.equal(realUnmeasured[0]?.origin, 'LEAD');
+    assert.equal(realUnmeasured[0]?.houses[0]?.readinessScore, null);
+    assert.equal(
+      formatIndexPripravenosti(
+        realUnmeasured[0]?.houses[0]?.readinessScore ?? null,
+      ),
+      'Zatím neměřeno',
+    );
+    assert.deepEqual(otherProject, []);
   });
 
   it('drops BUNGALOV cases immediately when the workspace House is VPD', () => {

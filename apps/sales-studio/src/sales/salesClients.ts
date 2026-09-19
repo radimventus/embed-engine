@@ -154,7 +154,13 @@ export function toSalesClients(
         id: item.houseId,
         houseName: item.houseName,
         score: item.profilZajemce.score,
-        readinessScore: item.profilZajemce.readinessScore,
+        // REFERENCE cases retain their historical canonical template value.
+        // REAL/LIVE_EMPTY cases remain governed exclusively by measured
+        // readiness and never inherit reference data.
+        readinessScore:
+          item.origin === 'REFERENCE'
+            ? item.profilZajemce.score
+            : item.profilZajemce.readinessScore,
         land: item.profilZajemce.land,
         location: item.profilZajemce.location ?? undefined,
         tags: item.profilZajemce.tags,
