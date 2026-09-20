@@ -101,7 +101,6 @@ export function ClientStudioPage({
     "hero",
   );
   const [requestedSceneId, setRequestedSceneId] = useState<string | null>(null);
-  const [snapEnabled, setSnapEnabled] = useState(false);
   const [scrollIntentResetKey, setScrollIntentResetKey] = useState(0);
   useEffect(() => () => cancelSectionScroll(), []);
 
@@ -127,12 +126,6 @@ export function ClientStudioPage({
       scenes.slice(0, revealedSceneCount).map((scene) => scene.id),
     );
   }, [onVisibleSceneIdsChange, revealedSceneCount, scenes]);
-
-  useEffect(() => {
-    if (activeSceneId !== scenes[0]?.id) {
-      setSnapEnabled(true);
-    }
-  }, [activeSceneId, scenes]);
 
   useLayoutEffect(() => {
     if (initialLandingSceneId === null) {
@@ -173,20 +166,36 @@ export function ClientStudioPage({
       const maximum = overlay
         ? overlay.scrollHeight - overlay.clientHeight
         : document.documentElement.scrollHeight - window.innerHeight;
+      const journeyRoot = document.querySelector<HTMLElement>(
+        '[data-guided-journey="decision-journey"]',
+      );
+      if (journeyRoot === null) {
+        return false;
+      }
+
       const current =
         parseFloat(
-          orientation.style.getPropertyValue("--journey-anchor-reserve"),
+          journeyRoot.style.getPropertyValue(
+            "--journey-reachability-runway",
+          ),
         ) || 0;
+
       const reserve = Math.max(
         0,
         current + Math.ceil(requiredMaximum - maximum),
       );
+
       if (reserve > 0) {
-        orientation.style.setProperty(
-          "--journey-anchor-reserve",
+        journeyRoot.style.setProperty(
+          "--journey-reachability-runway",
           `${reserve}px`,
         );
+      } else {
+        journeyRoot.style.removeProperty(
+          "--journey-reachability-runway",
+        );
       }
+
       return true;
     };
 
@@ -241,11 +250,11 @@ export function ClientStudioPage({
           onFirstFrame: () => markPinnedNavigationTiming("first-frame"),
           onComplete: () => {
             markPinnedNavigationTiming("target-reached");
-                        // Initial physical landing has now actually reached canonical TOUR.
-            // Commit the logical stop only after target arrival.
-            setOrientationStop("tour");
-            setScrollIntentResetKey((current) => current + 1);
-            onComplete?.();
+            window.requestAnimationFrame(() => {
+              setOrientationStop("tour");
+              setScrollIntentResetKey((current) => current + 1);
+              onComplete?.();
+            });
           },
         });
       };
@@ -265,14 +274,6 @@ export function ClientStudioPage({
   }, [initialLandingSceneId, scenes]);
 
   useLayoutEffect(() => {
-    if (revealedSceneCount > 1) {
-      document
-        .getElementById(scenes[0]!.id)
-        ?.style.removeProperty("--journey-anchor-reserve");
-    }
-  }, [revealedSceneCount, scenes]);
-
-  useLayoutEffect(() => {
     if (pendingSceneId === null) {
       return;
     }
@@ -281,6 +282,91 @@ export function ClientStudioPage({
     let frameId: number | null = null;
     let cancelled = false;
     let previousTargetTop: number | null = null;
+    const ensureReachability = (): boolean => {
+      const target = document.getElementById(sceneId);
+      if (target === null) return false;
+
+      const journeyRoot = document.querySelector<HTMLElement>(
+        '[data-guided-journey="decision-journey"]',
+      );
+      if (journeyRoot === null) return false;
+
+      const requested = sectionScrollTargetY(sceneId, scrollOffsetPx);
+      if (requested === null) return false;
+
+      const overlay = document.querySelector<HTMLElement>(
+        "[data-embed-overlay-mount]",
+      );
+      const currentScrollTop = overlay?.scrollTop ?? window.scrollY;
+      const maximum = overlay
+        ? overlay.scrollHeight - overlay.clientHeight
+        : document.documentElement.scrollHeight - window.innerHeight;
+
+      const current =
+        parseFloat(
+          journeyRoot.style.getPropertyValue(
+            "--journey-reachability-runway",
+          ),
+        ) || 0;
+
+      const requiredMaximum = Math.max(
+        requested,
+        currentScrollTop,
+      );
+
+      const reserve = Math.max(
+        0,
+        current + Math.ceil(requiredMaximum - maximum),
+      );
+
+      if (reserve > 0) {
+        journeyRoot.style.setProperty(
+          "--journey-reachability-runway",
+          `${reserve}px`,
+        );
+      } else {
+        journeyRoot.style.removeProperty(
+          "--journey-reachability-runway",
+        );
+      }
+
+      return true;
+    };
+
+    const releaseReachabilityIfSafe = () => {
+      const journeyRoot = document.querySelector<HTMLElement>(
+        '[data-guided-journey="decision-journey"]',
+      );
+      if (journeyRoot === null) return;
+
+      const current =
+        parseFloat(
+          journeyRoot.style.getPropertyValue(
+            "--journey-reachability-runway",
+          ),
+        ) || 0;
+
+      if (current <= 0) return;
+
+      const overlay = document.querySelector<HTMLElement>(
+        "[data-embed-overlay-mount]",
+      );
+      const currentScrollTop = overlay?.scrollTop ?? window.scrollY;
+      const maximumWithRunway = overlay
+        ? overlay.scrollHeight - overlay.clientHeight
+        : document.documentElement.scrollHeight - window.innerHeight;
+
+      const maximumWithoutRunway = Math.max(
+        0,
+        maximumWithRunway - current,
+      );
+
+      if (currentScrollTop <= maximumWithoutRunway + 1) {
+        journeyRoot.style.removeProperty(
+          "--journey-reachability-runway",
+        );
+      }
+    };
 
     const scrollWhenReady = () => {
       if (cancelled) {
@@ -288,6 +374,7 @@ export function ClientStudioPage({
       }
       if (
         document.getElementById(sceneId) === null ||
+        !ensureReachability() ||
         !isSectionScrollReady(sceneId, scrollOffsetPx)
       ) {
         frameId = window.requestAnimationFrame(scrollWhenReady);
@@ -312,6 +399,7 @@ export function ClientStudioPage({
         onFirstFrame: () => markPinnedNavigationTiming("first-frame"),
         onComplete: () => {
           markPinnedNavigationTiming("target-reached");
+          releaseReachabilityIfSafe();
           setIsSceneTransitioning(false);
         },
       });
@@ -345,9 +433,6 @@ export function ClientStudioPage({
     }
     setRevealedSceneCount((current) => Math.max(current, nextSceneIndex + 1));
     setScrollIntentResetKey((current) => current + 1);
-    if (sceneId !== scenes[0]?.id) {
-      setSnapEnabled(true);
-    }
     setIsSceneTransitioning(true);
     setActiveSceneId(sceneId);
     setRequestedSceneId(sceneId);
@@ -455,9 +540,7 @@ export function ClientStudioPage({
         <RuntimeBootstrapGate>
           <BuilderPreviewPersonaApplicator />
           <WalkthroughProvider>
-            <GuidedJourneyRoot
-              snapEnabled={snapEnabled && !isSceneTransitioning}
-            />
+            <GuidedJourneyRoot snapEnabled={false} />
             <JourneySurfaceObserver />
             <DesktopCanvas>
               <div

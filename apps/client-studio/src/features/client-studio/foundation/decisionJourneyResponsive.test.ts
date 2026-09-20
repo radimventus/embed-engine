@@ -19,6 +19,20 @@ function readSource(relativeFromClientStudio: string): string {
 }
 
 describe("Responsive Decision Journey (RCS-05)", () => {
+  it("shares one large pinned-scene gap across desktop tablet and mobile", () => {
+    const css = readSource("src/index.css");
+
+    assert.match(css, /--journey-pinned-scene-gap:\s*600px/);
+    assert.match(
+      css,
+      /data-standard-desktop-gap=["']true["'][\s\S]*margin-top:\s*var\(--journey-pinned-scene-gap\)/,
+    );
+    assert.doesNotMatch(
+      css,
+      /@media[^}]+--journey-pinned-scene-gap/,
+    );
+  });
+
   it("maps shell section ids to journey reveal bands", () => {
     assert.equal(isOrientationSection("hero"), true);
     assert.equal(isOrientationSection("walkthrough"), true);

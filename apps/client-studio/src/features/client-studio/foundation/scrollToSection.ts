@@ -23,6 +23,18 @@ export function canonicalScrollProgress(progress: number): number {
   return bounded * bounded * (3 - 2 * bounded);
 }
 
+export function canonicalMonotonicScrollTarget(
+  from: number,
+  to: number,
+  planned: number,
+  live: number,
+): number {
+  return to >= from
+    ? Math.min(to, Math.max(live, planned))
+    : Math.max(to, Math.min(live, planned));
+}
+
+
 export type ScrollToSectionOptions = {
   /** Moves the target this many pixels above the standard 20px safe inset. */
   readonly additionalOffsetPx?: number;
@@ -95,6 +107,7 @@ export function scrollToSection(
   const reducedMotion = window.matchMedia(
     "(prefers-reduced-motion: reduce)",
   ).matches;
+
   const destination = sectionScrollTargetY(
     sectionId,
     options.additionalOffsetPx,
@@ -339,10 +352,12 @@ function animateScroll(
     restoreChrome();
     onComplete?.();
   };
-  const from =
+
+  const readScrollPosition = () =>
     scroller instanceof Window ? scroller.scrollY : scroller.scrollTop;
 
   if (reducedMotion || durationMs <= 0) {
+    const from = readScrollPosition();
     if (scroller instanceof Window) {
       scroller.scrollTo({ top: to, left: 0, behavior: "auto" });
     } else {
@@ -355,18 +370,33 @@ function animateScroll(
     return;
   }
 
-  const delta = to - from;
-  if (Math.abs(delta) < 1) {
-    complete();
-    return;
-  }
-
-  const startedAt = performance.now();
+  let from: number | null = null;
+  let delta = 0;
+  let startedAt: number | null = null;
   let firstFrameWritten = false;
 
   const tick = (now: number) => {
+    if (from === null || startedAt === null) {
+      from = readScrollPosition();
+      delta = to - from;
+      startedAt = now;
+
+      if (Math.abs(delta) < 1) {
+        complete();
+        return;
+      }
+    }
+
     const progress = Math.min(1, (now - startedAt) / durationMs);
-    const next = from + delta * easing(progress);
+    const planned = from + delta * easing(progress);
+    const live = readScrollPosition();
+    const next = canonicalMonotonicScrollTarget(
+      from,
+      to,
+      planned,
+      live,
+    );
+
     if (scroller instanceof Window) {
       scroller.scrollTo({ top: next, left: 0, behavior: "auto" });
     } else {
@@ -374,6 +404,7 @@ function animateScroll(
     }
     const actual =
       scroller instanceof Window ? scroller.scrollY : scroller.scrollTop;
+
     if (!firstFrameWritten && Math.abs(actual - from) > 0) {
       firstFrameWritten = true;
       onFirstFrame?.();

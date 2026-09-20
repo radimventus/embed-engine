@@ -19,6 +19,7 @@ import {
 import {
   CANONICAL_SCROLL_MAX_DURATION_MS,
   CANONICAL_SCROLL_MIN_DURATION_MS,
+  canonicalMonotonicScrollTarget,
   canonicalScrollDurationMs,
   canonicalScrollProgress,
 } from "./scrollToSection";
@@ -33,9 +34,9 @@ const here = dirname(fileURLToPath(import.meta.url));
 const read = (path: string) => readFileSync(join(here, path), "utf8");
 
 describe("pinned progressive scene navigation", () => {
-  it("uses a tunable 160px threshold and transitions forward immediately", () => {
-    assert.equal(PROGRESSIVE_SCROLL_UNLOCK_THRESHOLD_PX, 160);
-    const partial = applyDirectionalIntent(EMPTY_DIRECTIONAL_INTENT, 159);
+  it("uses a tunable 80px threshold and transitions forward immediately", () => {
+    assert.equal(PROGRESSIVE_SCROLL_UNLOCK_THRESHOLD_PX, 80);
+    const partial = applyDirectionalIntent(EMPTY_DIRECTIONAL_INTENT, 79);
     const reached = applyDirectionalIntent(partial.state, 1);
     assert.equal(partial.transition, null);
     assert.equal(reached.transition, "forward");
@@ -43,8 +44,8 @@ describe("pinned progressive scene navigation", () => {
   });
 
   it("transitions backward at the same signed threshold", () => {
-    const partial = applyDirectionalIntent(EMPTY_DIRECTIONAL_INTENT, -100);
-    const reached = applyDirectionalIntent(partial.state, -60);
+    const partial = applyDirectionalIntent(EMPTY_DIRECTIONAL_INTENT, -50);
+    const reached = applyDirectionalIntent(partial.state, -30);
     assert.equal(reached.transition, "backward");
     assert.deepEqual(reached.state, EMPTY_DIRECTIONAL_INTENT);
   });
@@ -65,7 +66,7 @@ describe("pinned progressive scene navigation", () => {
 
   it("requires distinct intents for PRIORITY → TOUR → HERO", () => {
     const sceneIds = ["orientation", "priority", "racio", "decision"];
-    const threshold = applyDirectionalIntent(EMPTY_DIRECTIONAL_INTENT, -160);
+    const threshold = applyDirectionalIntent(EMPTY_DIRECTIONAL_INTENT, -80);
     assert.equal(threshold.transition, "backward");
     const tour = resolvePinnedSceneTarget({
       direction: threshold.transition!,
@@ -80,11 +81,11 @@ describe("pinned progressive scene navigation", () => {
       scrollOffsetPx: 20,
     });
     assert.equal(
-      applyDirectionalIntent(EMPTY_DIRECTIONAL_INTENT, -159).transition,
+      applyDirectionalIntent(EMPTY_DIRECTIONAL_INTENT, -79).transition,
       null,
     );
     const hero = resolvePinnedSceneTarget({
-      direction: applyDirectionalIntent(EMPTY_DIRECTIONAL_INTENT, -160)
+      direction: applyDirectionalIntent(EMPTY_DIRECTIONAL_INTENT, -80)
         .transition!,
       activeSceneId: tour!.activeSceneId,
       orientationSceneId: "orientation",
@@ -101,7 +102,7 @@ describe("pinned progressive scene navigation", () => {
   it("requires distinct intents for HERO → TOUR → PRIORITY", () => {
     const sceneIds = ["orientation", "priority", "racio", "decision"];
     const tour = resolvePinnedSceneTarget({
-      direction: applyDirectionalIntent(EMPTY_DIRECTIONAL_INTENT, 160)
+      direction: applyDirectionalIntent(EMPTY_DIRECTIONAL_INTENT, 80)
         .transition!,
       activeSceneId: "orientation",
       orientationSceneId: "orientation",
@@ -114,11 +115,11 @@ describe("pinned progressive scene navigation", () => {
       scrollOffsetPx: 20,
     });
     assert.equal(
-      applyDirectionalIntent(EMPTY_DIRECTIONAL_INTENT, 159).transition,
+      applyDirectionalIntent(EMPTY_DIRECTIONAL_INTENT, 79).transition,
       null,
     );
     const priority = resolvePinnedSceneTarget({
-      direction: applyDirectionalIntent(EMPTY_DIRECTIONAL_INTENT, 160)
+      direction: applyDirectionalIntent(EMPTY_DIRECTIONAL_INTENT, 80)
         .transition!,
       activeSceneId: tour!.activeSceneId,
       orientationSceneId: "orientation",
@@ -152,15 +153,14 @@ describe("pinned progressive scene navigation", () => {
     assert.doesNotMatch(hook, /document\.body\.scrollHeight/);
   });
 
-  it("pins input only at the matching directional reading boundary", () => {
+  it("takes over intent only at the matching directional reading boundary", () => {
     const hook = read("useProgressiveScrollUnlock.ts");
     assert.match(
       hook,
       /direction === "forward"[\s\S]*isAtCurrentSceneBoundary/,
     );
     assert.match(hook, /isAtCurrentSceneStart/);
-    assert.match(hook, /event\.preventDefault\(\)/);
-    assert.match(hook, /passive: false/);
+    assert.doesNotMatch(hook, /event\.preventDefault\(\)/);
   });
 
   it("protects directional inner scrollers", () => {
@@ -180,18 +180,34 @@ describe("pinned progressive scene navigation", () => {
     assert.match(page, /onNavigate: navigateProgressively/);
   });
 
-  it("starts transition synchronously at threshold", () => {
+  it("hands the threshold frame to native scroll before canonical RAF takeover", () => {
     const hook = read("useProgressiveScrollUnlock.ts");
-    const transition = hook.indexOf("navigateRef.current(result.transition)");
-    assert.ok(transition > 0);
-    assert.doesNotMatch(
-      hook.slice(transition - 180, transition + 80),
-      /setTimeout/,
+    const threshold = hook.indexOf(
+      'markPinnedNavigationTiming("threshold")',
     );
-    assert.match(hook, /markPinnedNavigationTiming\("threshold"\)/);
-    const page = read("../ClientStudioPage.tsx");
-    assert.match(page, /markPinnedNavigationTiming\("transition-request"\)/);
-    assert.doesNotMatch(page, /animateOnMount=\{revealedSceneCount/);
+    const scheduled = hook.indexOf(
+      "takeoverFrameId = window.requestAnimationFrame",
+      threshold,
+    );
+    const navigate = hook.indexOf(
+      "navigateRef.current(transition)",
+      scheduled,
+    );
+    assert.ok(threshold > 0);
+    assert.ok(scheduled > threshold);
+    assert.ok(navigate > scheduled);
+    assert.match(
+      hook,
+      /takeoverFrameId = window\.requestAnimationFrame\([\s\S]*navigateRef\.current\(transition\)/,
+    );
+    assert.match(
+      hook,
+      /if \(takeoverFrameId !== null\)[\s\S]*cancelAnimationFrame\(takeoverFrameId\)/,
+    );
+    assert.doesNotMatch(
+      hook,
+      /navigateRef\.current\(result\.transition\)/,
+    );
   });
 
   it("uses one distance-aware canonical RAF animation authority", () => {
@@ -209,6 +225,27 @@ describe("pinned progressive scene navigation", () => {
     assert.match(scroll, /activeScrollFrames[\s\S]*cancelAnimationFrame/);
     assert.match(scroll, /scrollBehavior = "auto"/);
     assert.match(scroll, /scrollSnapType = "none"/);
+  });
+
+  it("captures the canonical RAF baseline from live scroll position on its first frame", () => {
+    const scroll = read("scrollToSection.ts");
+
+    assert.match(
+      scroll,
+      /const readScrollPosition = \(\) =>[\s\S]*scroller\.scrollTop/,
+    );
+    assert.match(
+      scroll,
+      /let from: number \| null = null;/,
+    );
+    assert.match(
+      scroll,
+      /const tick = \(now: number\) => \{[\s\S]*if \(from === null \|\| startedAt === null\)[\s\S]*from = readScrollPosition\(\);[\s\S]*startedAt = now;/,
+    );
+    assert.doesNotMatch(
+      scroll,
+      /const from =\s*scroller instanceof Window \? scroller\.scrollY : scroller\.scrollTop;[\s\S]*const tick/,
+    );
   });
 
   it("uses the same generic duration and target pipeline for every stop", () => {
@@ -282,17 +319,49 @@ describe("pinned progressive scene navigation", () => {
     assert.ok(1 - samples.at(-2)! < 0.001);
   });
 
+  it("never pulls live scroll backward against the canonical direction", () => {
+    assert.equal(
+      canonicalMonotonicScrollTarget(0, 600, 450, 520),
+      520,
+    );
+    assert.equal(
+      canonicalMonotonicScrollTarget(600, 0, 150, 80),
+      80,
+    );
+    assert.equal(
+      canonicalMonotonicScrollTarget(0, 600, 450, 620),
+      600,
+    );
+    assert.equal(
+      canonicalMonotonicScrollTarget(600, 0, 150, -20),
+      0,
+    );
+  });
+
   it("schedules the first movement frame without a timer delay", () => {
     const scroll = read("scrollToSection.ts");
-    const start = scroll.indexOf("const startedAt = performance.now()");
+    const animate = scroll.indexOf("function animateScroll(");
+    const tick = scroll.indexOf("const tick = (now: number) => {", animate);
     const firstFrame = scroll.indexOf(
       "window.requestAnimationFrame(tick)",
-      start,
+      tick,
     );
-    assert.ok(start > 0 && firstFrame > start);
-    assert.doesNotMatch(scroll.slice(start, firstFrame), /setTimeout/);
+
+    assert.ok(animate > 0);
+    assert.ok(tick > animate);
+    assert.ok(firstFrame > tick);
+
+    assert.doesNotMatch(
+      scroll.slice(animate, firstFrame),
+      /setTimeout/,
+    );
+
+    assert.match(
+      scroll.slice(tick, firstFrame),
+      /startedAt = now/,
+    );
+
     assert.match(scroll, /onFirstFrame\?\.\(\)/);
-    assert.match(scroll, /markPinnedNavigationTiming/);
   });
 
   it("positions only after target render readiness", () => {
@@ -329,13 +398,27 @@ describe("pinned progressive scene navigation", () => {
     assert.match(scroll, /restoreChrome\(\);\s*onComplete\?\.\(\)/);
   });
 
-  it("blocks momentum and resets intent through transition and lock", () => {
+  it("keeps CSS proximity snap out of the native pre-threshold path", () => {
+    const page = read("../ClientStudioPage.tsx");
+    assert.match(
+      page,
+      /<GuidedJourneyRoot snapEnabled=\{false\} \/>/,
+    );
+    assert.doesNotMatch(page, /setSnapEnabled/);
+    assert.doesNotMatch(page, /const \[snapEnabled/);
+  });
+
+  it("releases consumed gesture ownership when transition lock ends", () => {
     const page = read("../ClientStudioPage.tsx");
     const hook = read("useProgressiveScrollUnlock.ts");
     assert.match(page, /navigationBlocked: isSceneTransitioning,/);
     assert.match(
       hook,
-      /if \(navigationBlocked\) gestureConsumedRef.current = true/,
+      /gestureConsumedRef\.current = navigationBlocked/,
+    );
+    assert.match(
+      hook,
+      /if \(navigationBlocked \|\| gestureConsumedRef\.current\) return false/,
     );
     assert.match(
       page,
@@ -349,12 +432,77 @@ describe("pinned progressive scene navigation", () => {
     assert.match(read("useProgressiveScrollUnlock.ts"), /gestureConsumedRef/);
   });
 
-  it("uses one canonical 48px desktop gap for standard scenes", () => {
+
+
+  it("keeps reachability in a journey-tail runway without moving scene geometry", () => {
+    const page = read("../ClientStudioPage.tsx");
+    const css = read("../../../index.css");
+
+    assert.match(
+      page,
+      /--journey-reachability-runway/,
+    );
+    assert.match(
+      page,
+      /const requiredMaximum = Math\.max\([\s\S]*requested,[\s\S]*currentScrollTop/,
+    );
+    assert.match(
+      page,
+      /maximumWithoutRunway = Math\.max/,
+    );
+    assert.match(
+      page,
+      /currentScrollTop <= maximumWithoutRunway \+ 1/,
+    );
+    assert.match(
+      css,
+      /padding-bottom:\s*var\(--journey-reachability-runway, 0px\)/,
+    );
+    assert.doesNotMatch(
+      page,
+      /style\.setProperty\("--journey-anchor-reserve"/,
+    );
+    assert.doesNotMatch(
+      page,
+      /previousSceneId = scenes\[revealedSceneCount - 2\]/,
+    );
+  });
+
+  it("keeps native movement through the 80px threshold frame", () => {
+    const hook = read("useProgressiveScrollUnlock.ts");
+    assert.match(
+      hook,
+      /PROGRESSIVE_SCROLL_UNLOCK_THRESHOLD_PX = 80/,
+    );
+    assert.match(
+      hook,
+      /Native scrolling owns the gesture through the threshold frame/,
+    );
+    assert.match(
+      hook,
+      /takeoverFrameId = window\.requestAnimationFrame/,
+    );
+    assert.doesNotMatch(hook, /event\.preventDefault\(\)/);
+  });
+
+  it("does not stretch standard desktop scenes beyond their real content", () => {
+    const css = read("../../../index.css");
+    assert.match(
+      css,
+      /@media \(min-width: 1280px\)[\s\S]*data-standard-desktop-gap=["']true["'][\s\S]*min-height:\s*0 !important/,
+    );
+    assert.match(
+      css,
+      /--journey-pinned-scene-gap:\s*600px/,
+    );
+  });
+
+  it("uses one canonical large gap for every pinned scene boundary", () => {
     const page = read("../ClientStudioPage.tsx");
     const css = read("../../../index.css");
     assert.match(
       css,
-      /@media \(min-width: 1280px\)[\s\S]*data-standard-desktop-gap=["']true["'][\s\S]*margin-top: 48px/,
+      /--journey-pinned-scene-gap:\s*600px[\s\S]*data-standard-desktop-gap=["']true["'][\s\S]*margin-top:\s*var\(--journey-pinned-scene-gap\)/,
     );
     assert.equal((page.match(/standardDesktopGap/g) ?? []).length, 3);
   });
@@ -474,17 +622,13 @@ describe("pinned progressive scene navigation", () => {
     );
   });
 
-  it("keeps the global reserve on responsive layouts only", () => {
+  it("keeps responsive baseline free of permanent bottom reserve", () => {
     const css = read("../../../index.css");
     assert.match(
       css,
-      /body \{[\s\S]*padding-bottom: 0;[\s\S]*@media \(max-width: 1279px\)[\s\S]*padding-bottom: max\(300px, env\(safe-area-inset-bottom\)\)/,
+      /body \{[\s\S]*padding-bottom: 0;[\s\S]*@media \(max-width: 1279px\)[\s\S]*padding-bottom: env\(safe-area-inset-bottom\)/,
     );
-    assert.equal((css.match(/padding-bottom: max\(300px/g) ?? []).length, 1);
-    assert.ok(
-      css.indexOf("@media (max-width: 1279px)") <
-        css.indexOf("padding-bottom: max(300px"),
-    );
+    assert.doesNotMatch(css, /padding-bottom: max\(300px/);
   });
 
   it("keeps desktop shell and sticky rail on the same document contract", () => {
@@ -557,26 +701,33 @@ describe("initial canonical landing state", () => {
     assert.doesNotMatch(initial, /setTimeout/);
   });
 
-  it("commits TOUR logical state only after initial canonical landing completes", () => {
+  it("defers TOUR logical commit until the frame after physical initial landing", () => {
     const page = read("../ClientStudioPage.tsx");
-
-    assert.match(
-      page,
-      /const \[orientationStop, setOrientationStop\] = useState<"hero" \| "tour">\(\s*"hero",\s*\)/,
-    );
 
     const initialPath = page.indexOf("if (initialLandingSceneId === null)");
     const laterPath = page.indexOf("if (pendingSceneId === null)");
+
     assert.ok(initialPath > 0 && laterPath > initialPath);
 
     const initial = page.slice(initialPath, laterPath);
+    const reached = initial.indexOf(
+      'markPinnedNavigationTiming("target-reached")',
+    );
+    const deferred = initial.indexOf(
+      "window.requestAnimationFrame(() => {",
+      reached,
+    );
+    const logical = initial.indexOf(
+      'setOrientationStop("tour")',
+      deferred,
+    );
+
+    assert.ok(reached > 0);
+    assert.ok(deferred > reached);
+    assert.ok(logical > deferred);
 
     assert.match(
-      initial,
-      /onComplete:\s*\(\)\s*=>\s*\{[\s\S]*setOrientationStop\("tour"\)/,
-    );
-    assert.match(
-      initial,
+      initial.slice(deferred),
       /setScrollIntentResetKey\(\(current\) => current \+ 1\)/,
     );
   });

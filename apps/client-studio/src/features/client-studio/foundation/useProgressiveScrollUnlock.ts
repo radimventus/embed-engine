@@ -3,7 +3,7 @@ import { useEffect, useRef } from "react";
 import { markPinnedNavigationTiming } from "./scrollToSection";
 
 /** Product-tunable input distance; not part of the public UX contract. */
-export const PROGRESSIVE_SCROLL_UNLOCK_THRESHOLD_PX = 160;
+export const PROGRESSIVE_SCROLL_UNLOCK_THRESHOLD_PX = 80;
 
 const BOTTOM_TOLERANCE_PX = 2;
 const INTENT_IDLE_RESET_MS = 450;
@@ -275,10 +275,11 @@ export function useProgressiveScrollUnlock({
 
   useEffect(() => {
     intentRef.current = EMPTY_DIRECTIONAL_INTENT;
-    if (navigationBlocked) gestureConsumedRef.current = true;
+    gestureConsumedRef.current = navigationBlocked;
 
     const root = scrollRoot();
     const eventTarget: EventTarget = root;
+    let takeoverFrameId: number | null = null;
 
     const clearIdleTimer = () => {
       if (idleTimerRef.current !== null) {
@@ -324,17 +325,23 @@ export function useProgressiveScrollUnlock({
       intentRef.current = result.state;
       clearIdleTimer();
       if (result.transition !== null) {
+        const transition = result.transition;
         resetIntent();
         gestureConsumedRef.current = true;
         markPinnedNavigationTiming("threshold");
-        navigateRef.current(result.transition);
-        return true;
+        takeoverFrameId = window.requestAnimationFrame(() => {
+          takeoverFrameId = null;
+          navigateRef.current(transition);
+        });
+        return false;
       }
       idleTimerRef.current = window.setTimeout(
         resetIntent,
         INTENT_IDLE_RESET_MS,
       );
-      return true;
+      // Native scrolling owns the gesture through the threshold frame.
+      // Canonical RAF takes over on the next frame from the live scrollTop.
+      return false;
     };
 
     const onWheel = (event: WheelEvent) => {
@@ -345,9 +352,7 @@ export function useProgressiveScrollUnlock({
       }
       lastWheelAtRef.current = now;
       if (navigationBlocked) gestureConsumedRef.current = true;
-      if (addIntent(wheelDeltaPx(event, root), event.target)) {
-        event.preventDefault();
-      }
+      addIntent(wheelDeltaPx(event, root), event.target);
     };
     const onTouchStart = (event: TouchEvent) => {
       gestureConsumedRef.current = navigationBlocked;
@@ -359,11 +364,10 @@ export function useProgressiveScrollUnlock({
       const previousY = touchYRef.current;
       touchYRef.current = currentY;
       if (currentY !== null && previousY !== null) {
-        if (
-          addIntent(touchDownwardDeltaPx(previousY, currentY), event.target)
-        ) {
-          event.preventDefault();
-        }
+        addIntent(
+          touchDownwardDeltaPx(previousY, currentY),
+          event.target,
+        );
       }
     };
     const onTouchEnd = () => {
@@ -389,6 +393,10 @@ export function useProgressiveScrollUnlock({
 
     return () => {
       clearIdleTimer();
+      if (takeoverFrameId !== null) {
+        window.cancelAnimationFrame(takeoverFrameId);
+        takeoverFrameId = null;
+      }
       eventTarget.removeEventListener("wheel", onWheel as EventListener);
       eventTarget.removeEventListener(
         "touchstart",
