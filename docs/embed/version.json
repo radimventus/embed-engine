@@ -4,12 +4,12 @@
   "apiVersion": "0.1.0",
   "freeze": "Architecture Freeze v0.1",
   "fingerprint": {
-    "commit": "6db65ca4",
-    "builtAt": "2026-09-13T06:17:28Z",
+    "commit": "5766b0a8",
+    "builtAt": "2026-09-21T06:31:58Z",
     "runtimeSource": "builder-package/projectBuilderImportToHousePackage",
-    "marker": "EMBED_RUNTIME_BUILD:6db65ca4@2026-09-13T06:17:28Z",
-    "iifeSha256": "a685a83ef7245e1e5578c0d9f8e87b2d94ecdff8aee4e526fc0b331f344c7017",
-    "esmSha256": "73b6df2dc45cc5ec071f9bee6fd30f298042c286d2efd35f48b3b6e1efaea4fa"
+    "marker": "EMBED_RUNTIME_BUILD:5766b0a8@2026-09-21T06:31:58Z",
+    "iifeSha256": "57f7b8e542ea9bf1d9138fddc0ecc2c1a384d2e4873c73913d9c0e9e79d0c870",
+    "esmSha256": "8515af2c66f48f0434fd77b4eca73da3813811bd16f5afb98876b0e7c545c90f"
   },
   "artifacts": {
     "esm": "embed.es.js",
