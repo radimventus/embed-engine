@@ -86,6 +86,9 @@ describe('BuilderStudioApp production imports (CAP-BLD-07)', () => {
       /openHousePackageRuntimePreviewWindow\(houseId\)/,
     );
     assert.match(mountSource, /const objectId = options\.objectId\.trim\(\)/);
+    assert.match(mountSource, /Embed\.mount\(/);
+    assert.match(mountSource, /mode: 'inline'/);
+    assert.doesNotMatch(mountSource, /JourneySceneFrame|ClientStudioPage/);
     assert.doesNotMatch(mountSource, /house-modern-01/);
   });
 });

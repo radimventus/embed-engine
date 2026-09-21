@@ -42,6 +42,21 @@ describe("canonical partner Embed snippet", () => {
     assert.match(snippet, /entryPoint: "hero-cta"/);
   });
 
+  it("shares one public Embed runtime across Houses and isolates objectId", () => {
+    const bungalov = buildOfficialPartnerSnippet({ houseId: BUNGALOV });
+    const vpd = buildOfficialPartnerSnippet({ houseId: VPD });
+    const placeholder = "__HOUSE_ID__";
+
+    assert.match(bungalov, /\/embed\/embed\.iife\.js/);
+    assert.match(vpd, /\/embed\/embed\.iife\.js/);
+    assert.equal(
+      bungalov.replaceAll(BUNGALOV, placeholder),
+      vpd.replaceAll(VPD, placeholder),
+    );
+    assert.doesNotMatch(bungalov, /JourneySceneFrame|PriorityEngine|AuditLeadCapture/);
+    assert.doesNotMatch(vpd, /house-packages\/bungalov-4kk|house-packages\/patrovy-5kk/);
+  });
+
   it("contains no customer Social Proof or Experience corpus", () => {
     const snippet = buildOfficialPartnerSnippet({ houseId: BUNGALOV });
 

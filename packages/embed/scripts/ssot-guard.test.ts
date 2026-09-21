@@ -158,3 +158,107 @@ describe("SSOT — single Runtime host path", () => {
     assert.match(demo, /appType:\s*["']mpa["']/);
   });
 });
+
+describe("SSOT — canonical Client Studio Experience delivery", () => {
+  it("production Embed Experience mounts canonical Client Studio", () => {
+    const delivery = read(
+      "packages/embed/src/delivery/mountClientStudioDelivery.ts",
+    );
+    const launch = read("packages/embed/src/delivery/launchExperience.ts");
+    const mount = read("packages/embed/src/mount.ts");
+    const aliases = read("packages/embed/vite.ssot-aliases.ts");
+    const clientMount = read(
+      "apps/client-studio/src/embed/mountClientStudio.tsx",
+    );
+
+    assert.match(delivery, /from "@client-studio\/embed-mount"/);
+    assert.match(delivery, /mountClientStudio\(/);
+    assert.match(launch, /from "@client-studio\/embed-mount"/);
+    assert.match(launch, /mountClientStudio\(/);
+    assert.match(mount, /bootstrapClientStudioDelivery/);
+    assert.match(
+      aliases,
+      /embed\/mountClientStudio\.tsx/,
+    );
+    assert.match(clientMount, /ClientStudioApp/);
+    assert.match(clientMount, /export function mountClientStudio/);
+  });
+
+  it("Builder preview uses the same canonical Experience mount", () => {
+    const preview = read(
+      "apps/builder-studio/src/features/house-package/mountHousePackageRuntimePreview.ts",
+    );
+    const builderVite = read("apps/builder-studio/vite.config.ts");
+    assert.match(preview, /Embed\.mount\(/);
+    assert.match(preview, /mode: 'inline'/);
+    assert.match(preview, /objectId/);
+    assert.doesNotMatch(preview, /createStubRuntimeAdapter/);
+    assert.match(builderVite, /createSsotResolveAliases/);
+  });
+
+  it("does not host a second Journey/Priority/Racio/Audit Experience tree", () => {
+    const embedSrc = join(repoRoot, "packages/embed/src");
+    const forbidden = [
+      "JourneySceneFrame",
+      "ClientStudioPage",
+      "useProgressiveScrollUnlock",
+      "pinnedSceneOrder",
+      "AuditLeadCapture",
+      "AuditConsentDialog",
+    ];
+    function walk(dir: string): string[] {
+      return readdirSync(dir, { withFileTypes: true }).flatMap((entry) => {
+        const next = join(dir, entry.name);
+        if (entry.isDirectory()) return walk(next);
+        return [next];
+      });
+    }
+    const files = walk(embedSrc).filter((file) =>
+      /\.(ts|tsx|js|mjs)$/.test(file),
+    );
+    for (const file of files) {
+      const relative = file.slice(repoRoot.length + 1);
+      if (relative.includes(".test.")) continue;
+      const source = readFileSync(file, "utf8");
+      for (const token of forbidden) {
+        assert.equal(
+          source.includes(token),
+          false,
+          `${relative} must not reimplement ${token}`,
+        );
+      }
+    }
+  });
+
+  it("Studio publish cannot READY without rebuilding/validating Embed provenance", () => {
+    const studioPublish = read("scripts/publish-studio-platform.mjs");
+    const provenance = read("scripts/lib/canonicalReleaseProvenance.mjs");
+    assert.match(studioPublish, /evaluateCanonicalReleaseArtifacts/);
+    assert.match(studioPublish, /publishCanonicalEmbedRelease/);
+    assert.match(studioPublish, /\["embed:publish"\]/);
+    assert.match(studioPublish, /assertCanonicalEmbedProvenance/);
+    assert.match(studioPublish, /CONIS_STUDIO_PUBLISH_RUNNING/);
+    assert.match(provenance, /commitsIdentifySameSource/);
+    const embedPublish = read("packages/embed/scripts/publish-release.mjs");
+    assert.doesNotMatch(embedPublish, /studio:publish/);
+  });
+
+  it("TASK 119 scroll contract remains in canonical Client Studio source", () => {
+    const scroll = read(
+      "apps/client-studio/src/features/client-studio/foundation/scrollToSection.ts",
+    );
+    const unlock = read(
+      "apps/client-studio/src/features/client-studio/foundation/useProgressiveScrollUnlock.ts",
+    );
+    const pinned = read(
+      "apps/client-studio/src/features/client-studio/foundation/pinnedSceneOrder.ts",
+    );
+    assert.match(unlock, /PROGRESSIVE_SCROLL_UNLOCK_THRESHOLD_PX = 80/);
+    assert.match(scroll, /CANONICAL_SCROLL_MIN_DURATION_MS = 653/);
+    assert.match(scroll, /CANONICAL_SCROLL_MAX_DURATION_MS = 1056/);
+    assert.match(scroll, /614\.4 \+ Math\.abs\(distancePx\) \* 0\.3648/);
+    assert.match(scroll, /bounded \* bounded \* \(3 - 2 \* bounded\)/);
+    assert.match(pinned, /orientationStop === "hero"/);
+    assert.match(pinned, /PILOT_SECTION_IDS\.socialProof/);
+  });
+});

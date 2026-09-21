@@ -33,7 +33,7 @@
     "deploy:pages": "pnpm run publish:release",
     "ssot:guard": "tsx --test scripts/ssot-guard.test.ts",
     "typecheck": "tsc --noEmit",
-    "test": "tsx --test src/Embed.test.ts src/fixtures.test.ts src/delivery/deliveryLayer.test.ts src/delivery/revealEngine.test.ts src/delivery/cssIsolation.test.ts src/delivery/resolveProductionAssetBase.test.ts src/launcher/embedHero/socialProofParity.test.ts scripts/ssot-guard.test.ts scripts/lib/partnerSnippet.test.mjs src/delivery/chatParity.test.ts",
+    "test": "tsx --test src/Embed.test.ts src/fixtures.test.ts src/delivery/deliveryLayer.test.ts src/delivery/revealEngine.test.ts src/delivery/cssIsolation.test.ts src/delivery/resolveProductionAssetBase.test.ts src/launcher/embedHero/socialProofParity.test.ts scripts/ssot-guard.test.ts scripts/lib/partnerSnippet.test.mjs src/delivery/chatParity.test.ts ../../scripts/lib/canonicalReleaseProvenance.test.mjs",
     "test:browser": "tsx --test src/browser/embed.browser.test.ts",
     "demo": "vite --config demo/vite.config.ts"
   },

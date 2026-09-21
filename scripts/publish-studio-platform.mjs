@@ -28,6 +28,8 @@ import path from "node:path";
 import { spawnSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
 
+import { evaluateCanonicalReleaseArtifacts } from "./lib/canonicalReleaseProvenance.mjs";
+
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const STUDIO_ORIGIN = "https://conis.cz";
 
@@ -274,7 +276,7 @@ function stageSharedHousePackages(stageRoot) {
   }
 }
 
-function writeReleaseMetadata(stageRoot) {
+function currentHeadSha() {
   const sha = spawnSync("git", ["rev-parse", "HEAD"], {
     cwd: repoRoot,
     encoding: "utf8",
@@ -282,11 +284,15 @@ function writeReleaseMetadata(stageRoot) {
   if (sha.status !== 0) {
     fail("Cannot resolve source Git SHA");
   }
+  return sha.stdout.trim();
+}
+
+function writeReleaseMetadata(stageRoot) {
   writeFileSync(
     path.join(stageRoot, "studio", "release.json"),
     `${JSON.stringify(
       {
-        sourceGitSha: sha.stdout.trim(),
+        sourceGitSha: currentHeadSha(),
         builtAt: new Date().toISOString(),
         topologyVersion: TOPOLOGY_VERSION,
         surfaces: STUDIOS.map((studio) => studio.id),
@@ -295,6 +301,44 @@ function writeReleaseMetadata(stageRoot) {
       null,
       2,
     )}\n`,
+  );
+}
+
+function publishCanonicalEmbedRelease() {
+  run(
+    "Canonical Embed Release Snapshot from the same HEAD",
+    "pnpm",
+    ["embed:publish"],
+    {
+      CONIS_STUDIO_PUBLISH_RUNNING: "1",
+      CONIS_EMBED_PUBLISH_RUNNING: "1",
+    },
+  );
+}
+
+function assertCanonicalEmbedProvenance(stageRoot) {
+  const studioRelease = JSON.parse(
+    readFileSync(path.join(stageRoot, "studio", "release.json"), "utf8"),
+  );
+  const embedVersionPath = path.join(repoRoot, "docs/embed/version.json");
+  if (!existsSync(embedVersionPath)) {
+    fail(
+      "Studio publish cannot be READY: missing docs/embed/version.json.\nRun `pnpm embed:publish` from this committed HEAD.",
+    );
+  }
+  const embedVersion = JSON.parse(readFileSync(embedVersionPath, "utf8"));
+  const result = evaluateCanonicalReleaseArtifacts({
+    sourceHeadSha: currentHeadSha(),
+    studioRelease,
+    embedVersion,
+  });
+  if (!result.ok) {
+    fail(
+      `Studio publish cannot be READY while Embed is stale.\n${result.reason}\nRun \`pnpm embed:publish\` from this committed HEAD, then retry studio:publish.`,
+    );
+  }
+  console.log(
+    `  canonical provenance PASS (${result.studioSourceGitSha} ≡ ${result.embedFingerprintCommit})`,
   );
 }
 
@@ -371,6 +415,10 @@ console.log("W-01A — Publish CONIS Studio platform");
 console.log(`Origin: ${STUDIO_ORIGIN}/studio`);
 console.log("════════════════════════════════════════════════════════");
 
+if (process.env.CONIS_STUDIO_PUBLISH_RUNNING === "1") {
+  fail("Refusing nested studio:publish (Embed publish must not re-enter Studio)");
+}
+
 assertCleanSource();
 assertSourceTopology();
 
@@ -388,6 +436,8 @@ stageSharedHousePackages(stageRoot);
 writeStudioSurfaces(stageRoot);
 writeReleaseMetadata(stageRoot);
 validateStage(stageRoot);
+publishCanonicalEmbedRelease();
+assertCanonicalEmbedProvenance(stageRoot);
 publishStage(stageRoot);
 rmSync(stageRoot, { recursive: true, force: true });
 
