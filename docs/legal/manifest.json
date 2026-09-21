@@ -6,6 +6,12 @@
       "docx": "01_obchodni-podminky.docx",
       "html": "01_obchodni-podminky.html",
       "pdf": "01–obchodni-podminky.pdf"
+    },
+    "nda": {
+      "version": "1.0",
+      "effectiveDate": "2026-09-21",
+      "docx": "05_nda.docx",
+      "pdf": "05_nda.pdf"
     }
   }
 }

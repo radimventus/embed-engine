@@ -5,6 +5,7 @@ import {
   createPlatformAccessInviteClient,
   type PlatformAccessInvite,
 } from '../api/platformAccessClient';
+import { resolvePublicLegalHref } from '../cloud/cloudConfig';
 import { inviteLifecycleMessage } from '../pilot/invitationWorkflow';
 import { prepareWelcomeJourney } from '../pilot/welcomeStore';
 import { usePlatformSession } from './SessionProvider';
@@ -19,6 +20,8 @@ type InviteStep = 'token' | 'nda' | 'password';
 
 const NDA_SUMMARY =
   'Informace a podklady zpřístupněné v rámci pilotního programu CONIS jsou důvěrné a jsou určeny pouze pro Vaši společnost a zapojený tým.';
+
+const NDA_DOCUMENT_HREF = resolvePublicLegalHref('05_nda.pdf');
 
 /**
  * PE-04 — Invitation → NDA Gateway → First Password → Account Activation.
@@ -247,6 +250,23 @@ export function InviteShell({
               <p className="platform-access__lead" style={{ marginTop: 0 }}>
                 {NDA_SUMMARY}
               </p>
+
+              <p style={{ margin: '0 0 12px' }}>
+                <a
+                  href={NDA_DOCUMENT_HREF}
+                  target="_blank"
+                  rel="noopener"
+                  data-testid="nda-document-link"
+                  style={{
+                    color: '#071b33',
+                    fontSize: 13,
+                    fontWeight: 700,
+                    textDecoration: 'underline',
+                  }}
+                >
+                  Dohoda o mlčenlivosti (NDA)
+                </a>
+              </p>
               {!ndaAccepted && (
                 <div
                   data-testid="nda-consent-comment"
@@ -271,8 +291,8 @@ export function InviteShell({
                       fontWeight: 600,
                     }}
                   >
-                    Souhlasím s podmínkami pilotního přístupu a zachováním
-                    důvěrnosti.
+                    Souhlasím s Dohodou o mlčenlivosti (NDA) a podmínkami
+                    pilotního přístupu.
                   </span>
 
                   <button
@@ -309,7 +329,7 @@ export function InviteShell({
                   checked={ndaAccepted}
                   onChange={(event) => setNdaAccepted(event.target.checked)}
                   data-testid="nda-accept"
-                  aria-label="Souhlas s podmínkami pilotního přístupu a zachováním důvěrnosti"
+                  aria-label="Souhlas s Dohodou o mlčenlivosti (NDA) a podmínkami pilotního přístupu"
                 />
                 <span>
                   {ndaAccepted ? 'Souhlas potvrzen.' : 'Souhlas'}

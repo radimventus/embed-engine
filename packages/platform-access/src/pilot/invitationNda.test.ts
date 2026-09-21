@@ -3,6 +3,9 @@
  */
 
 import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
+import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { describe, it } from 'node:test';
 
 import {
@@ -147,4 +150,21 @@ describe('PE-04 Invitation & NDA', () => {
     resetUserRegistry();
     resetPartnerWelcomeStore();
   });
+
+  it('exposes the canonical public NDA document in the invite gateway', () => {
+    const source = readFileSync(
+      join(
+        dirname(fileURLToPath(import.meta.url)),
+        '../react/InviteShell.tsx',
+      ),
+      'utf8',
+    );
+
+    assert.match(source, /resolvePublicLegalHref\('05_nda\.pdf'\)/);
+    assert.match(source, /data-testid="nda-document-link"/);
+    assert.match(source, /Dohoda o mlčenlivosti \(NDA\)/);
+    assert.match(source, /target="_blank"/);
+    assert.match(source, /rel="noopener"/);
+  });
+
 });
