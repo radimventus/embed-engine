@@ -213,11 +213,11 @@ describe("pinned progressive scene navigation", () => {
   it("uses one distance-aware canonical RAF animation authority", () => {
     const scroll = read("scrollToSection.ts");
     const heroCta = read("../sections/Hero/HeroCTA.tsx");
-    assert.equal(CANONICAL_SCROLL_MIN_DURATION_MS, 816);
-    assert.equal(CANONICAL_SCROLL_MAX_DURATION_MS, 1320);
-    assert.equal(canonicalScrollDurationMs(0), 816);
-    assert.equal(canonicalScrollDurationMs(2_000), 1320);
-    assert.equal(canonicalScrollDurationMs(500), 996);
+    assert.equal(CANONICAL_SCROLL_MIN_DURATION_MS, 653);
+    assert.equal(CANONICAL_SCROLL_MAX_DURATION_MS, 1056);
+    assert.equal(canonicalScrollDurationMs(0), 653);
+    assert.equal(canonicalScrollDurationMs(2_000), 1056);
+    assert.equal(canonicalScrollDurationMs(500), 797);
     assert.match(scroll, /canonicalScrollDurationMs/);
     assert.match(scroll, /canonicalScrollProgress/);
     assert.doesNotMatch(heroCta, /requestAnimationFrame|scrollTop|scrollTo\(/);
@@ -250,8 +250,8 @@ describe("pinned progressive scene navigation", () => {
 
   it("uses the same generic duration and target pipeline for every stop", () => {
     const scroll = read("scrollToSection.ts");
-    assert.equal(canonicalScrollDurationMs(605), 1044);
-    assert.equal(canonicalScrollDurationMs(804), 1135);
+    assert.equal(canonicalScrollDurationMs(605), 835);
+    assert.equal(canonicalScrollDurationMs(804), 908);
     assert.doesNotMatch(scroll, /heroTour|HERO_TOUR/);
     assert.doesNotMatch(scroll, /sectionId === ["']social-proof["']/);
     assert.match(

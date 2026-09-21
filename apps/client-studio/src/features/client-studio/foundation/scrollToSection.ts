@@ -2,8 +2,8 @@
  * Smooth scroll to a Decision Journey section anchor (CSCB-01).
  * Aligns the section just below the sticky Experience header when present.
  */
-export const CANONICAL_SCROLL_MIN_DURATION_MS = 816;
-export const CANONICAL_SCROLL_MAX_DURATION_MS = 1320;
+export const CANONICAL_SCROLL_MIN_DURATION_MS = 653;
+export const CANONICAL_SCROLL_MAX_DURATION_MS = 1056;
 
 export function canonicalScrollDurationMs(distancePx: number): number {
   return Math.round(
@@ -11,7 +11,7 @@ export function canonicalScrollDurationMs(distancePx: number): number {
       CANONICAL_SCROLL_MAX_DURATION_MS,
       Math.max(
         CANONICAL_SCROLL_MIN_DURATION_MS,
-        768 + Math.abs(distancePx) * 0.456,
+        614.4 + Math.abs(distancePx) * 0.3648,
       ),
     ),
   );
