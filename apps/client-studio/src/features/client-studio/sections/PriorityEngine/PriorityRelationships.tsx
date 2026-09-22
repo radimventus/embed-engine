@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 
 import {
+  evidenceBoundNarrative,
   HouseRelationshipOutputCache,
   type HouseRelationshipEvidenceBundle,
   type HouseRelationshipOutput,
@@ -68,11 +69,12 @@ function RelationshipDialog({
 
   useEffect(() => {
     let active = true;
-    setOutput(null);
+    const { primaryFact: _primary, relatedFact: _related, supportingFacts: _supporting, ...evidence } = bundle;
+    setOutput({ ...evidence, narrative: evidenceBoundNarrative(bundle) });
     setFailed(false);
     void outputCache.getOrGenerate(bundle, generator).then(
       (value) => { if (active) setOutput(value); },
-      () => { if (active) setFailed(true); },
+      () => { /* Grounded synchronous fallback remains visible. */ },
     );
     closeButtonRef.current?.focus();
     const onKeyDown = (event: KeyboardEvent) => {

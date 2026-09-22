@@ -8,6 +8,7 @@ import {
   PRIORITY_BRIDGE_ANCHOR_ID,
 } from '../../foundation/scrollToSection';
 import { captureJourneyStageFromSection } from '../../foundation/journeyStageCapture';
+import { navigateToJourneySection } from '../../foundation/journeyNavigation';
 import { PILOT_SECTION_IDS } from '../../pilot/pilotVocabulary';
 import { useDecisionSessionRuntime } from '../../runtime/DecisionSessionRuntimeProvider';
 import {
@@ -73,7 +74,7 @@ export type PriorityConversationView = {
 };
 
 function focusAdvisorChat(): void {
-  scrollToSection(PILOT_SECTION_IDS.aiAdvisor);
+  navigateToJourneySection(PILOT_SECTION_IDS.aiAdvisor);
   window.setTimeout(() => {
     const root = document.getElementById(PILOT_SECTION_IDS.aiAdvisor);
     const field = root?.querySelector<HTMLTextAreaElement>('textarea');
@@ -466,9 +467,8 @@ export function usePriorityConversation(): PriorityConversationView {
       path: 'plot-check',
       at: Date.now(),
     });
-    captureJourneyStageFromSection(PILOT_SECTION_IDS.audit);
-    openAuditLandFlow('seeking');
-    scrollToConversion();
+    openAuditLandFlow('owned');
+    navigateToJourneySection(PILOT_SECTION_IDS.audit);
   };
 
   const continueWithPlotFind = () => {
@@ -477,9 +477,8 @@ export function usePriorityConversation(): PriorityConversationView {
       path: 'plot-find',
       at: Date.now(),
     });
-    captureJourneyStageFromSection(PILOT_SECTION_IDS.audit);
-    openAuditLandFlow('owned');
-    scrollToConversion();
+    openAuditLandFlow('seeking');
+    navigateToJourneySection(PILOT_SECTION_IDS.audit);
   };
 
   const continueWithReport = () => {

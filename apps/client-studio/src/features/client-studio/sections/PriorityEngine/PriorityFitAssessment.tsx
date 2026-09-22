@@ -1,9 +1,11 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 
 import { PRIORITY_BRIDGE_ANCHOR_ID } from '../../foundation/scrollToSection';
 import { useDecisionSessionRuntime } from '../../runtime/DecisionSessionRuntimeProvider';
 import { usePriorityConversationContext } from './PriorityConversationProvider';
 import { PriorityRelationships } from './PriorityRelationships';
+import { MediaLightbox } from '../MediaExplorer/MediaLightbox';
+import { SpatialZoomControl } from '../SpatialZoomControl';
 import {
   priorityFitEntry,
   type PriorityFitContractEntry,
@@ -13,23 +15,40 @@ const heading =
   'm-0 text-[12px] font-extrabold uppercase tracking-[0.06em] text-embed-brand-navy';
 const panel = 'rounded-[8px] border border-solid border-[#DEDED9] bg-white p-4';
 
-const CONIS_CHECK_CANDIDATES = [
-  ['plot', 'orientation'],
-  ['plot', 'garden-terrace'],
-  ['comfort', 'fresh-air'],
-  ['comfort', 'heating-cooling'],
-  ['quality', 'execution-detail'],
-  ['realization', 'price-scope'],
-] as const;
+type GroundedFitEntry = PriorityFitContractEntry & {
+  readonly grounded: boolean;
+  readonly rowKind: 'priority' | 'answer';
+};
 
-function usefulness(entry: PriorityFitContractEntry): number {
-  return entry.resultType === 'rating'
-    ? 4
-    : entry.resultType === 'verify'
-      ? 3
-      : entry.resultType === 'information'
-        ? 2
-        : 1;
+function derivePriorityResult(
+  priorityId: string,
+  label: string,
+  intensity: number,
+  selected: readonly GroundedFitEntry[],
+): GroundedFitEntry {
+  const ratings = selected.filter((entry) => entry.resultType === 'rating');
+  const nonRating = selected.find((entry) => entry.resultType === 'verify') ??
+    selected.find((entry) => entry.resultType === 'knowledge-gap') ??
+    selected.find((entry) => entry.resultType === 'information');
+  const allRated = selected.length > 0 && ratings.length === selected.length;
+  const rating = allRated
+    ? Math.round(ratings.reduce((sum, entry) => sum + (entry.rating ?? 0), 0) / ratings.length) as 1 | 2 | 3 | 4 | 5
+    : undefined;
+  return {
+    priorityId,
+    answerId: `priority:${priorityId}`,
+    answer: label,
+    resultType: allRated ? 'rating' : (nonRating?.resultType ?? 'information'),
+    ...(rating === undefined ? {} : { rating }),
+    why: selected.length === 0
+      ? 'Pro tuto prioritu zatím chybí konkrétní odpověď klienta.'
+      : `Význam pro vás: ${intensity} %. ${selected.map((entry) => entry.why).join(' ')}`,
+    evidenceFactIds: selected.flatMap((entry) => entry.evidenceFactIds),
+    missingEvidence: nonRating?.missingEvidence,
+    roomId: selected[0]?.roomId ?? 'exterior',
+    grounded: selected.length > 0 && selected.every((entry) => entry.grounded),
+    rowKind: 'priority',
+  };
 }
 
 function mediaExplanation(entry: PriorityFitContractEntry): string {
@@ -56,6 +75,10 @@ export function PriorityFitAssessment() {
   const { answers, tags, continueWithPlotCheck, continueWithPlotFind, askConis } =
     usePriorityConversationContext();
   const { experience, chatHouseKnowledge } = useDecisionSessionRuntime();
+  const [zoomedMedia, setZoomedMedia] = useState<{
+    readonly src: string;
+    readonly alt: string;
+  } | null>(null);
   const entries = useMemo(
     () =>
       Object.entries(answers).flatMap(([priorityId, answerIds]) =>
@@ -74,58 +97,26 @@ export function PriorityFitAssessment() {
     () =>
       entries.map((entry) => ({
         ...entry,
+        rowKind: 'answer' as const,
         grounded:
           chatHouseKnowledge?.canonicalHouseId === 'modern-4kk' &&
           entry.evidenceFactIds.every((id) => factIds.has(id)),
       })),
     [chatHouseKnowledge?.canonicalHouseId, entries, factIds],
   );
-  const intensityByPriority = useMemo(
-    () => new Map(tags.map((tag) => [tag.id, tag.percent])),
-    [tags],
-  );
-  const personalResults = useMemo(() => {
-    const countByPriority = new Map<string, number>();
-    return [...grounded]
-      .sort((left, right) =>
-        (intensityByPriority.get(right.priorityId) ?? 0) -
-          (intensityByPriority.get(left.priorityId) ?? 0) ||
-        usefulness(right) - usefulness(left),
-      )
-      .filter((entry) => {
-        const count = countByPriority.get(entry.priorityId) ?? 0;
-        if (count >= 2) return false;
-        countByPriority.set(entry.priorityId, count + 1);
-        return true;
-      })
-      .slice(0, 3);
-  }, [grounded, intensityByPriority]);
-  const conisChecks = useMemo(() => {
-    const usedPriorities = new Set(personalResults.map((entry) => entry.priorityId));
-    const usedAnswers = new Set(personalResults.map((entry) => entry.answerId));
-    const candidates = CONIS_CHECK_CANDIDATES.flatMap(([priorityId, answerId]) => {
-      const entry = priorityFitEntry(priorityId, answerId);
-      return entry === null || usedAnswers.has(entry.answerId)
-        ? []
-        : [{
-            ...entry,
-            grounded:
-              chatHouseKnowledge?.canonicalHouseId === 'modern-4kk' &&
-              entry.evidenceFactIds.every((id) => factIds.has(id)),
-          }];
-    });
-    return [
-      ...candidates.filter((entry) => !usedPriorities.has(entry.priorityId)),
-      ...candidates.filter((entry) => usedPriorities.has(entry.priorityId)),
-    ].slice(0, 3);
-  }, [chatHouseKnowledge?.canonicalHouseId, factIds, personalResults]);
   const resultRows = useMemo(
-    () => [...personalResults, ...conisChecks],
-    [conisChecks, personalResults],
+    () => tags.flatMap((tag) => {
+      const selected = grounded.filter((entry) => entry.priorityId === tag.id);
+      return [
+        derivePriorityResult(tag.id, tag.title, tag.percent, selected),
+        ...selected,
+      ];
+    }),
+    [grounded, tags],
   );
   const media = useMemo(() => {
     const used = new Set<string>();
-    return resultRows
+    return grounded
       .flatMap((entry) => {
         const asset = experience.context.roomMedia.gallery.find(
           (item) => item.roomId === entry.roomId && !used.has(item.url),
@@ -135,17 +126,18 @@ export function PriorityFitAssessment() {
         return [{ asset, entry }];
       })
       .slice(0, 3);
-  }, [experience.context.roomMedia.gallery, resultRows]);
-  const strongest = personalResults.find(
+  }, [experience.context.roomMedia.gallery, grounded]);
+  const strongest = grounded.find(
     (entry) =>
       entry.resultType === 'rating' &&
       entry.grounded &&
       (entry.rating ?? 0) >= 4,
   );
-  const secondStrongest = personalResults.find(
+  const secondStrongest = grounded.find(
     (entry) => entry !== strongest && entry.resultType === 'rating' && entry.grounded,
   );
-  const verify = resultRows.find((entry) => entry.resultType === 'verify');
+  const plotBridge = priorityFitEntry('plot', 'orientation');
+  const verify = grounded.find((entry) => entry.resultType === 'verify') ?? plotBridge;
   const unknown = resultRows.find(
     (entry) =>
       entry.resultType === 'knowledge-gap' ||
@@ -181,7 +173,7 @@ export function PriorityFitAssessment() {
           <div className="px-3 py-2.5">Míra shody</div>
           <div className="px-3 py-2.5">Proč</div>
         </div>
-        {resultRows.map((entry, index) => {
+        {resultRows.map((entry) => {
           const effectiveType =
             entry.grounded || entry.evidenceFactIds.length === 0
               ? entry.resultType
@@ -193,10 +185,10 @@ export function PriorityFitAssessment() {
           return (
             <article
               key={`${entry.priorityId}:${entry.answerId}`}
-              className="grid min-h-[64px] grid-cols-[1.15fr_145px_2fr] items-center border-t border-solid border-[#E7E7E3] text-[15px] first:border-t-0 mobile:m-2 mobile:grid-cols-[1fr_auto] mobile:rounded-[8px] mobile:border mobile:border-solid mobile:border-[#DEDED9]"
+              className={`grid min-h-[64px] grid-cols-[1.15fr_145px_2fr] items-center border-t border-solid border-[#E7E7E3] text-[15px] first:border-t-0 mobile:m-2 mobile:grid-cols-[1fr_auto] mobile:rounded-[8px] mobile:border mobile:border-solid mobile:border-[#DEDED9] ${entry.rowKind === 'priority' ? 'bg-[#F7F7F5]' : 'bg-white'}`}
               data-result-type={effectiveType}
               data-grounded={entry.grounded ? 'true' : 'false'}
-              data-result-source={index < 3 ? 'personal' : 'conis-check'}
+              data-result-source={entry.rowKind}
             >
               <strong className="px-3 py-3 text-embed-brand-navy mobile:pb-1">
                 {entry.answer}
@@ -219,22 +211,30 @@ export function PriorityFitAssessment() {
           <p className="mb-2 mt-1 text-[14px] text-embed-foreground-primary/65">
             Tyto části domu souvisejí s tím, co jste označili jako důležité.
           </p>
-          <div className="grid grid-cols-3 gap-3 mobile:grid-cols-1 mobile:gap-2">
+          <div className="mx-auto grid w-[80%] grid-cols-3 gap-3 mobile:w-full mobile:grid-cols-1 mobile:gap-2">
             {media.map(({ asset, entry }) => (
               <article
                 key={asset.url}
                 className="overflow-hidden rounded-[8px] border border-solid border-[#DEDED9] bg-white mobile:grid mobile:grid-cols-[38%_62%]"
+                data-testid="priority-context-media"
               >
-                <img
-                  src={asset.url}
-                  alt={entry.answer}
-                  className="aspect-[2/1] h-full w-full object-cover mobile:min-h-[92px]"
-                />
+                <div className="relative">
+                  <img
+                    src={asset.url}
+                    alt={entry.answer}
+                    className="aspect-[16/9] w-full object-cover mobile:h-full mobile:min-h-[92px]"
+                  />
+                  <SpatialZoomControl
+                    onClick={() => setZoomedMedia({ src: asset.url, alt: entry.answer })}
+                    label={`Zvětšit: ${entry.answer}`}
+                    className="absolute bottom-2 right-2 z-10"
+                  />
+                </div>
                 <div className="p-3">
                   <strong className="text-[15px] text-embed-brand-navy">
                     {entry.answer}
                   </strong>
-                  <p className="mb-0 mt-1 text-[14px] leading-[1.45] text-embed-foreground-primary/70">
+                  <p className="mb-0 mt-1 text-[14px] leading-[1.45] text-embed-foreground-primary/70" data-testid="priority-context-copy">
                     {mediaExplanation(entry)}
                   </p>
                 </div>
@@ -243,6 +243,22 @@ export function PriorityFitAssessment() {
           </div>
         </section>
       ) : null}
+      <MediaLightbox
+        alt={zoomedMedia?.alt ?? ''}
+        isOpen={zoomedMedia !== null}
+        kind="photo"
+        src={zoomedMedia?.src ?? ''}
+        onClose={() => setZoomedMedia(null)}
+      />
+      <section className={`${panel} mt-3`} data-testid="priority-additional-topics">
+        <h3 className={heading}>Další důležité informace</h3>
+        <div className="mt-3 text-[15px]">
+          <PriorityRelationships
+            limit={6}
+            excludeTitles={resultRows.map((entry) => entry.answer)}
+          />
+        </div>
+      </section>
       <div className="mt-4 grid grid-cols-2 gap-3 mobile:grid-cols-1">
         <section className={`${panel} bg-[#F7F7F5]`}>
           <h3 className={heading}>Celkový obraz</h3>
@@ -281,15 +297,6 @@ export function PriorityFitAssessment() {
           </div>
         </section>
       </div>
-      <section className={`${panel} mt-3`}>
-        <h3 className={heading}>Další důležité informace</h3>
-        <div className="mt-3 text-[15px]">
-          <PriorityRelationships
-            limit={6}
-            excludeTitles={resultRows.map((entry) => entry.answer)}
-          />
-        </div>
-      </section>
       <section className="mt-3 grid grid-cols-[1fr_auto] items-center gap-5 rounded-[8px] bg-embed-brand-navy p-4 text-white mobile:grid-cols-1">
         <div>
           <h3 className="m-0 text-[12px] font-extrabold uppercase tracking-[0.06em] text-embed-brand-gold">

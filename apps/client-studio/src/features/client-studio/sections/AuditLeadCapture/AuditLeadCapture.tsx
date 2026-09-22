@@ -13,7 +13,10 @@ import {
 import { AuditContact } from './AuditContact';
 import { AuditTransition } from './AuditTransition';
 import { AUDIT_SECTION_STYLE, type LandOption } from './audit-panel';
-import { AUDIT_LAND_HANDOFF_EVENT } from './auditLandHandoff';
+import {
+  AUDIT_LAND_HANDOFF_EVENT,
+  consumeAuditLandFlow,
+} from './auditLandHandoff';
 import { ContactCard } from './ContactCard';
 import { SituationSelect } from './SituationSelect';
 
@@ -24,7 +27,9 @@ import { SituationSelect } from './SituationSelect';
  */
 export function AuditLeadCapture({ onBack }: { readonly onBack: () => void }) {
   const { dispatch } = useDecisionSessionRuntime();
-  const [landOption, setLandOption] = useState<LandOption>('owned');
+  const [landOption, setLandOption] = useState<LandOption>(
+    () => consumeAuditLandFlow() ?? 'owned',
+  );
   const persistLandIntent = (value: LandOption) => {
     dispatch({
       type: 'AnswerQuestion',
@@ -38,6 +43,7 @@ export function AuditLeadCapture({ onBack }: { readonly onBack: () => void }) {
     scrollToSection(AUDIT_ASSESSMENT_WORKFLOW_ID);
   };
   useEffect(() => {
+    persistLandIntent(landOption);
     const applyPriorityHandoff = (event: Event) => {
       const value = (event as CustomEvent<LandOption>).detail;
       if (value !== 'owned' && value !== 'seeking') return;
@@ -54,6 +60,7 @@ export function AuditLeadCapture({ onBack }: { readonly onBack: () => void }) {
       id={PILOT_SECTION_IDS.audit}
       className="scroll-mt-header"
       data-testid="audit-lead-capture"
+      data-land-option={landOption}
     >
       <div
         className="overflow-hidden rounded-[11px] pb-8 shadow-[0_1px_11px_rgba(0,25,48,0.044)]"
