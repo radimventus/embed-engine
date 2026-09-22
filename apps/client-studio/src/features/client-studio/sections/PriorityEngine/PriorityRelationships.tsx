@@ -9,6 +9,9 @@ import {
 
 import { useDecisionSessionRuntime } from '../../runtime/DecisionSessionRuntimeProvider';
 import { useDecisionContext } from '../../runtime/useDecisionContext';
+import { scrollToSection } from '../../foundation/scrollToSection';
+import { PILOT_SECTION_IDS } from '../../pilot/pilotVocabulary';
+import { openDecisionTopicInChat } from '../AIAdvisor/decisionTopicChatBridge';
 import { createRelationshipNarrativeGenerator } from './relationshipNarrativeGenerator';
 
 const outputCache = new HouseRelationshipOutputCache();
@@ -53,6 +56,15 @@ function RelationshipDialog({
   const [output, setOutput] = useState<HouseRelationshipOutput | null>(null);
   const [failed, setFailed] = useState(false);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
+
+  const askConis = () => {
+    openDecisionTopicInChat({ houseId: bundle.houseId, topicTitle: bundle.title });
+    onClose();
+    scrollToSection(PILOT_SECTION_IDS.aiAdvisor);
+    window.setTimeout(() => {
+      document.querySelector<HTMLInputElement>(`#${PILOT_SECTION_IDS.aiAdvisor} input`)?.focus();
+    }, 450);
+  };
 
   useEffect(() => {
     let active = true;
@@ -162,6 +174,11 @@ function RelationshipDialog({
               <h4 className="m-0 text-[12px] font-bold uppercase tracking-[0.08em] text-[#B8922D]">{SECTION_LABELS.conclusion}</h4>
               <p className="mb-0 mt-2 text-[18px] font-bold leading-[1.5]">{output.narrative.conclusion}</p>
             </section>
+            <button type="button" onClick={askConis}
+              className="mt-7 rounded-[8px] border-0 bg-[#B8922D] px-5 py-3 text-[15px] font-bold text-[#001930]"
+              data-testid="priority-relationship-ask-conis">
+              Zeptat se CONIS
+            </button>
           </div>
         ) : null}
       </section>
@@ -178,6 +195,11 @@ export function PriorityRelationships() {
     () => createRelationshipNarrativeGenerator(decision),
     [decision],
   );
+  useEffect(() => {
+    if (active !== null && !relationshipEvidence.some((item) => item.outputId === active.outputId && item.houseId === active.houseId)) {
+      setActive(null);
+    }
+  }, [active, relationshipEvidence]);
   if (relationshipEvidence.length === 0) return null;
 
   const connected = relationshipEvidence.filter((item) => item.kind === 'CONNECTED');

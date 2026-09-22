@@ -33,6 +33,11 @@ import {
 } from './experiencePresentation';
 import { InputBar } from './InputBar';
 import { SectionHeader } from './SectionHeader';
+import {
+  DECISION_TOPIC_CHAT_EVENT,
+  decisionTopicChatPrompt,
+  type DecisionTopicChatDetail,
+} from './decisionTopicChatBridge';
 import { FaqList, FaqTitle } from './SuggestedQuestions';
 import {
   AI_LOADING_RESPONSE,
@@ -118,6 +123,16 @@ export function AIAdvisor() {
     setIsLoading(false);
     setMessages([createAssistantSeed(openingText)]);
   }, [aiSessionScope]);
+
+  useEffect(() => {
+    const handleDecisionTopic = (event: Event) => {
+      const detail = (event as CustomEvent<DecisionTopicChatDetail>).detail;
+      if (detail.houseId !== chatHouseKnowledge?.canonicalHouseId) return;
+      setInputValue(decisionTopicChatPrompt(detail.topicTitle));
+    };
+    window.addEventListener(DECISION_TOPIC_CHAT_EVENT, handleDecisionTopic);
+    return () => window.removeEventListener(DECISION_TOPIC_CHAT_EVENT, handleDecisionTopic);
+  }, [chatHouseKnowledge?.canonicalHouseId]);
 
   const handleQuestionSelect = (question: string) => {
     setInputValue(question);
