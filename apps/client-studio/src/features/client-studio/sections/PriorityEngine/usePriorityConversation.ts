@@ -30,6 +30,7 @@ import {
   type PriorityConversationProgress,
 } from './priorityConversationProgress';
 import { usePriorityExperience } from './PriorityExperienceProvider';
+import { openAuditLandFlow } from '../AuditLeadCapture/auditLandHandoff';
 
 export type PriorityTagView = {
   readonly id: string;
@@ -450,7 +451,6 @@ export function usePriorityConversation(): PriorityConversationView {
 
   const askConis = () => {
     progress.record({ type: 'completion-path', path: 'chat', at: Date.now() });
-    captureJourneyStageFromSection(PILOT_SECTION_IDS.aiAdvisor);
     focusAdvisorChat();
   };
 
@@ -467,6 +467,7 @@ export function usePriorityConversation(): PriorityConversationView {
       at: Date.now(),
     });
     captureJourneyStageFromSection(PILOT_SECTION_IDS.audit);
+    openAuditLandFlow('seeking');
     scrollToConversion();
   };
 
@@ -477,6 +478,7 @@ export function usePriorityConversation(): PriorityConversationView {
       at: Date.now(),
     });
     captureJourneyStageFromSection(PILOT_SECTION_IDS.audit);
+    openAuditLandFlow('owned');
     scrollToConversion();
   };
 

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { AUDIT_LAND_QUESTION_ID } from '@embed-engine/platform-access';
 
@@ -13,6 +13,7 @@ import {
 import { AuditContact } from './AuditContact';
 import { AuditTransition } from './AuditTransition';
 import { AUDIT_SECTION_STYLE, type LandOption } from './audit-panel';
+import { AUDIT_LAND_HANDOFF_EVENT } from './auditLandHandoff';
 import { ContactCard } from './ContactCard';
 import { SituationSelect } from './SituationSelect';
 
@@ -36,6 +37,16 @@ export function AuditLeadCapture({ onBack }: { readonly onBack: () => void }) {
     persistLandIntent(value);
     scrollToSection(AUDIT_ASSESSMENT_WORKFLOW_ID);
   };
+  useEffect(() => {
+    const applyPriorityHandoff = (event: Event) => {
+      const value = (event as CustomEvent<LandOption>).detail;
+      if (value !== 'owned' && value !== 'seeking') return;
+      setLandOption(value);
+      persistLandIntent(value);
+    };
+    window.addEventListener(AUDIT_LAND_HANDOFF_EVENT, applyPriorityHandoff);
+    return () => window.removeEventListener(AUDIT_LAND_HANDOFF_EVENT, applyPriorityHandoff);
+  }, []);
 
   return (
     <section

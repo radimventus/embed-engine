@@ -187,7 +187,13 @@ function RelationshipDialog({
   );
 }
 
-export function PriorityRelationships() {
+export function PriorityRelationships({
+  limit,
+  excludeTitles = [],
+}: {
+  readonly limit?: number;
+  readonly excludeTitles?: readonly string[];
+} = {}) {
   const { relationshipEvidence } = useDecisionSessionRuntime();
   const decision = useDecisionContext();
   const [active, setActive] = useState<HouseRelationshipEvidenceBundle | null>(null);
@@ -202,8 +208,14 @@ export function PriorityRelationships() {
   }, [active, relationshipEvidence]);
   if (relationshipEvidence.length === 0) return null;
 
-  const connected = relationshipEvidence.filter((item) => item.kind === 'CONNECTED');
-  const blindspots = relationshipEvidence.filter((item) => item.kind === 'BLINDSPOT');
+  const excluded = new Set(excludeTitles.map((title) => title.trim().toLocaleLowerCase('cs')));
+  const preferred = relationshipEvidence.filter(
+    (item) => !excluded.has(item.title.trim().toLocaleLowerCase('cs')),
+  );
+  const fallback = relationshipEvidence.filter(
+    (item) => excluded.has(item.title.trim().toLocaleLowerCase('cs')),
+  );
+  const visible = [...preferred, ...fallback].slice(0, limit);
   return (
     <section
       className="w-full"
@@ -211,17 +223,12 @@ export function PriorityRelationships() {
       aria-label="Kontextové souvislosti priorit"
     >
       <div className="grid grid-cols-6 gap-3 tabletMin:grid-cols-3 mobile:grid-cols-1 mobile:gap-2">
-        {connected.map((bundle) => (
+        {visible.map((bundle) => (
           <button key={bundle.outputId} type="button" onClick={() => setActive(bundle)}
             className="min-h-11 rounded-[8px] border-0 bg-[#001930] px-3 py-2.5 text-[15px] font-normal leading-[1.3] text-white transition-colors hover:bg-[#B8922D] hover:text-[#001930]"
-            data-testid="priority-relationship-connected">
-            {bundle.title}
-          </button>
-        ))}
-        {blindspots.map((bundle) => (
-          <button key={bundle.outputId} type="button" onClick={() => setActive(bundle)}
-            className="min-h-11 rounded-[8px] border-0 bg-[#001930] px-3 py-2.5 text-[15px] font-normal leading-[1.3] text-white transition-colors hover:bg-[#B8922D] hover:text-[#001930]"
-            data-testid="priority-relationship-blindspot">
+            data-testid={bundle.kind === 'CONNECTED'
+              ? 'priority-relationship-connected'
+              : 'priority-relationship-blindspot'}>
             {bundle.title}
           </button>
         ))}
