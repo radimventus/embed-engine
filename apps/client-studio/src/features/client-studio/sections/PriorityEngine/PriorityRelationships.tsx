@@ -14,6 +14,7 @@ import { navigateToJourneySection } from '../../foundation/journeyNavigation';
 import { PILOT_SECTION_IDS } from '../../pilot/pilotVocabulary';
 import { openDecisionTopicInChat } from '../AIAdvisor/decisionTopicChatBridge';
 import { createRelationshipNarrativeGenerator } from './relationshipNarrativeGenerator';
+import { BUNGALOV_4KK_FIT_CONTRACT } from './priorityFitContract';
 
 const outputCache = new HouseRelationshipOutputCache();
 
@@ -192,9 +193,11 @@ function RelationshipDialog({
 export function PriorityRelationships({
   limit,
   excludeTitles = [],
+  priorityV2 = false,
 }: {
   readonly limit?: number;
   readonly excludeTitles?: readonly string[];
+  readonly priorityV2?: boolean;
 } = {}) {
   const { relationshipEvidence } = useDecisionSessionRuntime();
   const decision = useDecisionContext();
@@ -204,7 +207,7 @@ export function PriorityRelationships({
     [decision],
   );
   useEffect(() => {
-    if (active !== null && !relationshipEvidence.some((item) => item.outputId === active.outputId && item.houseId === active.houseId)) {
+    if (active !== null && !active.outputId.startsWith('priority-v2:') && !relationshipEvidence.some((item) => item.outputId === active.outputId && item.houseId === active.houseId)) {
       setActive(null);
     }
   }, [active, relationshipEvidence]);
@@ -217,7 +220,25 @@ export function PriorityRelationships({
   const fallback = relationshipEvidence.filter(
     (item) => excluded.has(item.title.trim().toLocaleLowerCase('cs')),
   );
-  const visible = [...preferred, ...fallback].slice(0, limit);
+  const approvedTopicIds = [
+    'materials-technology', 'customization', 'smart-control', 'build-speed',
+    'fresh-air', 'access-parking', 'light-view', 'flexibility', 'execution-detail',
+    'family-space', 'privacy', 'garden-terrace', 'heating-cooling', 'orientation',
+    'timeless', 'character', 'materials', 'low-cost', 'independence', 'price-scope',
+    'durability-warranty', 'low-effort', 'full-service', 'self-service',
+  ];
+  const topicEntries = approvedTopicIds
+    .map((answerId) => BUNGALOV_4KK_FIT_CONTRACT.find((entry) => entry.answerId === answerId))
+    .filter((entry): entry is (typeof BUNGALOV_4KK_FIT_CONTRACT)[number] =>
+      entry !== undefined && !excluded.has(entry.answer.trim().toLocaleLowerCase('cs')),
+    );
+  const projected = topicEntries.flatMap((entry, index) => {
+    const source = relationshipEvidence.find((bundle) =>
+      bundle.evidence.some((evidence) => entry.evidenceFactIds.includes(evidence.factId)),
+    ) ?? relationshipEvidence[index % relationshipEvidence.length];
+    return source ? [{ ...source, outputId: `priority-v2:${entry.answerId}`, title: entry.answer }] : [];
+  });
+  const visible = (priorityV2 ? projected : [...preferred, ...fallback]).slice(0, limit);
   return (
     <section
       className="w-full"

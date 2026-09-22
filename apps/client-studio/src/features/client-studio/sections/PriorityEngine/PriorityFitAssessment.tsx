@@ -28,29 +28,32 @@ type GroundedFitEntry = PriorityFitContractEntry & {
   readonly rowKind: 'priority' | 'answer';
 };
 
+const PRIORITY_SYNTHESIS: Readonly<Record<string, string>> = {
+  plot: 'U tohoto domu bude důležité prověřit orientaci, příjezd a vztah terasy k zahradě na konkrétní parcele.',
+  layout: 'Dům pracuje s otevřeným společným prostorem, oddělenou klidovou částí a částečně upravitelnými pokoji.',
+  comfort: 'Tepelný komfort, řízené větrání a velké prosklení společně podporují příjemné vnitřní prostředí.',
+  design: 'Dům stojí na jednoduché hmotě, výrazném prosklení a kombinaci střídmých materiálů.',
+  energy: 'Energetická třída, řízené technologie a příprava výroby energie tvoří společný provozní celek.',
+  realization: 'Rozsah úprav je částečně doložený; cenu, harmonogram a závazný rozsah je nutné potvrdit s prodejcem.',
+  quality: 'Konstrukce, materiály, technologie a kontrola provedení jsou popsané jako jeden technický systém.',
+  maintenance: 'Použité materiály omezují pravidelnou péči, konkrétní servisní intervaly a náklady je ale potřeba ověřit.',
+};
+
 function derivePriorityResult(
   priorityId: string,
   label: string,
-  intensity: number,
+  _intensity: number,
   selected: readonly GroundedFitEntry[],
 ): GroundedFitEntry {
-  const ratings = selected.filter((entry) => entry.resultType === 'rating');
   const nonRating = selected.find((entry) => entry.resultType === 'verify') ??
     selected.find((entry) => entry.resultType === 'knowledge-gap') ??
     selected.find((entry) => entry.resultType === 'information');
-  const allRated = selected.length > 0 && ratings.length === selected.length;
-  const rating = allRated
-    ? Math.round(ratings.reduce((sum, entry) => sum + (entry.rating ?? 0), 0) / ratings.length) as 1 | 2 | 3 | 4 | 5
-    : undefined;
   return {
     priorityId,
     answerId: `priority:${priorityId}`,
     answer: label,
-    resultType: allRated ? 'rating' : (nonRating?.resultType ?? 'information'),
-    ...(rating === undefined ? {} : { rating }),
-    why: selected.length === 0
-      ? 'Pro tuto prioritu zatím chybí konkrétní odpověď klienta.'
-      : `Význam pro vás: ${intensity} %. ${selected.map((entry) => entry.why).join(' ')}`,
+    resultType: nonRating?.resultType ?? 'information',
+    why: PRIORITY_SYNTHESIS[priorityId] ?? 'Tuto oblast porovnáváme s doloženými vlastnostmi domu a vašimi konkrétními potřebami.',
     evidenceFactIds: selected.flatMap((entry) => entry.evidenceFactIds),
     missingEvidence: nonRating?.missingEvidence,
     roomId: selected[0]?.roomId ?? 'exterior',
@@ -66,10 +69,20 @@ function mediaExplanation(entry: PriorityFitContractEntry): string {
     'garden-terrace': 'Terasa navazuje na obytnou část; její fungování rozhodne osazení na pozemku.',
     'fresh-air': 'Tento prostor ukazuje místnost, kde řízené větrání průběžně obnovuje vzduch.',
     'heating-cooling': 'Všimněte si prostoru, jehož komfort podporuje vytápění i chlazení.',
+    'light-view': 'Všimněte si velké prosklené plochy, která propojuje obytný prostor s výhledem ven.',
+    timeless: 'Všimněte si jednoduché hmoty domu a střídmého počtu výrazových prvků.',
+    character: 'Všimněte si kontrastu podlouhlé hmoty, sedlové střechy a velkého prosklení.',
+    materials: 'Všimněte si kombinace dřeva a střídmého opláštění na jednoduché hmotě domu.',
+    'low-effort': 'Všimněte si rozsahu opláštění, které omezuje plochy vyžadující pravidelnou povrchovou péči.',
     'execution-detail': 'Na provedení detailů se projeví kontrola konstrukcí a instalací.',
   };
-  return copy[entry.answerId] ?? entry.why;
+  return copy[entry.answerId] ?? '';
 }
+
+const VISUAL_ANSWER_IDS = new Set([
+  'family-space', 'privacy', 'garden-terrace', 'heating-cooling', 'light-view',
+  'timeless', 'character', 'materials', 'low-effort',
+]);
 
 function resultLabel(entry: PriorityFitContractEntry): string {
   if (entry.resultType === 'rating')
@@ -138,6 +151,7 @@ export function PriorityFitAssessment() {
           }];
     });
     return [...grounded, ...fallbacks]
+      .filter((entry) => VISUAL_ANSWER_IDS.has(entry.answerId) && mediaExplanation(entry).length > 0)
       .flatMap((entry) => {
         const asset = experience.context.roomMedia.gallery.find(
           (item) => item.roomId === entry.roomId && !used.has(item.url),
@@ -199,35 +213,26 @@ export function PriorityFitAssessment() {
           <div className="px-3 py-2.5">Míra shody</div>
           <div className="px-3 py-2.5">Proč</div>
         </div>
-        {resultRows.map((entry) => {
-          const effectiveType =
-            entry.grounded || entry.evidenceFactIds.length === 0
-              ? entry.resultType
-              : 'knowledge-gap';
-          const effective = {
-            ...entry,
-            resultType: effectiveType,
-          } as PriorityFitContractEntry;
+        {tags.map((tag) => {
+          const priority = resultRows.find((entry) => entry.answerId === `priority:${tag.id}`)!;
+          const answerRows = resultRows.filter((entry) => entry.priorityId === tag.id && entry.rowKind === 'answer');
           return (
-            <article
-              key={`${entry.priorityId}:${entry.answerId}`}
-              className={`grid min-h-[64px] grid-cols-[1.15fr_145px_2fr] items-center border-t border-solid border-[#E7E7E3] text-[15px] first:border-t-0 mobile:m-2 mobile:grid-cols-[1fr_auto] mobile:rounded-[8px] mobile:border mobile:border-solid mobile:border-[#DEDED9] ${entry.rowKind === 'priority' ? 'bg-[#F7F7F5]' : 'bg-white'}`}
-              data-result-type={effectiveType}
-              data-grounded={entry.grounded ? 'true' : 'false'}
-              data-result-source={entry.rowKind}
-            >
-              <strong className="px-3 py-3 text-embed-brand-navy mobile:pb-1">
-                {entry.answer}
-              </strong>
-              <span
-                className={`px-3 py-3 font-extrabold ${effectiveType === 'rating' ? 'text-[20px] tracking-[1px] text-embed-brand-gold' : 'text-[12px] uppercase text-[#8C6B24]'} mobile:pb-1 mobile:text-right`}
-              >
-                {resultLabel(effective)}
-              </span>
-              <span className="px-3 py-3 leading-[1.4] text-embed-foreground-primary/70 mobile:col-span-2 mobile:pt-1">
-                {entry.why}
-              </span>
-            </article>
+            <section key={tag.id} className="border-t border-solid border-[#E7E7E3] first:border-t-0" data-testid="priority-result-group">
+              <article className="grid min-h-[72px] grid-cols-[1.15fr_145px_2fr] items-center bg-[#F7F7F5] text-[15px] mobile:m-2 mobile:grid-cols-[1fr_auto] mobile:rounded-[8px]" data-result-source="priority">
+                <strong className="px-3 py-3 text-[17px] uppercase text-embed-brand-navy">{priority.answer}</strong>
+                <span className="px-3 py-3 text-[13px] font-extrabold uppercase text-[#8C6B24] mobile:text-right">PRO VÁS {tag.percent} %</span>
+                <span className="px-3 py-3 leading-[1.45] text-embed-foreground-primary/75 mobile:col-span-2">{priority.why}</span>
+              </article>
+              {answerRows.map((entry) => {
+                const effectiveType = entry.grounded ? entry.resultType : 'knowledge-gap';
+                const effective = { ...entry, resultType: effectiveType } as PriorityFitContractEntry;
+                return <article key={`${entry.priorityId}:${entry.answerId}`} className="ml-6 grid min-h-[64px] grid-cols-[1.15fr_145px_2fr] items-center border-t border-solid border-[#ECECE8] bg-white text-[15px] mobile:m-2 mobile:grid-cols-[1fr_auto] mobile:rounded-[8px] mobile:border" data-result-type={effectiveType} data-result-source="answer">
+                  <strong className="px-3 py-3 text-embed-brand-navy mobile:pb-1">↳ {entry.answer}</strong>
+                  <span className={`px-3 py-3 font-extrabold ${effectiveType === 'rating' ? 'text-[20px] tracking-[1px] text-embed-brand-gold' : 'text-[12px] uppercase text-[#8C6B24]'} mobile:text-right`}>{resultLabel(effective)}</span>
+                  <span className="px-3 py-3 leading-[1.4] text-embed-foreground-primary/70 mobile:col-span-2">{entry.why}</span>
+                </article>;
+              })}
+            </section>
           );
         })}
       </div>
@@ -282,6 +287,7 @@ export function PriorityFitAssessment() {
           <PriorityRelationships
             limit={6}
             excludeTitles={resultRows.map((entry) => entry.answer)}
+            priorityV2
           />
         </div>
       </section>
@@ -291,8 +297,8 @@ export function PriorityFitAssessment() {
           <strong className="mt-2 block text-[16px] leading-[1.3] text-embed-brand-navy">
             {strongest
               ? secondStrongest
-                ? `Nejsilnější shody máte v oblastech ${strongest.answer.toLocaleLowerCase('cs')} a ${secondStrongest.answer.toLocaleLowerCase('cs')}.`
-                : `${strongest.answer} patří mezi vaše nejsilnější doložené shody.`
+                ? `Nejlépe vám tento dům odpovídá v tom, jak řeší ${strongest.answer.toLocaleLowerCase('cs')} a ${secondStrongest.answer.toLocaleLowerCase('cs')}.`
+                : `Nejlépe vám tento dům odpovídá v tom, jak řeší ${strongest.answer.toLocaleLowerCase('cs')}.`
               : 'Vaše hlavní potřeby vedou především k otázkám pro další ověření.'}
           </strong>
           <p className="mb-0 mt-2 text-[15px] leading-[1.55] text-embed-foreground-primary/70">
