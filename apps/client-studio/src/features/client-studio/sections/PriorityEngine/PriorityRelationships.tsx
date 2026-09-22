@@ -10,7 +10,7 @@ import {
 
 import { useDecisionSessionRuntime } from '../../runtime/DecisionSessionRuntimeProvider';
 import { useDecisionContext } from '../../runtime/useDecisionContext';
-import { scrollToSection } from '../../foundation/scrollToSection';
+import { navigateToJourneySection } from '../../foundation/journeyNavigation';
 import { PILOT_SECTION_IDS } from '../../pilot/pilotVocabulary';
 import { openDecisionTopicInChat } from '../AIAdvisor/decisionTopicChatBridge';
 import { createRelationshipNarrativeGenerator } from './relationshipNarrativeGenerator';
@@ -61,7 +61,7 @@ function RelationshipDialog({
   const askConis = () => {
     openDecisionTopicInChat({ houseId: bundle.houseId, topicTitle: bundle.title });
     onClose();
-    scrollToSection(PILOT_SECTION_IDS.aiAdvisor);
+    navigateToJourneySection(PILOT_SECTION_IDS.aiAdvisor);
     window.setTimeout(() => {
       document.querySelector<HTMLInputElement>(`#${PILOT_SECTION_IDS.aiAdvisor} input`)?.focus();
     }, 450);

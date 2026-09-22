@@ -42,6 +42,7 @@ test('VR2 places six existing Decision topics before synthesis and guarantees gr
   assert.match(relationships, /evidenceBoundNarrative\(bundle\)/);
   assert.match(relationships, /priority-relationship-ask-conis/);
   assert.match(relationships, /openDecisionTopicInChat/);
+  assert.match(relationships, /navigateToJourneySection\(PILOT_SECTION_IDS\.aiAdvisor\)/);
 });
 
 test('VR2 preserves the selected Audit brochure state across scene mounting', () => {
