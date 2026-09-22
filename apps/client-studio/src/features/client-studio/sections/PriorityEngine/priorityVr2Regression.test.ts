@@ -24,6 +24,7 @@ test('VR2 renders contextual copy under all three canonical images and reuses TO
   const output = read('PriorityFitAssessment.tsx');
   assert.match(output, /roomMedia\.gallery\.find/);
   assert.match(output, /media\.length === 3/);
+  assert.match(output, /MEDIA_FALLBACKS/);
   assert.match(output, /data-testid="priority-context-copy"/);
   assert.match(output, /\{mediaExplanation\(entry\)\}/);
   assert.match(output, /<SpatialZoomControl/);

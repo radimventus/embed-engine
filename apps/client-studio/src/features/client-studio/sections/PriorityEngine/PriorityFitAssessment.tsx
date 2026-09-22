@@ -15,6 +15,14 @@ const heading =
   'm-0 text-[12px] font-extrabold uppercase tracking-[0.06em] text-embed-brand-navy';
 const panel = 'rounded-[8px] border border-solid border-[#DEDED9] bg-white p-4';
 
+const MEDIA_FALLBACKS = [
+  ['layout', 'privacy'],
+  ['comfort', 'fresh-air'],
+  ['layout', 'flexibility'],
+  ['quality', 'execution-detail'],
+  ['plot', 'garden-terrace'],
+] as const;
+
 type GroundedFitEntry = PriorityFitContractEntry & {
   readonly grounded: boolean;
   readonly rowKind: 'priority' | 'answer';
@@ -116,7 +124,20 @@ export function PriorityFitAssessment() {
   );
   const media = useMemo(() => {
     const used = new Set<string>();
-    return grounded
+    const selectedIds = new Set(grounded.map((entry) => entry.answerId));
+    const fallbacks = MEDIA_FALLBACKS.flatMap(([priorityId, answerId]) => {
+      const entry = priorityFitEntry(priorityId, answerId);
+      return entry === null || selectedIds.has(entry.answerId)
+        ? []
+        : [{
+            ...entry,
+            rowKind: 'answer' as const,
+            grounded:
+              chatHouseKnowledge?.canonicalHouseId === 'modern-4kk' &&
+              entry.evidenceFactIds.every((id) => factIds.has(id)),
+          }];
+    });
+    return [...grounded, ...fallbacks]
       .flatMap((entry) => {
         const asset = experience.context.roomMedia.gallery.find(
           (item) => item.roomId === entry.roomId && !used.has(item.url),
@@ -126,7 +147,12 @@ export function PriorityFitAssessment() {
         return [{ asset, entry }];
       })
       .slice(0, 3);
-  }, [experience.context.roomMedia.gallery, grounded]);
+  }, [
+    chatHouseKnowledge?.canonicalHouseId,
+    experience.context.roomMedia.gallery,
+    factIds,
+    grounded,
+  ]);
   const strongest = grounded.find(
     (entry) =>
       entry.resultType === 'rating' &&
