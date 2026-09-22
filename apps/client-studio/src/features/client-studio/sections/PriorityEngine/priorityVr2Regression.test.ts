@@ -60,9 +60,14 @@ test('VR2 preserves the selected Audit brochure state across scene mounting', ()
 
 test('VR2 routes plot choices through journey reveal and question to Chat, never RACIO', () => {
   const conversation = read('usePriorityConversation.ts');
+  const page = read('../../ClientStudioPage.tsx');
   assert.match(conversation, /openAuditLandFlow\('owned'\)[\s\S]*navigateToJourneySection\(PILOT_SECTION_IDS\.audit\)/);
   assert.match(conversation, /openAuditLandFlow\('seeking'\)[\s\S]*navigateToJourneySection\(PILOT_SECTION_IDS\.audit\)/);
   const askConis = conversation.slice(conversation.indexOf('const askConis'), conversation.indexOf('const continueToNextChapter'));
   assert.match(askConis, /focusAdvisorChat\(\)/);
   assert.doesNotMatch(askConis, /racio/i);
+  assert.match(page, /if \(isDecisionSection\(sectionId\)\)/);
+  assert.match(page, /if \(isRacioSection\(sectionId\)\)/);
+  assert.doesNotMatch(page, /isDecisionSection\(sectionId\) && revealedSceneCount/);
+  assert.doesNotMatch(page, /isRacioSection\(sectionId\) && revealedSceneCount/);
 });

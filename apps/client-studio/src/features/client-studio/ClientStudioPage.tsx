@@ -442,7 +442,7 @@ export function ClientStudioPage({
 
   useEffect(() => {
     registerJourneySectionNavigator((sectionId) => {
-      if (isDecisionSection(sectionId) && revealedSceneCount >= 4) {
+      if (isDecisionSection(sectionId)) {
         unlockScene(scenes[3]!.id, sectionId);
         return;
       }
@@ -450,7 +450,7 @@ export function ClientStudioPage({
         unlockScene(scenes[1]!.id, sectionId);
         return;
       }
-      if (isRacioSection(sectionId) && revealedSceneCount >= 3) {
+      if (isRacioSection(sectionId)) {
         unlockScene(scenes[2]!.id, sectionId);
         return;
       }
