@@ -119,7 +119,13 @@ function isDecisionEvent(value: unknown): value is DecisionEvent {
     case "QuestionAnswered":
       return (
         typeof value.questionId === "string" &&
-        typeof value.answerId === "string"
+        ((Array.isArray(value.answerIds) &&
+          value.answerIds.length >= 1 &&
+          value.answerIds.length <= 3 &&
+          value.answerIds.every(
+            (id) => typeof id === "string" && id.length > 0,
+          )) ||
+          typeof value.answerId === "string")
       );
     case "QuestionOpened":
       return (
@@ -144,7 +150,9 @@ function isDecisionEvent(value: unknown): value is DecisionEvent {
         value.stageId === "audit"
       );
     case "ChatQuestionSubmitted":
-      return typeof value.questionId === "string" && value.questionId.length > 0;
+      return (
+        typeof value.questionId === "string" && value.questionId.length > 0
+      );
     default:
       return false;
   }
@@ -153,9 +161,7 @@ function isDecisionEvent(value: unknown): value is DecisionEvent {
 /**
  * Restore a Decision Session from serialized data (no HousePackage required).
  */
-export function restoreDecisionSession(
-  raw: unknown,
-): RestoreSessionResult {
+export function restoreDecisionSession(raw: unknown): RestoreSessionResult {
   if (!isRecord(raw)) {
     return { ok: false, message: "Serialized session must be an object." };
   }
@@ -218,7 +224,21 @@ export function restoreDecisionSession(
         scenarioId,
         version: raw.runtimeState.version,
       },
-      events: raw.events,
+      events: raw.events.map((event) => {
+        const legacyEvent = event as unknown as Record<string, unknown>;
+        if (
+          legacyEvent.type === "QuestionAnswered" &&
+          !Array.isArray(legacyEvent.answerIds) &&
+          typeof legacyEvent.answerId === "string"
+        ) {
+          const { answerId, ...legacy } = legacyEvent;
+          return {
+            ...legacy,
+            answerIds: [answerId],
+          } as unknown as DecisionEvent;
+        }
+        return event as DecisionEvent;
+      }),
       createdAt: raw.createdAt,
       updatedAt: raw.updatedAt,
     }),
@@ -241,7 +261,9 @@ export function restoreDecisionSessionFromJson(
 }
 
 /** Structural clone — independent event array, same semantic content. */
-export function cloneDecisionSession(session: DecisionSession): DecisionSession {
+export function cloneDecisionSession(
+  session: DecisionSession,
+): DecisionSession {
   return freezeDecisionSession({
     objectId: session.objectId,
     runtimeState: {

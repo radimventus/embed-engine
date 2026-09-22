@@ -29,8 +29,7 @@ import {
 } from './priority-engine-layout';
 import { usePriorityConversationContext } from './PriorityConversationProvider';
 
-const bodyTextClass =
-  'text-[15px] leading-[1.6] text-embed-foreground-primary';
+const bodyTextClass = 'text-[15px] leading-[1.6] text-embed-foreground-primary';
 
 const leadTextClass =
   'text-[16px] font-medium leading-[1.45] text-embed-foreground-primary';
@@ -105,7 +104,7 @@ function PriorityWhiteActionButton({
 
 /** Tour-style gray track hosting label + white action (or white action alone). */
 type PrioritySwitchStyle = React.CSSProperties & {
-  "--priority-switch-shift-x"?: string;
+  '--priority-switch-shift-x'?: string;
 };
 
 function PrioritySwitchTrack({
@@ -126,15 +125,17 @@ function PrioritySwitchTrack({
   return (
     <div
       className={`${className} flex w-full justify-center [margin-left:var(--priority-switch-shift-x,0px)] mobile:!ml-[-52px] mobile:w-[calc(100%+52px)] mobile:max-w-none mobile:!pt-0`}
-      style={{
-        ...(shift ? { '--priority-switch-shift-x': `${shift.x}px` } : {}),
-        // Use paddingTop — ConisMessage space-y utilities set margin-top !important.
-        ...(offsetLines > 0
-          ? { paddingTop: `${offsetLines * 1.6}em` }
-          : shift && shift.y !== 0
-            ? { paddingTop: shift.y }
-            : {}),
-      } as PrioritySwitchStyle}
+      style={
+        {
+          ...(shift ? { '--priority-switch-shift-x': `${shift.x}px` } : {}),
+          // Use paddingTop — ConisMessage space-y utilities set margin-top !important.
+          ...(offsetLines > 0
+            ? { paddingTop: `${offsetLines * 1.6}em` }
+            : shift && shift.y !== 0
+              ? { paddingTop: shift.y }
+              : {}),
+        } as PrioritySwitchStyle
+      }
     >
       <div
         className="flex w-full min-w-0 shrink-0 items-stretch gap-[1.6px] rounded-[6.4px] border border-solid p-[1.6px] desktop:w-1/2 mobile:w-full mobile:max-w-none"
@@ -180,10 +181,11 @@ export function PriorityConversationPanel() {
     progressPercent,
     canAddMore,
     isAdvancing,
-    pendingOptionId,
+    pendingOptionIds,
     finishSelection,
     acknowledgePrep,
     answerQuestion,
+    confirmQuestion,
     continueDialog,
     continueToSummary,
   } = usePriorityConversationContext();
@@ -400,25 +402,22 @@ export function PriorityConversationPanel() {
                   {questionIntent}
                 </p>
               ) : null}
-              <div
-                className="relative overflow-hidden rounded-[10px] border border-[#E3E3E3] bg-[#F7F6F4] p-3.5 shadow-[0_1px_0_rgba(0,25,48,0.04)] desktop:mr-[80px]"
-
-              >
+              <div className="relative overflow-hidden rounded-[10px] border border-[#E3E3E3] bg-[#F7F6F4] p-3.5 shadow-[0_1px_0_rgba(0,25,48,0.04)] desktop:mr-[80px]">
                 <p className={`${bodyTextClass} font-medium`}>
                   {currentQuestion.prompt}
                 </p>
                 <div
                   className="mt-3 flex flex-col gap-2.5"
-                  role="radiogroup"
+                  role="group"
                   aria-label={currentQuestion.prompt}
                 >
                   {currentQuestion.options.map((option) => {
-                    const isPending = pendingOptionId === option.id;
+                    const isPending = pendingOptionIds.includes(option.id);
                     return (
                       <button
                         key={option.id}
                         type="button"
-                        role="radio"
+                        role="checkbox"
                         aria-checked={isPending}
                         disabled={dialogBeat !== 'question'}
                         data-testid={`priority-dialog-option-${option.id}`}
@@ -464,6 +463,15 @@ export function PriorityConversationPanel() {
                       </button>
                     );
                   })}
+                  <p className="m-0 text-[12px] text-embed-foreground-primary/60">
+                    Vyberte 1–3 možnosti.
+                  </p>
+                  <PriorityWhiteActionButton
+                    testId="priority-dialog-confirm"
+                    label="Potvrdit výběr"
+                    onClick={confirmQuestion}
+                    disabled={pendingOptionIds.length === 0}
+                  />
                 </div>
 
                 {dialogBeat === 'thinking' ? (

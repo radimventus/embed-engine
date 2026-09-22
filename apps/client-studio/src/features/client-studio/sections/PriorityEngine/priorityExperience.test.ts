@@ -9,6 +9,7 @@ import {
   DECISION_CATEGORIES,
   SELECTABLE_DECISION_CATEGORIES,
 } from './decision-cards.constants';
+import { BUNGALOV_4KK_FIT_CONTRACT } from './priorityFitContract';
 
 const here = dirname(fileURLToPath(import.meta.url));
 
@@ -17,9 +18,7 @@ function read(name: string): string {
 }
 
 function stripComments(source: string): string {
-  return source
-    .replace(/\/\*[\s\S]*?\*\//g, '')
-    .replace(/^\s*\/\/.*$/gm, '');
+  return source.replace(/\/\*[\s\S]*?\*\//g, '').replace(/^\s*\/\/.*$/gm, '');
 }
 
 describe('Priority Experience (CSCB-04)', () => {
@@ -29,14 +28,12 @@ describe('Priority Experience (CSCB-04)', () => {
       [
         'plot',
         'layout',
-        'privacy',
-        'energy',
-        'operating-costs',
+        'comfort',
         'design',
+        'energy',
+        'realization',
         'quality',
-        'investment',
         'maintenance',
-        'flexibility',
       ],
     );
   });
@@ -48,10 +45,10 @@ describe('Priority Experience (CSCB-04)', () => {
       [
         'Pozemek',
         'Dispozice',
-        'Soukromí',
+        'Komfort',
         'Design',
         'Energie',
-        'Provozní náklady',
+        'Realizace',
         'Kvalita',
         'Údržba',
       ],
@@ -74,27 +71,33 @@ describe('Priority Experience (CSCB-04)', () => {
     const cards = createCardsFromPriorityIds([
       'plot',
       'layout',
-      'privacy',
+      'comfort',
       'design',
     ]);
     assert.equal(cards.plot?.selected, true);
     assert.equal(cards.layout?.selected, true);
-    assert.equal(cards.privacy?.selected, true);
+    assert.equal(cards.comfort?.selected, true);
     assert.equal(cards.design?.selected, true);
     assert.equal(cards.energy?.selected, false);
     assert.ok((cards.plot?.importance ?? 0) > (cards.layout?.importance ?? 0));
-    assert.ok((cards.layout?.importance ?? 0) > (cards.privacy?.importance ?? 0));
-    assert.equal(Object.values(cards).filter((card) => card.selected).length, 4);
+    assert.ok(
+      (cards.layout?.importance ?? 0) > (cards.comfort?.importance ?? 0),
+    );
+    assert.equal(
+      Object.values(cards).filter((card) => card.selected).length,
+      4,
+    );
   });
 
   it('hydrates captured Client-scale intensities when Runtime preserved them', () => {
-    const cards = createCardsFromPriorityIds(
-      ['plot', 'layout', 'privacy'],
-      { plot: 0.2, layout: 0.9, privacy: 0.5 },
-    );
+    const cards = createCardsFromPriorityIds(['plot', 'layout', 'comfort'], {
+      plot: 0.2,
+      layout: 0.9,
+      comfort: 0.5,
+    });
     assert.equal(cards.plot?.importance, 0.2);
     assert.equal(cards.layout?.importance, 0.9);
-    assert.equal(cards.privacy?.importance, 0.5);
+    assert.equal(cards.comfort?.importance, 0.5);
   });
 
   it('dispatches ChangePriority only — no semantic composition', () => {
@@ -156,14 +159,48 @@ describe('Priority Experience (CSCB-04)', () => {
 
   it('uses the canonical conversation phase for the shared skip/continue CTA', () => {
     const engine = read('PriorityEngine.tsx');
-    assert.match(engine, /phase === "complete" \? "Pokračovat →" : "Přeskočit →"/);
+    assert.match(
+      engine,
+      /phase === "complete" \? "Pokračovat →" : "Přeskočit →"/,
+    );
     assert.match(engine, /onClick={onContinueToRacio}/);
-    assert.match(engine, /phase === "complete" && shouldShowDelayedRacioBridge/);
+    assert.match(
+      engine,
+      /phase === "complete" && shouldShowDelayedRacioBridge/,
+    );
   });
 
   it('persists supplementary Priority answers as AnswerQuestion', () => {
     const conversation = stripComments(read('usePriorityConversation.ts'));
-    assert.match(conversation, /type: 'AnswerQuestion'/);
+    assert.match(conversation, /type: ["']AnswerQuestion["']/);
     assert.match(conversation, /prioritySupplementaryQuestionId\(priorityId\)/);
+    assert.match(conversation, /answerIds/);
+  });
+
+  it('projects the approved explicit Bungalov 4KK fit contract', () => {
+    assert.equal(BUNGALOV_4KK_FIT_CONTRACT.length, 24);
+    assert.equal(
+      BUNGALOV_4KK_FIT_CONTRACT.filter((entry) => entry.resultType === 'rating')
+        .length,
+      14,
+    );
+    assert.equal(
+      BUNGALOV_4KK_FIT_CONTRACT.filter((entry) => entry.resultType !== 'rating')
+        .length,
+      10,
+    );
+    assert.ok(
+      BUNGALOV_4KK_FIT_CONTRACT.every((entry) => entry.roomId.length > 0),
+    );
+    assert.ok(
+      BUNGALOV_4KK_FIT_CONTRACT.filter(
+        (entry) => entry.resultType === 'rating',
+      ).every(
+        (entry) =>
+          (entry.rating ?? 0) >= 1 &&
+          (entry.rating ?? 0) <= 5 &&
+          entry.evidenceFactIds.length > 0,
+      ),
+    );
   });
 });

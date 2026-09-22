@@ -36,7 +36,7 @@ export function commandToEvent(
       return {
         type: "QuestionAnswered",
         questionId: command.questionId,
-        answerId: command.answerId,
+        answerIds: [...command.answerIds],
         at,
       };
     case "OpenQuestion":

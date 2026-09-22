@@ -76,7 +76,10 @@ describe("Runtime Event Pipeline", () => {
       result.experience.context.decision.interpretationSummary,
       result.interpretation.summary,
     );
-    assert.equal(runtime.getExperience()?.context.activeRoom.id, "room-bedroom");
+    assert.equal(
+      runtime.getExperience()?.context.activeRoom.id,
+      "room-bedroom",
+    );
   });
 
   it("ChangePriorityCommand → PriorityChanged → updated Experience", () => {
@@ -99,7 +102,10 @@ describe("Runtime Event Pipeline", () => {
       "garden",
     ]);
     assert.deepEqual(result.interpretation.priorityIds, ["price", "garden"]);
-    assert.deepEqual(result.experience.context.decision.priorityIds, ["price", "garden"]);
+    assert.deepEqual(result.experience.context.decision.priorityIds, [
+      "price",
+      "garden",
+    ]);
     assert.match(result.interpretation.summary, /priorities:price,garden/);
   });
 
@@ -157,10 +163,7 @@ describe("Runtime Event Pipeline", () => {
       return;
     }
     assert.equal(result.session.runtimeState.priorityIntensities, null);
-    assert.equal(
-      result.experience.context.decision.priorityIntensities,
-      null,
-    );
+    assert.equal(result.experience.context.decision.priorityIntensities, null);
   });
 
   it("mutation → Interpretation → Projection is deterministic", () => {
@@ -201,7 +204,10 @@ describe("Runtime Event Pipeline", () => {
       return;
     }
 
-    assert.deepEqual(secondA.session.runtimeState, secondB.session.runtimeState);
+    assert.deepEqual(
+      secondA.session.runtimeState,
+      secondB.session.runtimeState,
+    );
     assert.deepEqual(secondA.session.events, secondB.session.events);
     assert.deepEqual(secondA.interpretation, secondB.interpretation);
     assert.deepEqual(secondA.experience, secondB.experience);
@@ -278,7 +284,7 @@ describe("Runtime Event Pipeline", () => {
       {
         type: "AnswerQuestion",
         questionId: "priority.energy",
-        answerId: "comfort",
+        answerIds: ["comfort"],
       },
       3,
     );
@@ -291,7 +297,7 @@ describe("Runtime Event Pipeline", () => {
       return;
     }
     assert.equal(result.event.questionId, "priority.energy");
-    assert.equal(result.event.answerId, "comfort");
+    assert.deepEqual(result.event.answerIds, ["comfort"]);
     assert.equal(result.session.runtimeState.activeRoomId, "room-kitchen");
   });
 
@@ -331,10 +337,7 @@ describe("Runtime Event Pipeline", () => {
       now: 1,
     });
     runtime.dispatch({ type: "SelectRoom", roomId: "room-kitchen" }, 2);
-    runtime.dispatch(
-      { type: "ChangePriority", priorityIds: ["price"] },
-      3,
-    );
+    runtime.dispatch({ type: "ChangePriority", priorityIds: ["price"] }, 3);
     const started = runtime.dispatch(
       { type: "StartVideoPlayback", mediaId: "tour-video" },
       4,
@@ -359,7 +362,10 @@ describe("Runtime Event Pipeline", () => {
       { type: "SubmitChatQuestion", questionId: "q-1" },
       8,
     );
-    assert.equal(started.ok && half.ok && image.ok && stage.ok && chat.ok, true);
+    assert.equal(
+      started.ok && half.ok && image.ok && stage.ok && chat.ok,
+      true,
+    );
     if (!started.ok || !half.ok || !image.ok || !stage.ok || !chat.ok) {
       return;
     }

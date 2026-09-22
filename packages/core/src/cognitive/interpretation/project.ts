@@ -23,6 +23,8 @@ export const INTERPRETATION_PRIORITY_IDS = [
   "investment",
   "maintenance",
   "flexibility",
+  "comfort",
+  "realization",
 ] as const;
 
 export type InterpretationPriorityId =
@@ -42,6 +44,8 @@ const PRIORITY_TITLES: Record<InterpretationPriorityId, string> = {
   investment: "Investice",
   maintenance: "Údržba",
   flexibility: "Flexibilita",
+  comfort: "Komfort",
+  realization: "Realizace",
 };
 
 type QuestionSeed = {
@@ -51,119 +55,122 @@ type QuestionSeed = {
   readonly why: string;
 };
 
-const QUESTION_BANK: Record<InterpretationPriorityId, readonly QuestionSeed[]> = {
-  energy: [
-    {
-      id: "energy-heat",
-      question: "Jaký je energetický standard a náklady na vytápění?",
-      answer:
-        "Modulární skladba umožňuje cílit nízkoenergetický provoz — konkrétní bilanci upřesníme podle orientace a skladby obálky.",
-      why: "Energie je teď vedoucí Prioritou ve vašem filtru.",
-    },
-    {
-      id: "energy-solar",
-      question: "Lze připravit dům na fotovoltaiku?",
-      answer:
-        "Ano — střecha a rozvody lze připravit tak, aby FVE byla přirozeným dalším krokem bez zásahů do dispozice.",
-      why: "Doporučeno, protože se soustředíte na technické a energetické parametry.",
-    },
-  ],
-  "operating-costs": [
-    {
-      id: "opex-service",
-      question: "Jaké jsou typické provozní a servisní náklady?",
-      answer:
-        "Provoz držíme predikovatelný modularitou a jednoduchou údržbou — detailní model ukážeme v rozhodnutí o prioritách.",
-      why: "Provozní náklady vystoupily ve vaší Interpretaci.",
-    },
-  ],
-  layout: [
-    {
-      id: "layout-flow",
-      question: "Jak spolu fungují denní a noční zóna?",
-      answer:
-        "Dispozice odděluje společný život od klidu — po prohlídce místností je to přesně to, na co se teď díváte.",
-      why: "Protože jste prošli místnosti / půdorys.",
-    },
-    {
-      id: "layout-flex",
-      question: "Lze dispozici upravit bez změny celkové stopy?",
-      answer:
-        "Ano v rámci modulární mřížky — změny zůstávají kontrolované a čitelné.",
-      why: "Dispozice je aktivní ve vašem současném Focusu.",
-    },
-  ],
-  privacy: [
-    {
-      id: "privacy-street",
-      question: "Jak je řešeno soukromí vůči ulici a sousedům?",
-      answer:
-        "Orientace oken a vstupních zón chrání intimitu — upravitelná podle pozemku.",
-      why: "Soukromí se stalo relevantní ve vašem filtru.",
-    },
-  ],
-  design: [
-    {
-      id: "design-exterior",
-      question: "Jaký charakter má exteriér a materiály?",
-      answer:
-        "Exteriér drží klidnou soudobou řeč — galerie ukazuje přesně ten vizuální tón.",
-      why: "Protože jste otevřeli galerii nebo média.",
-    },
-  ],
-  quality: [
-    {
-      id: "quality-build",
-      question: "Jak je zajištěna kvalita provedení?",
-      answer:
-        "Výroba modulů probíhá v kontrolovaném prostředí — méně rizik než čistě staveništní stavba.",
-      why: "Kvalita je součástí vašich zvýšených Priorit.",
-    },
-  ],
-  plot: [
-    {
-      id: "plot-narrow",
-      question: "Hodí se dům i na užší pozemek?",
-      answer:
-        "Ano — stopa a úrovně lze sladit s pozemkem; právě prohlížíte prostorové úrovně domu.",
-      why: "Protože jste přepnuli patro / prostorové úrovně.",
-    },
-  ],
-  investment: [
-    {
-      id: "invest-units",
-      question: "Jaká je logika návratnosti při více jednotkách?",
-      answer:
-        "Rozhodnutí o investici navazujeme na vaše priority — ne na obecné marketingové sliby.",
-      why: "Investice / financování je vaše aktivní téma.",
-    },
-    {
-      id: "invest-finance",
-      question: "Jak probíhá financování a splátkový scénář?",
-      answer:
-        "Scénář sestavíme podle vašeho filtru priorit — kontext průvodce na to už reaguje.",
-      why: "Doporučeno z vašeho aktuálního Focusu.",
-    },
-  ],
-  maintenance: [
-    {
-      id: "maint-care",
-      question: "Jak náročná je dlouhodobá údržba?",
-      answer:
-        "Cílem je nízká zátěž — materiály a detaily volíme s ohledem na životní cyklus.",
-      why: "Údržba se objevuje ve vaší Interpretaci.",
-    },
-  ],
-  flexibility: [
-    {
-      id: "flex-future",
-      question: "Jak dům poroste s rodinou v čase?",
-      answer:
-        "Flexibilita modulů umožňuje fáze — dnešní Focus určuje, co řešíme jako první.",
-      why: "Flexibilita je zvýšená ve vašem filtru.",
-    },
-  ],
-};
+const QUESTION_BANK: Record<InterpretationPriorityId, readonly QuestionSeed[]> =
+  {
+    comfort: [],
+    realization: [],
+    energy: [
+      {
+        id: "energy-heat",
+        question: "Jaký je energetický standard a náklady na vytápění?",
+        answer:
+          "Modulární skladba umožňuje cílit nízkoenergetický provoz — konkrétní bilanci upřesníme podle orientace a skladby obálky.",
+        why: "Energie je teď vedoucí Prioritou ve vašem filtru.",
+      },
+      {
+        id: "energy-solar",
+        question: "Lze připravit dům na fotovoltaiku?",
+        answer:
+          "Ano — střecha a rozvody lze připravit tak, aby FVE byla přirozeným dalším krokem bez zásahů do dispozice.",
+        why: "Doporučeno, protože se soustředíte na technické a energetické parametry.",
+      },
+    ],
+    "operating-costs": [
+      {
+        id: "opex-service",
+        question: "Jaké jsou typické provozní a servisní náklady?",
+        answer:
+          "Provoz držíme predikovatelný modularitou a jednoduchou údržbou — detailní model ukážeme v rozhodnutí o prioritách.",
+        why: "Provozní náklady vystoupily ve vaší Interpretaci.",
+      },
+    ],
+    layout: [
+      {
+        id: "layout-flow",
+        question: "Jak spolu fungují denní a noční zóna?",
+        answer:
+          "Dispozice odděluje společný život od klidu — po prohlídce místností je to přesně to, na co se teď díváte.",
+        why: "Protože jste prošli místnosti / půdorys.",
+      },
+      {
+        id: "layout-flex",
+        question: "Lze dispozici upravit bez změny celkové stopy?",
+        answer:
+          "Ano v rámci modulární mřížky — změny zůstávají kontrolované a čitelné.",
+        why: "Dispozice je aktivní ve vašem současném Focusu.",
+      },
+    ],
+    privacy: [
+      {
+        id: "privacy-street",
+        question: "Jak je řešeno soukromí vůči ulici a sousedům?",
+        answer:
+          "Orientace oken a vstupních zón chrání intimitu — upravitelná podle pozemku.",
+        why: "Soukromí se stalo relevantní ve vašem filtru.",
+      },
+    ],
+    design: [
+      {
+        id: "design-exterior",
+        question: "Jaký charakter má exteriér a materiály?",
+        answer:
+          "Exteriér drží klidnou soudobou řeč — galerie ukazuje přesně ten vizuální tón.",
+        why: "Protože jste otevřeli galerii nebo média.",
+      },
+    ],
+    quality: [
+      {
+        id: "quality-build",
+        question: "Jak je zajištěna kvalita provedení?",
+        answer:
+          "Výroba modulů probíhá v kontrolovaném prostředí — méně rizik než čistě staveništní stavba.",
+        why: "Kvalita je součástí vašich zvýšených Priorit.",
+      },
+    ],
+    plot: [
+      {
+        id: "plot-narrow",
+        question: "Hodí se dům i na užší pozemek?",
+        answer:
+          "Ano — stopa a úrovně lze sladit s pozemkem; právě prohlížíte prostorové úrovně domu.",
+        why: "Protože jste přepnuli patro / prostorové úrovně.",
+      },
+    ],
+    investment: [
+      {
+        id: "invest-units",
+        question: "Jaká je logika návratnosti při více jednotkách?",
+        answer:
+          "Rozhodnutí o investici navazujeme na vaše priority — ne na obecné marketingové sliby.",
+        why: "Investice / financování je vaše aktivní téma.",
+      },
+      {
+        id: "invest-finance",
+        question: "Jak probíhá financování a splátkový scénář?",
+        answer:
+          "Scénář sestavíme podle vašeho filtru priorit — kontext průvodce na to už reaguje.",
+        why: "Doporučeno z vašeho aktuálního Focusu.",
+      },
+    ],
+    maintenance: [
+      {
+        id: "maint-care",
+        question: "Jak náročná je dlouhodobá údržba?",
+        answer:
+          "Cílem je nízká zátěž — materiály a detaily volíme s ohledem na životní cyklus.",
+        why: "Údržba se objevuje ve vaší Interpretaci.",
+      },
+    ],
+    flexibility: [
+      {
+        id: "flex-future",
+        question: "Jak dům poroste s rodinou v čase?",
+        answer:
+          "Flexibilita modulů umožňuje fáze — dnešní Focus určuje, co řešíme jako první.",
+        why: "Flexibilita je zvýšená ve vašem filtru.",
+      },
+    ],
+  };
 
 const DEFAULT_QUESTIONS: readonly QuestionSeed[] = [
   {
@@ -278,7 +285,9 @@ function eventLabel(signal: Signal): string {
   }
 }
 
-function projectEvents(signals: readonly Signal[]): readonly InterpretationEvent[] {
+function projectEvents(
+  signals: readonly Signal[],
+): readonly InterpretationEvent[] {
   const events = signals.map((signal) =>
     Object.freeze({
       id: signal.id,
@@ -297,7 +306,9 @@ function leadingTopic(
 ): InterpretationPriorityId {
   if (
     focus.questionId &&
-    (INTERPRETATION_PRIORITY_IDS as readonly string[]).includes(focus.questionId)
+    (INTERPRETATION_PRIORITY_IDS as readonly string[]).includes(
+      focus.questionId,
+    )
   ) {
     return focus.questionId as InterpretationPriorityId;
   }
@@ -407,7 +418,9 @@ export function project(state: DecisionState): Interpretation {
     },
   );
 
-  const ranked = [...unsorted].sort((left, right) => right.weight - left.weight);
+  const ranked = [...unsorted].sort(
+    (left, right) => right.weight - left.weight,
+  );
   const priorities: InterpretationPriority[] = unsorted.map((priority) => {
     const rank =
       priority.weight > BASE_WEIGHT
@@ -422,7 +435,11 @@ export function project(state: DecisionState): Interpretation {
 
   const frozenPriorities = Object.freeze(priorities);
   const topic = leadingTopic(frozenPriorities, state.focus);
-  const conversation = projectConversation(topic, state.focus, frozenPriorities);
+  const conversation = projectConversation(
+    topic,
+    state.focus,
+    frozenPriorities,
+  );
 
   return Object.freeze({
     priorities: frozenPriorities,

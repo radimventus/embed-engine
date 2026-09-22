@@ -13,7 +13,10 @@ import {
   selectHouseOperationalCases,
   selectScopedOperationalCases,
 } from './selectHouseOperationalCases';
-import type { OperationalDecisionSnapshot, OperationalLeadRecord } from './operationalTypes';
+import type {
+  OperationalDecisionSnapshot,
+  OperationalLeadRecord,
+} from './operationalTypes';
 
 function lead(
   overrides: Partial<OperationalLeadRecord> = {},
@@ -93,8 +96,14 @@ describe('House operational data path', () => {
       accumulated.map((item) => item.caseId),
       ['lead-1', 'lead-2'],
     );
-    assert.equal(accumulated.every((item) => item.origin === 'LEAD'), true);
-    assert.equal(accumulated.every((item) => item.houseId === vpdA.houseId), true);
+    assert.equal(
+      accumulated.every((item) => item.origin === 'LEAD'),
+      true,
+    );
+    assert.equal(
+      accumulated.every((item) => item.houseId === vpdA.houseId),
+      true,
+    );
     assert.equal(aggregateHouseOperations(accumulated).caseCount, 2);
     assert.equal(aggregateHouseOperations(accumulated).convertedCount, 2);
   });
@@ -109,18 +118,27 @@ describe('House operational data path', () => {
       cases.map((item) => item.caseId.split(':').at(-1)),
       [...REFERENCE_CASE_TEMPLATE_IDS],
     );
-    assert.equal(cases.every((item) => item.origin === 'REFERENCE'), true);
-    assert.equal(cases.every((item) => item.houseId === bungalowA.houseId), true);
-    assert.equal(cases.every((item) => item.companyId === bungalowA.companyId), true);
-    assert.equal(cases.every((item) => item.projectId === bungalowA.projectId), true);
+    assert.equal(
+      cases.every((item) => item.origin === 'REFERENCE'),
+      true,
+    );
+    assert.equal(
+      cases.every((item) => item.houseId === bungalowA.houseId),
+      true,
+    );
+    assert.equal(
+      cases.every((item) => item.companyId === bungalowA.companyId),
+      true,
+    );
+    assert.equal(
+      cases.every((item) => item.projectId === bungalowA.projectId),
+      true,
+    );
     assert.equal(
       cases.every((item) => item.profilZajemce.tags.length > 0),
       true,
     );
-    assert.equal(
-      new Set(cases.map((item) => item.contact.email)).size,
-      3,
-    );
+    assert.equal(new Set(cases.map((item) => item.contact.email)).size, 3);
   });
 
   it('does not use the DSE BUNGALOV id as a global reference key', () => {
@@ -301,7 +319,9 @@ describe('House operational data path', () => {
     assert.equal(aggregate.highIntentCount, 2);
     assert.ok(aggregate.priorityCounts.length > 0);
     assert.ok(
-      aggregate.priorityCounts.every((item) => item.count <= aggregate.caseCount),
+      aggregate.priorityCounts.every(
+        (item) => item.count <= aggregate.caseCount,
+      ),
     );
     assert.ok(
       aggregate.journeyModuleCounts.every(
@@ -384,7 +404,10 @@ describe('House operational data path', () => {
       'Energie',
       'Pozemek',
     ]);
-    assert.equal(cases[0]?.profilZajemce.tags.includes('Žádost o audit'), false);
+    assert.equal(
+      cases[0]?.profilZajemce.tags.includes('Žádost o audit'),
+      false,
+    );
     assert.equal(cases[0]?.profilZajemce.score, null);
     assert.equal(cases[0]?.profilZajemce.readinessScore, 10);
     assert.equal(cases[0]?.processingStatus, 'new');
@@ -466,7 +489,7 @@ describe('House operational data path', () => {
         {
           type: 'QuestionAnswered',
           questionId: 'priority.energy',
-          answerId: 'comfort',
+          answerIds: ['low-cost', 'smart-control'],
           at: 3,
         },
         {
@@ -504,8 +527,15 @@ describe('House operational data path', () => {
     assert.equal(profil?.score, null);
     assert.equal(profil?.land, 'Mám pozemek');
     assert.equal(
-      profil?.priorities.find((item) => item.id === 'energy')?.answer?.answerLabel,
-      'Každodenní komfort',
+      profil?.priorities.find((item) => item.id === 'energy')?.answer
+        ?.answerLabel,
+      'Nízké provozní náklady',
+    );
+    assert.deepEqual(
+      profil?.priorities
+        .find((item) => item.id === 'energy')
+        ?.answers.map((answer) => answer.answerLabel),
+      ['Nízké provozní náklady', 'Chytré řízení provozu'],
     );
     assert.deepEqual(
       profil?.openedQuestions.map((item) => item.questionId),
@@ -524,12 +554,15 @@ describe('House operational data path', () => {
       profil?.journey.some(
         (step) =>
           step.module === 'Pozemek' &&
-          step.title === 'Má pozemek a chce ověřit jeho vhodnost pro tento dům.',
+          step.title ===
+            'Má pozemek a chce ověřit jeho vhodnost pro tento dům.',
       ),
       true,
     );
     assert.equal(
-      profil?.openedQuestions.some((item) => item.questionId === 'unopened-faq'),
+      profil?.openedQuestions.some(
+        (item) => item.questionId === 'unopened-faq',
+      ),
       false,
     );
   });
@@ -572,8 +605,7 @@ describe('House operational data path', () => {
     assert.equal(profil?.land, 'Hledám pozemek');
     assert.equal(
       profil?.journey.some(
-        (step) =>
-          step.module === 'Pozemek' && step.title === 'Hledá pozemek.',
+        (step) => step.module === 'Pozemek' && step.title === 'Hledá pozemek.',
       ),
       true,
     );
@@ -633,7 +665,8 @@ describe('House operational data path', () => {
       null,
     );
     assert.equal(
-      cases.find((item) => item.origin === 'LEAD')?.profilZajemce.readinessScore,
+      cases.find((item) => item.origin === 'LEAD')?.profilZajemce
+        .readinessScore,
       null,
     );
     assert.equal(

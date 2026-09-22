@@ -1,4 +1,4 @@
-import { colors } from "@embed-engine/design-tokens";
+import { colors } from '@embed-engine/design-tokens';
 
 import {
   PRIORITY_BRIDGE_TITLE,
@@ -10,22 +10,23 @@ import {
   PRIORITY_PAYOFF_RECALL_HEADING,
   PRIORITY_PAYOFF_RECALL_INTRO,
   PRIORITY_PAYOFF_UPPER_LINES,
-} from "./priorityConversation.constants";
-import { PRIORITY_ENGINE_TITLE_CLASS } from "./priority-engine-layout";
-import { usePriorityConversationContext } from "./PriorityConversationProvider";
-import { PRIORITY_BRIDGE_ANCHOR_ID } from "../../foundation/scrollToSection";
-import { useDecisionSessionRuntime } from "../../runtime/DecisionSessionRuntimeProvider";
+} from './priorityConversation.constants';
+import { PRIORITY_ENGINE_TITLE_CLASS } from './priority-engine-layout';
+import { usePriorityConversationContext } from './PriorityConversationProvider';
+import { PRIORITY_BRIDGE_ANCHOR_ID } from '../../foundation/scrollToSection';
+import { useDecisionSessionRuntime } from '../../runtime/DecisionSessionRuntimeProvider';
 import { PriorityRelationships } from './PriorityRelationships';
+import { PriorityFitAssessment } from './PriorityFitAssessment';
 
 const bodyClass =
-  "m-0 text-[15px] leading-[1.65] text-embed-foreground-primary";
+  'm-0 text-[15px] leading-[1.65] text-embed-foreground-primary';
 
-const panelHeadingClass = "m-0 text-[17px] font-bold uppercase leading-[1.4]";
+const panelHeadingClass = 'm-0 text-[17px] font-bold uppercase leading-[1.4]';
 
 const goldIntenseStyle = { color: colors.brand.goldIntense };
 
 const panelClass =
-  "rounded-[8px] border border-solid border-[#E3E3E3] bg-[#F7F6F4] p-5 desktop:grid desktop:grid-rows-[48px_repeat(3,minmax(132px,1fr))]";
+  'rounded-[8px] border border-solid border-[#E3E3E3] bg-[#F7F6F4] p-5 desktop:grid desktop:grid-rows-[48px_repeat(3,minmax(132px,1fr))]';
 
 const payoffRowClass = `${bodyClass} relative flex flex-col items-start py-3 desktop:py-3`;
 
@@ -35,19 +36,27 @@ const payoffRowClass = `${bodyClass} relative flex flex-col items-start py-3 des
  */
 export function PriorityChapterBridge() {
   const { phase, hypothesis } = usePriorityConversationContext();
-  const { experience, houseKnowledge } = useDecisionSessionRuntime();
+  const { experience, houseKnowledge, chatHouseKnowledge } =
+    useDecisionSessionRuntime();
 
-  if (phase !== "complete" || hypothesis === null) {
+  if (
+    phase === 'complete' &&
+    chatHouseKnowledge?.canonicalHouseId === 'modern-4kk'
+  ) {
+    return <PriorityFitAssessment />;
+  }
+
+  if (phase !== 'complete' || hypothesis === null) {
     return null;
   }
 
   const roomMedia = experience.context.roomMedia;
   const recallImage = roomMedia.thumbnails.find(
     (item) =>
-      item.kind === "photo" &&
+      item.kind === 'photo' &&
       !/(?:^|\/)01\.(?:png|jpe?g|webp)$/i.test(item.src),
   );
-  const roomTitle = roomMedia.title ?? "vybraný prostor";
+  const roomTitle = roomMedia.title ?? 'vybraný prostor';
   const interpretationByFactId = new Map(
     (houseKnowledge?.interpretations ?? []).map((item) => [
       item.factId,
@@ -109,7 +118,7 @@ export function PriorityChapterBridge() {
             {payoffRows.map((row, index) => (
               <div
                 key={row.fact}
-                className={`${payoffRowClass} ${index === 0 ? "" : "border-t border-[#E3E3E3]"}`}
+                className={`${payoffRowClass} ${index === 0 ? '' : 'border-t border-[#E3E3E3]'}`}
               >
                 <strong className="block uppercase">{row.factPoint}</strong>
                 <span>{row.fact}</span>
@@ -128,7 +137,7 @@ export function PriorityChapterBridge() {
             {payoffRows.map((row, index) => (
               <p
                 key={row.fact}
-                className={`${payoffRowClass} ${index === 0 ? "" : "border-t border-[#E3E3E3]"}`}
+                className={`${payoffRowClass} ${index === 0 ? '' : 'border-t border-[#E3E3E3]'}`}
               >
                 <strong className="uppercase">{row.interpretationPoint}</strong>
                 <span>{row.meaning}</span>
@@ -169,41 +178,41 @@ export function PriorityChapterBridge() {
             <li>
               {
                 PRIORITY_PAYOFF_EXPLORATION_BULLETS[0].split(
-                  "OTÁZKY A ODPOVĚDI",
+                  'OTÁZKY A ODPOVĚDI',
                 )[0]
               }
               <strong>OTÁZKY A ODPOVĚDI</strong>
               {
                 PRIORITY_PAYOFF_EXPLORATION_BULLETS[0].split(
-                  "OTÁZKY A ODPOVĚDI",
+                  'OTÁZKY A ODPOVĚDI',
                 )[1]
               }
             </li>
             <li>
               {
                 PRIORITY_PAYOFF_EXPLORATION_BULLETS[1].split(
-                  "DISKUTOVAT PŘES CHAT",
+                  'DISKUTOVAT PŘES CHAT',
                 )[0]
               }
               <strong>DISKUTOVAT PŘES CHAT</strong>
               {
                 PRIORITY_PAYOFF_EXPLORATION_BULLETS[1].split(
-                  "DISKUTOVAT PŘES CHAT",
+                  'DISKUTOVAT PŘES CHAT',
                 )[1]
               }
             </li>
             <li>
-              {PRIORITY_PAYOFF_EXPLORATION_BULLETS[2].split("OSOBNÍ SOUHRN")[0]}
+              {PRIORITY_PAYOFF_EXPLORATION_BULLETS[2].split('OSOBNÍ SOUHRN')[0]}
               <strong>OSOBNÍ SOUHRN</strong>
               {
                 PRIORITY_PAYOFF_EXPLORATION_BULLETS[2]
-                  .split("OSOBNÍ SOUHRN")[1]
-                  .split("FAKTY A OBRÁZKY")[0]
+                  .split('OSOBNÍ SOUHRN')[1]
+                  .split('FAKTY A OBRÁZKY')[0]
               }
               <strong>FAKTY A OBRÁZKY</strong>
               {
                 PRIORITY_PAYOFF_EXPLORATION_BULLETS[2].split(
-                  "FAKTY A OBRÁZKY",
+                  'FAKTY A OBRÁZKY',
                 )[1]
               }
             </li>

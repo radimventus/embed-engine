@@ -7,10 +7,11 @@ export const AUDIT_LAND_QUESTION_ID = 'audit.land';
 export const AUDIT_LAND_HAS_PLOT = 'owned';
 export const AUDIT_LAND_SEARCHING_PLOT = 'seeking';
 
-export const AUDIT_LAND_LABELS: Readonly<Record<string, string>> = Object.freeze({
-  [AUDIT_LAND_HAS_PLOT]: 'Mám pozemek',
-  [AUDIT_LAND_SEARCHING_PLOT]: 'Hledám pozemek',
-});
+export const AUDIT_LAND_LABELS: Readonly<Record<string, string>> =
+  Object.freeze({
+    [AUDIT_LAND_HAS_PLOT]: 'Mám pozemek',
+    [AUDIT_LAND_SEARCHING_PLOT]: 'Hledám pozemek',
+  });
 
 export const AUDIT_LAND_SALES_DETAIL: Readonly<Record<string, string>> =
   Object.freeze({
@@ -48,83 +49,70 @@ export const PRIORITY_SUPPLEMENTARY_QUESTIONS: Readonly<
   Record<string, SupplementaryQuestion>
 > = Object.freeze({
   energy: {
-    prompt: 'Co je pro vás u energie nejdůležitější?',
+    prompt: 'Co má pro vás dobře vyřešená energetika přinést?',
     options: [
-      { id: 'low-cost', label: 'Nižší náklady' },
-      { id: 'independence', label: 'Větší nezávislost' },
-      { id: 'comfort', label: 'Každodenní komfort' },
+      { id: 'low-cost', label: 'Nízké provozní náklady' },
+      { id: 'independence', label: 'Maximální energetickou nezávislost' },
+      { id: 'smart-control', label: 'Chytré řízení provozu' },
     ],
   },
-  'operating-costs': {
-    prompt: 'Jak přemýšlíte o provozních nákladech?',
+  comfort: {
+    prompt: 'Co vám doma nejvíc pomáhá cítit se dobře?',
     options: [
-      { id: 'predictability', label: 'Stabilní výdaje' },
-      { id: 'low-monthly', label: 'Nízké měsíční náklady' },
-      { id: 'long-term', label: 'Úspora v čase' },
+      { id: 'heating-cooling', label: 'Pohodlné vytápění + klimatizace' },
+      { id: 'fresh-air', label: 'Zdravý a čerstvý vzduch' },
+      { id: 'light-view', label: 'Světlo a výhled přes velká okna' },
     ],
   },
   layout: {
-    prompt: 'Jak má dům podporovat váš každodenní život?',
+    prompt: 'Co vám musí dobře fungovat v každodenním uspořádání domu?',
     options: [
-      { id: 'day-night', label: 'Oddělený den a noc' },
-      { id: 'open-space', label: 'Otevřený společný prostor' },
-      { id: 'flexibility', label: 'Místnosti, které se dají měnit' },
-    ],
-  },
-  privacy: {
-    prompt: 'Kde je pro vás soukromí nejdůležitější?',
-    options: [
-      { id: 'neighbors', label: 'Odclonění od sousedů' },
-      { id: 'garden', label: 'Klidná zahrada' },
-      { id: 'interior', label: 'Soukromí uvnitř domu' },
+      { id: 'family-space', label: 'Společný prostor pro rodinu' },
+      { id: 'privacy', label: 'Dostatek soukromí' },
+      { id: 'flexibility', label: 'Možnost místnosti časem měnit' },
     ],
   },
   design: {
-    prompt: 'Co má design domu vyjádřit?',
+    prompt: 'Jaký dům se vám bude líbit i za mnoho let?',
     options: [
-      { id: 'timeless', label: 'Nadčasový klid' },
+      { id: 'timeless', label: 'Nadčasový vzhled' },
       { id: 'character', label: 'Výrazný charakter' },
-      { id: 'materials', label: 'Poctivé materiály' },
+      { id: 'materials', label: 'Umírněnost a přírodní materiály' },
     ],
   },
   quality: {
-    prompt: 'Co pro vás znamená kvalita?',
+    prompt: 'Podle čeho poznáte, že je dům opravdu kvalitní?',
     options: [
-      { id: 'durability', label: 'Trvanlivost' },
-      { id: 'detail', label: 'Pečlivé detaily' },
-      { id: 'warranty', label: 'Jistotu záruky' },
+      { id: 'durability-warranty', label: 'Dlouhá životnost a záruka' },
+      { id: 'materials-technology', label: 'Použité materiály a technologie' },
+      {
+        id: 'execution-detail',
+        label: 'Kontrola provedení a technické detaily',
+      },
     ],
   },
   plot: {
-    prompt: 'Co je u pozemku pro vás zásadní?',
+    prompt: 'Jak by měl dům co nejlépe využít váš pozemek?',
     options: [
-      { id: 'orientation', label: 'Orientace ke slunci' },
-      { id: 'size', label: 'Velikost pozemku' },
-      { id: 'access', label: 'Přístup a okolí' },
+      { id: 'orientation', label: 'Orientace světových stran' },
+      { id: 'access-parking', label: 'Příjezd a garážové stání' },
+      { id: 'garden-terrace', label: 'Krásná zahrada s terasou' },
     ],
   },
-  investment: {
-    prompt: 'Co chcete od investice do bydlení?',
+  realization: {
+    prompt: 'Co očekáváte od realizace především?',
     options: [
-      { id: 'value-hold', label: 'Udržet hodnotu' },
-      { id: 'budget', label: 'Jasný rozpočet' },
-      { id: 'return', label: 'Dlouhodobou jistotu' },
+      { id: 'price-scope', label: 'Garantovaná cena a rozsah' },
+      { id: 'build-speed', label: 'Rychlost výstavby' },
+      { id: 'customization', label: 'Možnost individuálních úprav' },
     ],
   },
   maintenance: {
-    prompt: 'Jak chcete o dům pečovat?',
+    prompt: 'Jak se chcete o dům starat, až v něm budete bydlet?',
     options: [
-      { id: 'low-effort', label: 'Co nejméně starostí' },
-      { id: 'predictable', label: 'Předvídatelné náklady' },
-      { id: 'self-service', label: 'Možnost řešit sám' },
-    ],
-  },
-  flexibility: {
-    prompt: 'K čemu má být dům připravený?',
-    options: [
-      { id: 'lifecycle', label: 'Změny během let' },
-      { id: 'work-home', label: 'Práci z domova' },
-      { id: 'guests', label: 'Prostor pro hosty' },
+      { id: 'low-effort', label: 'Minimální údržba s nízkými náklady' },
+      { id: 'full-service', label: 'Pravidelný servis s plným komfortem' },
+      { id: 'self-service', label: 'Možnost částečné údržby svépomocí' },
     ],
   },
 });
@@ -153,7 +141,13 @@ export function lookupSupplementaryAnswer(
   const option = PRIORITY_SUPPLEMENTARY_QUESTIONS[priorityId]?.options.find(
     (item) => item.id === answerId,
   );
-  return option?.label ?? null;
+  if (option) {
+    return option.label;
+  }
+  const legacyLabels: Readonly<Record<string, string>> = {
+    'energy:comfort': 'Každodenní komfort',
+  };
+  return legacyLabels[`${priorityId}:${answerId}`] ?? null;
 }
 
 export function lookupOpenedQuestionLabel(

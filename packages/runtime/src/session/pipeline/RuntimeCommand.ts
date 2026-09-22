@@ -32,7 +32,7 @@ export type RuntimeCommand =
   | {
       readonly type: "AnswerQuestion";
       readonly questionId: string;
-      readonly answerId: string;
+      readonly answerIds: readonly string[];
     }
   | {
       readonly type: "OpenQuestion";

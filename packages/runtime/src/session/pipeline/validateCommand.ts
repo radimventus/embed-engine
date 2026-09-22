@@ -55,7 +55,9 @@ export function validateCommand(input: {
         });
         break;
       }
-      const room = housePackage.rooms.find((candidate) => candidate.id === command.roomId);
+      const room = housePackage.rooms.find(
+        (candidate) => candidate.id === command.roomId,
+      );
       if (room === undefined) {
         errors.push({
           code: "HP_UNKNOWN_ROOM",
@@ -66,7 +68,10 @@ export function validateCommand(input: {
       break;
     }
     case "ChangePriority": {
-      if (!Array.isArray(command.priorityIds) || command.priorityIds.length === 0) {
+      if (
+        !Array.isArray(command.priorityIds) ||
+        command.priorityIds.length === 0
+      ) {
         errors.push({
           code: "HP_INVALID_PRIORITY",
           message: "priorityIds must be a non-empty array.",
@@ -74,7 +79,11 @@ export function validateCommand(input: {
         });
         break;
       }
-      if (command.priorityIds.some((id) => typeof id !== "string" || id.length === 0)) {
+      if (
+        command.priorityIds.some(
+          (id) => typeof id !== "string" || id.length === 0,
+        )
+      ) {
         errors.push({
           code: "HP_INVALID_PRIORITY",
           message: "Each priorityId must be a non-empty string.",
@@ -127,7 +136,10 @@ export function validateCommand(input: {
       break;
     }
     case "SelectVariant": {
-      if (typeof command.variantId !== "string" || command.variantId.length === 0) {
+      if (
+        typeof command.variantId !== "string" ||
+        command.variantId.length === 0
+      ) {
         errors.push({
           code: "HP_INVALID_VARIANT",
           message: "variantId must be a non-empty string.",
@@ -137,7 +149,10 @@ export function validateCommand(input: {
       break;
     }
     case "ActivateScenario": {
-      if (typeof command.scenarioId !== "string" || command.scenarioId.length === 0) {
+      if (
+        typeof command.scenarioId !== "string" ||
+        command.scenarioId.length === 0
+      ) {
         errors.push({
           code: "HP_INVALID_SCENARIO",
           message: "scenarioId must be a non-empty string.",
@@ -147,24 +162,38 @@ export function validateCommand(input: {
       break;
     }
     case "AnswerQuestion": {
-      if (typeof command.questionId !== "string" || command.questionId.length === 0) {
+      if (
+        typeof command.questionId !== "string" ||
+        command.questionId.length === 0
+      ) {
         errors.push({
           code: "HP_INVALID_ANSWER",
           message: "questionId must be a non-empty string.",
           path: "command.questionId",
         });
       }
-      if (typeof command.answerId !== "string" || command.answerId.length === 0) {
+      if (
+        !Array.isArray(command.answerIds) ||
+        command.answerIds.length < 1 ||
+        command.answerIds.length > 3 ||
+        command.answerIds.some(
+          (answerId) => typeof answerId !== "string" || answerId.length === 0,
+        ) ||
+        new Set(command.answerIds).size !== command.answerIds.length
+      ) {
         errors.push({
           code: "HP_INVALID_ANSWER",
-          message: "answerId must be a non-empty string.",
-          path: "command.answerId",
+          message: "answerIds must contain 1–3 unique non-empty strings.",
+          path: "command.answerIds",
         });
       }
       break;
     }
     case "OpenQuestion": {
-      if (typeof command.questionId !== "string" || command.questionId.length === 0) {
+      if (
+        typeof command.questionId !== "string" ||
+        command.questionId.length === 0
+      ) {
         errors.push({
           code: "HP_INVALID_ANSWER",
           message: "questionId must be a non-empty string.",
@@ -173,7 +202,8 @@ export function validateCommand(input: {
       }
       if (
         command.prompt !== undefined &&
-        (typeof command.prompt !== "string" || command.prompt.trim().length === 0)
+        (typeof command.prompt !== "string" ||
+          command.prompt.trim().length === 0)
       ) {
         errors.push({
           code: "HP_INVALID_ANSWER",
@@ -185,7 +215,10 @@ export function validateCommand(input: {
     }
     case "StartVideoPlayback":
     case "ViewImage": {
-      if (typeof command.mediaId !== "string" || command.mediaId.trim().length === 0) {
+      if (
+        typeof command.mediaId !== "string" ||
+        command.mediaId.trim().length === 0
+      ) {
         errors.push({
           code: "HP_INVALID_ANSWER",
           message: "mediaId must be a non-empty string.",
@@ -195,7 +228,10 @@ export function validateCommand(input: {
       break;
     }
     case "MarkVideoPlaybackMilestone": {
-      if (typeof command.mediaId !== "string" || command.mediaId.trim().length === 0) {
+      if (
+        typeof command.mediaId !== "string" ||
+        command.mediaId.trim().length === 0
+      ) {
         errors.push({
           code: "HP_INVALID_ANSWER",
           message: "mediaId must be a non-empty string.",
@@ -227,7 +263,10 @@ export function validateCommand(input: {
       break;
     }
     case "SubmitChatQuestion": {
-      if (typeof command.questionId !== "string" || command.questionId.length === 0) {
+      if (
+        typeof command.questionId !== "string" ||
+        command.questionId.length === 0
+      ) {
         errors.push({
           code: "HP_INVALID_ANSWER",
           message: "questionId must be a non-empty string.",

@@ -10,14 +10,12 @@ export type DecisionCategory = {
 export const DECISION_CATEGORIES: DecisionCategory[] = [
   { id: 'plot', title: 'Pozemek' },
   { id: 'layout', title: 'Dispozice' },
-  { id: 'privacy', title: 'Soukromí' },
-  { id: 'energy', title: 'Energie' },
-  { id: 'operating-costs', title: 'Provozní náklady' },
+  { id: 'comfort', title: 'Komfort' },
   { id: 'design', title: 'Design' },
+  { id: 'energy', title: 'Energie' },
+  { id: 'realization', title: 'Realizace' },
   { id: 'quality', title: 'Kvalita' },
-  { id: 'investment', title: 'Investice' },
   { id: 'maintenance', title: 'Údržba' },
-  { id: 'flexibility', title: 'Flexibilita' },
 ];
 
 /**
@@ -27,17 +25,19 @@ export const DECISION_CATEGORIES: DecisionCategory[] = [
 export const SELECTABLE_DECISION_CATEGORY_IDS = [
   'plot',
   'layout',
-  'privacy',
+  'comfort',
   'design',
   'energy',
-  'operating-costs',
+  'realization',
   'quality',
   'maintenance',
 ] as const;
 
 export const SELECTABLE_DECISION_CATEGORIES: readonly DecisionCategory[] =
   SELECTABLE_DECISION_CATEGORY_IDS.map((id) => {
-    const category = DECISION_CATEGORIES.find((candidate) => candidate.id === id);
+    const category = DECISION_CATEGORIES.find(
+      (candidate) => candidate.id === id,
+    );
     if (category === undefined) {
       throw new Error(`Unknown selectable decision category: ${id}`);
     }

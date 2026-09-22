@@ -30,16 +30,28 @@ export type DecisionAnalyticsCollector = {
   readonly resumeJourney: (at?: AnalyticsTimestamp) => void;
   readonly completeJourney: (at?: AnalyticsTimestamp) => void;
   readonly abandonJourney: (at?: AnalyticsTimestamp) => void;
-  readonly enterSurface: (surfaceId: JourneySurfaceId, at?: AnalyticsTimestamp) => void;
-  readonly exitSurface: (surfaceId: JourneySurfaceId, at?: AnalyticsTimestamp) => void;
-  readonly observeDispatch: (result: DispatchResult, at?: AnalyticsTimestamp) => void;
+  readonly enterSurface: (
+    surfaceId: JourneySurfaceId,
+    at?: AnalyticsTimestamp,
+  ) => void;
+  readonly exitSurface: (
+    surfaceId: JourneySurfaceId,
+    at?: AnalyticsTimestamp,
+  ) => void;
+  readonly observeDispatch: (
+    result: DispatchResult,
+    at?: AnalyticsTimestamp,
+  ) => void;
   readonly terminalViewed: (input: {
     readonly terminalId: string;
     readonly recommendationKey: string;
     readonly at?: AnalyticsTimestamp;
   }) => void;
   readonly storyViewed: (storyId: string, at?: AnalyticsTimestamp) => void;
-  readonly aiSessionOpened: (aiContextId: string, at?: AnalyticsTimestamp) => void;
+  readonly aiSessionOpened: (
+    aiContextId: string,
+    at?: AnalyticsTimestamp,
+  ) => void;
   readonly aiInteraction: (input: {
     readonly questionCategory: string;
     readonly responseGenerated: boolean;
@@ -47,7 +59,10 @@ export type DecisionAnalyticsCollector = {
     readonly conversationLength: number;
     readonly at?: AnalyticsTimestamp;
   }) => void;
-  readonly aiSessionEnded: (conversationLength: number, at?: AnalyticsTimestamp) => void;
+  readonly aiSessionEnded: (
+    conversationLength: number,
+    at?: AnalyticsTimestamp,
+  ) => void;
   readonly experienceEvent: (input: {
     readonly experienceEventType: ExperienceEventType;
     readonly payload?: ExperienceEventPayload;
@@ -55,10 +70,22 @@ export type DecisionAnalyticsCollector = {
     readonly at?: AnalyticsTimestamp;
   }) => void;
   readonly conversionStarted: (ctaId: string, at?: AnalyticsTimestamp) => void;
-  readonly conversionFormOpened: (ctaId: string, at?: AnalyticsTimestamp) => void;
-  readonly conversionConsentAccepted: (ctaId: string, at?: AnalyticsTimestamp) => void;
-  readonly conversionCompleted: (ctaId: string, at?: AnalyticsTimestamp) => void;
-  readonly conversionCancelled: (ctaId: string, at?: AnalyticsTimestamp) => void;
+  readonly conversionFormOpened: (
+    ctaId: string,
+    at?: AnalyticsTimestamp,
+  ) => void;
+  readonly conversionConsentAccepted: (
+    ctaId: string,
+    at?: AnalyticsTimestamp,
+  ) => void;
+  readonly conversionCompleted: (
+    ctaId: string,
+    at?: AnalyticsTimestamp,
+  ) => void;
+  readonly conversionCancelled: (
+    ctaId: string,
+    at?: AnalyticsTimestamp,
+  ) => void;
   readonly flush: () => void;
 };
 
@@ -221,7 +248,8 @@ export function createDecisionAnalyticsCollector(
         emit({
           ...base(at),
           type: 'experience.event',
-          experienceEventType: priorityCount > 0 ? 'priority.selected' : 'priority.changed',
+          experienceEventType:
+            priorityCount > 0 ? 'priority.selected' : 'priority.changed',
           payload: Object.freeze({ priorityCount, priorityIds }),
         });
         emit({
@@ -409,7 +437,7 @@ function payloadFromDecisionEvent(
     case 'QuestionAnswered':
       return {
         questionId: event.questionId,
-        answerId: event.answerId,
+        answerIds: event.answerIds.join(','),
       };
     case 'QuestionOpened':
       return { questionId: event.questionId };

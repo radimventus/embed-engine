@@ -1,12 +1,12 @@
-import type { HouseDataMode } from "../domain/types";
+import type { HouseDataMode } from '../domain/types';
 import type {
   LeadProcessingStatus,
   ReadinessCatalog,
-} from "../readiness/readinessTypes";
+} from '../readiness/readinessTypes';
 
 export const HIGH_INTENT_THRESHOLD = 65;
 
-export type OperationalOrigin = "REFERENCE" | "LEAD";
+export type OperationalOrigin = 'REFERENCE' | 'LEAD';
 
 export type OperationalJourneyStep = {
   readonly module: string;
@@ -53,6 +53,7 @@ export type OperationalPrioritySelection = {
   readonly label: string;
   readonly importance: number | null;
   readonly answer: OperationalPriorityAnswer | null;
+  readonly answers: readonly OperationalPriorityAnswer[];
 };
 
 export type HouseOperationalCase = {
@@ -77,9 +78,9 @@ export type HouseOperationalCase = {
     readonly phone: string | null;
   };
   readonly conversion: {
-    readonly source: "EMBED";
-    readonly intent: "audit";
-    readonly status: "accepted";
+    readonly source: 'EMBED';
+    readonly intent: 'audit';
+    readonly status: 'accepted';
   };
   readonly profilZajemce: ProfilZajemce;
 };
@@ -99,9 +100,9 @@ export type OperationalLeadRecord = {
   readonly projectId: string;
   readonly houseId: string;
   readonly createdAt: string;
-  readonly source: "EMBED";
-  readonly intent: "audit";
-  readonly status: "accepted";
+  readonly source: 'EMBED';
+  readonly intent: 'audit';
+  readonly status: 'accepted';
   readonly processingStatus: LeadProcessingStatus;
   readonly contact: {
     readonly name: string;
@@ -113,12 +114,12 @@ export type OperationalLeadRecord = {
 
 export type OperationalDecisionEvent =
   | {
-      readonly type: "RoomSelected";
+      readonly type: 'RoomSelected';
       readonly roomId: string;
       readonly at: number;
     }
   | {
-      readonly type: "PriorityChanged";
+      readonly type: 'PriorityChanged';
       readonly priorityIds: readonly string[];
       readonly intensities?: readonly {
         readonly priorityId: string;
@@ -127,40 +128,42 @@ export type OperationalDecisionEvent =
       readonly at: number;
     }
   | {
-      readonly type: "QuestionAnswered";
+      readonly type: 'QuestionAnswered';
       readonly questionId: string;
-      readonly answerId: string;
+      readonly answerIds?: readonly string[];
+      /** Backward-compatible read shape for sessions stored before Priority V2. */
+      readonly answerId?: string;
       readonly at: number;
     }
   | {
-      readonly type: "QuestionOpened";
+      readonly type: 'QuestionOpened';
       readonly questionId: string;
       readonly prompt?: string;
       readonly at: number;
     }
   | {
-      readonly type: "VideoPlaybackStarted";
+      readonly type: 'VideoPlaybackStarted';
       readonly mediaId: string;
       readonly at: number;
     }
   | {
-      readonly type: "VideoPlaybackMilestone";
+      readonly type: 'VideoPlaybackMilestone';
       readonly mediaId: string;
-      readonly milestone: "half" | "end";
+      readonly milestone: 'half' | 'end';
       readonly at: number;
     }
   | {
-      readonly type: "ImageViewed";
+      readonly type: 'ImageViewed';
       readonly mediaId: string;
       readonly at: number;
     }
   | {
-      readonly type: "JourneyStageEntered";
-      readonly stageId: "tour" | "priority" | "racio" | "audit";
+      readonly type: 'JourneyStageEntered';
+      readonly stageId: 'tour' | 'priority' | 'racio' | 'audit';
       readonly at: number;
     }
   | {
-      readonly type: "ChatQuestionSubmitted";
+      readonly type: 'ChatQuestionSubmitted';
       readonly questionId: string;
       readonly at: number;
     }

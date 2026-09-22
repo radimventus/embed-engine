@@ -1,22 +1,20 @@
-import { useState } from "react";
+import { useState } from 'react';
 
-import {
-  AUDIT_LAND_QUESTION_ID,
-} from "@embed-engine/platform-access";
+import { AUDIT_LAND_QUESTION_ID } from '@embed-engine/platform-access';
 
-import { JOURNEY_CTA_SECONDARY_CLASS } from "../../foundation/journeyCta";
-import { scrollToSection } from "../../foundation/scrollToSection";
-import { PILOT_SECTION_IDS } from "../../pilot/pilotVocabulary";
-import { useDecisionSessionRuntime } from "../../runtime/DecisionSessionRuntimeProvider";
+import { JOURNEY_CTA_SECONDARY_CLASS } from '../../foundation/journeyCta';
+import { scrollToSection } from '../../foundation/scrollToSection';
+import { PILOT_SECTION_IDS } from '../../pilot/pilotVocabulary';
+import { useDecisionSessionRuntime } from '../../runtime/DecisionSessionRuntimeProvider';
 import {
   AssessmentWorkflow,
   AUDIT_ASSESSMENT_WORKFLOW_ID,
-} from "./AssessmentWorkflow";
-import { AuditContact } from "./AuditContact";
-import { AuditTransition } from "./AuditTransition";
-import { AUDIT_SECTION_STYLE, type LandOption } from "./audit-panel";
-import { ContactCard } from "./ContactCard";
-import { SituationSelect } from "./SituationSelect";
+} from './AssessmentWorkflow';
+import { AuditContact } from './AuditContact';
+import { AuditTransition } from './AuditTransition';
+import { AUDIT_SECTION_STYLE, type LandOption } from './audit-panel';
+import { ContactCard } from './ContactCard';
+import { SituationSelect } from './SituationSelect';
 
 /**
  * Audit — Experience closer (CAP UX 42).
@@ -25,12 +23,12 @@ import { SituationSelect } from "./SituationSelect";
  */
 export function AuditLeadCapture({ onBack }: { readonly onBack: () => void }) {
   const { dispatch } = useDecisionSessionRuntime();
-  const [landOption, setLandOption] = useState<LandOption>("owned");
+  const [landOption, setLandOption] = useState<LandOption>('owned');
   const persistLandIntent = (value: LandOption) => {
     dispatch({
-      type: "AnswerQuestion",
+      type: 'AnswerQuestion',
       questionId: AUDIT_LAND_QUESTION_ID,
-      answerId: value,
+      answerIds: [value],
     });
   };
   const handleLandOptionChange = (value: LandOption) => {
@@ -58,7 +56,10 @@ export function AuditLeadCapture({ onBack }: { readonly onBack: () => void }) {
             onChange={handleLandOptionChange}
           />
           <AssessmentWorkflow landOption={landOption} />
-          <AuditContact landOption={landOption} onPersistLandIntent={persistLandIntent} />
+          <AuditContact
+            landOption={landOption}
+            onPersistLandIntent={persistLandIntent}
+          />
         </div>
 
         <ContactCard />

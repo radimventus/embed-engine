@@ -11,9 +11,7 @@ import {
   formatVisitedRoomsTitle,
   lookupRoomSalesLabel,
 } from './lookupRoomSalesLabel';
-import {
-  scoreIndexPripravenosti,
-} from '../readiness/scoreIndexPripravenosti';
+import { scoreIndexPripravenosti } from '../readiness/scoreIndexPripravenosti';
 import type { ReadinessCatalog } from '../readiness/readinessTypes';
 import type {
   OperationalDecisionEvent,
@@ -55,7 +53,9 @@ export function priorityLabel(priorityId: string): string {
   return CANONICAL_PRIORITY_LABELS[priorityId] ?? priorityId;
 }
 
-export function formatPriorityImportance(importance: number | null): string | null {
+export function formatPriorityImportance(
+  importance: number | null,
+): string | null {
   if (importance === null || !Number.isFinite(importance)) {
     return null;
   }
@@ -92,15 +92,19 @@ function visitedRoomIdsFromSnapshot(
 function isPriorityChanged(
   event: OperationalDecisionEvent,
 ): event is Extract<OperationalDecisionEvent, { type: 'PriorityChanged' }> {
-  return event.type === 'PriorityChanged' && Array.isArray(
-    (event as { priorityIds?: unknown }).priorityIds,
+  return (
+    event.type === 'PriorityChanged' &&
+    Array.isArray((event as { priorityIds?: unknown }).priorityIds)
   );
 }
 
 function isRoomSelected(
   event: OperationalDecisionEvent,
 ): event is Extract<OperationalDecisionEvent, { type: 'RoomSelected' }> {
-  return event.type === 'RoomSelected' && typeof (event as { roomId?: unknown }).roomId === 'string';
+  return (
+    event.type === 'RoomSelected' &&
+    typeof (event as { roomId?: unknown }).roomId === 'string'
+  );
 }
 
 function isQuestionAnswered(
@@ -109,7 +113,8 @@ function isQuestionAnswered(
   return (
     event.type === 'QuestionAnswered' &&
     typeof (event as { questionId?: unknown }).questionId === 'string' &&
-    typeof (event as { answerId?: unknown }).answerId === 'string'
+    (Array.isArray((event as { answerIds?: unknown }).answerIds) ||
+      typeof (event as { answerId?: unknown }).answerId === 'string')
   );
 }
 
@@ -124,36 +129,44 @@ function isQuestionOpened(
 
 function latestAnswersByQuestion(
   events: readonly OperationalDecisionEvent[],
-): ReadonlyMap<string, { readonly answerId: string; readonly at: number }> {
-  const latest = new Map<string, { readonly answerId: string; readonly at: number }>();
+): ReadonlyMap<
+  string,
+  { readonly answerIds: readonly string[]; readonly at: number }
+> {
+  const latest = new Map<
+    string,
+    { readonly answerIds: readonly string[]; readonly at: number }
+  >();
   for (const event of events) {
     if (!isQuestionAnswered(event)) {
       continue;
     }
-    latest.set(event.questionId, { answerId: event.answerId, at: event.at });
+    const answerIds =
+      event.answerIds ?? (event.answerId ? [event.answerId] : []);
+    latest.set(event.questionId, { answerIds, at: event.at });
   }
   return latest;
 }
 
 function supplementaryAnswerForPriority(
   priorityId: string,
-  answers: ReadonlyMap<string, { readonly answerId: string; readonly at: number }>,
-): OperationalPriorityAnswer | null {
+  answers: ReadonlyMap<
+    string,
+    { readonly answerIds: readonly string[]; readonly at: number }
+  >,
+): readonly OperationalPriorityAnswer[] {
   const questionId = prioritySupplementaryQuestionId(priorityId);
   const recorded = answers.get(questionId);
   if (recorded === undefined) {
-    return null;
+    return [];
   }
-  const questionLabel =
-    lookupSupplementaryQuestion(priorityId) ?? questionId;
-  const answerLabel =
-    lookupSupplementaryAnswer(priorityId, recorded.answerId) ?? recorded.answerId;
-  return {
+  const questionLabel = lookupSupplementaryQuestion(priorityId) ?? questionId;
+  return recorded.answerIds.map((answerId) => ({
     questionId,
     questionLabel,
-    answerId: recorded.answerId,
-    answerLabel,
-  };
+    answerId,
+    answerLabel: lookupSupplementaryAnswer(priorityId, answerId) ?? answerId,
+  }));
 }
 
 export function selectedPrioritiesFromSnapshot(
@@ -162,15 +175,20 @@ export function selectedPrioritiesFromSnapshot(
   const ids =
     snapshot.priorityIds.length > 0
       ? snapshot.priorityIds
-      : [...snapshot.events].reverse().find(isPriorityChanged)?.priorityIds ?? [];
+      : ([...snapshot.events].reverse().find(isPriorityChanged)?.priorityIds ??
+        []);
   const answers = latestAnswersByQuestion(snapshot.events);
 
-  return ids.map((id) => ({
-    id,
-    label: priorityLabel(id),
-    importance: snapshot.priorityIntensities?.[id] ?? null,
-    answer: supplementaryAnswerForPriority(id, answers),
-  }));
+  return ids.map((id) => {
+    const selectedAnswers = supplementaryAnswerForPriority(id, answers);
+    return {
+      id,
+      label: priorityLabel(id),
+      importance: snapshot.priorityIntensities?.[id] ?? null,
+      answer: selectedAnswers[0] ?? null,
+      answers: selectedAnswers,
+    };
+  });
 }
 
 export function openedQuestionsFromSnapshot(
@@ -192,9 +210,7 @@ export function openedQuestionsFromSnapshot(
   return [...unique.values()];
 }
 
-export function auditLandFromSnapshot(
-  snapshot: OperationalDecisionSnapshot,
-): {
+export function auditLandFromSnapshot(snapshot: OperationalDecisionSnapshot): {
   readonly answerId: string;
   readonly label: string;
   readonly detail: string;
@@ -205,14 +221,18 @@ export function auditLandFromSnapshot(
   if (recorded === undefined) {
     return null;
   }
-  const label = lookupAuditLandLabel(recorded.answerId);
+  const answerId = recorded.answerIds[0];
+  if (answerId === undefined) {
+    return null;
+  }
+  const label = lookupAuditLandLabel(answerId);
   if (label === null) {
     return null;
   }
   return {
-    answerId: recorded.answerId,
+    answerId,
     label,
-    detail: AUDIT_LAND_SALES_DETAIL[recorded.answerId] ?? label,
+    detail: AUDIT_LAND_SALES_DETAIL[answerId] ?? label,
   };
 }
 
@@ -222,13 +242,15 @@ function strongestPriority(
   if (priorities.length === 0) {
     return null;
   }
-  return [...priorities].sort((left, right) => {
-    const delta = (right.importance ?? -1) - (left.importance ?? -1);
-    if (delta !== 0) {
-      return delta;
-    }
-    return left.label.localeCompare(right.label, 'cs');
-  })[0] ?? null;
+  return (
+    [...priorities].sort((left, right) => {
+      const delta = (right.importance ?? -1) - (left.importance ?? -1);
+      if (delta !== 0) {
+        return delta;
+      }
+      return left.label.localeCompare(right.label, 'cs');
+    })[0] ?? null
+  );
 }
 
 function journeyFromSnapshot(

@@ -2,20 +2,22 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { prioritySupplementaryQuestionId } from '@embed-engine/platform-access';
 
-import { scrollToSection, scrollElementIntoView, PRIORITY_BRIDGE_ANCHOR_ID } from '../../foundation/scrollToSection';
+import {
+  scrollToSection,
+  scrollElementIntoView,
+  PRIORITY_BRIDGE_ANCHOR_ID,
+} from '../../foundation/scrollToSection';
 import { captureJourneyStageFromSection } from '../../foundation/journeyStageCapture';
 import { PILOT_SECTION_IDS } from '../../pilot/pilotVocabulary';
 import { useDecisionSessionRuntime } from '../../runtime/DecisionSessionRuntimeProvider';
 import {
   buildPriorityHypothesisSummary,
   coachingProgressPercent,
-  interpretationFor,
   questionIntentFor,
   type PriorityHypothesisSummary,
 } from './priorityCoachingDialogue';
 import {
   CONIS_MICROINTERACTION_MS,
-  CONIS_THINKING_MS,
   dialogQuestionFor,
   pickDialogPriorityIds,
   PRIORITY_CONVERSATION_MINIMUM,
@@ -46,12 +48,12 @@ export type PriorityConversationView = {
   readonly currentQuestion: PriorityDialogQuestion | null;
   readonly questionIntent: string | null;
   readonly interpretation: string | null;
-  readonly answers: Readonly<Record<string, string>>;
+  readonly answers: Readonly<Record<string, readonly string[]>>;
   readonly hypothesis: PriorityHypothesisSummary | null;
   readonly progressPercent: number;
   readonly canAddMore: boolean;
   readonly isAdvancing: boolean;
-  readonly pendingOptionId: string | null;
+  readonly pendingOptionIds: readonly string[];
   readonly progress: PriorityConversationProgress;
   readonly finishSelection: () => void;
   readonly addMorePriorities: () => void;
@@ -59,6 +61,7 @@ export type PriorityConversationView = {
   readonly continueToSummary: () => void;
   readonly acknowledgePrep: () => void;
   readonly answerQuestion: (priorityId: string, optionId: string) => void;
+  readonly confirmQuestion: () => void;
   readonly continueDialog: () => void;
   readonly continueToFaq: () => void;
   readonly askConis: () => void;
@@ -101,12 +104,12 @@ export function usePriorityConversation(): PriorityConversationView {
   const [awaitingMore, setAwaitingMore] = useState(false);
   const [prepAcknowledged, setPrepAcknowledged] = useState(false);
   const [dialogQueue, setDialogQueue] = useState<string[]>([]);
-  const [answers, setAnswers] = useState<Record<string, string>>({});
+  const [answers, setAnswers] = useState<Record<string, readonly string[]>>({});
   const [dialogBeat, setDialogBeat] = useState<DialogBeat>('question');
   const [interpretation, setInterpretation] = useState<string | null>(null);
   const [activePriorityId, setActivePriorityId] = useState<string | null>(null);
   const [isAdvancing, setIsAdvancing] = useState(false);
-  const [pendingOptionId, setPendingOptionId] = useState<string | null>(null);
+  const [pendingOptionIds, setPendingOptionIds] = useState<string[]>([]);
   const phaseRef = useRef<PriorityConversationPhase>('instruction');
   const intensityRef = useRef<Record<string, number>>({});
 
@@ -145,7 +148,7 @@ export function usePriorityConversation(): PriorityConversationView {
     setDialogBeat('question');
     setInterpretation(null);
     setActivePriorityId(null);
-    setPendingOptionId(null);
+    setPendingOptionIds([]);
   }, [clearTimers]);
 
   useEffect(() => {
@@ -234,7 +237,7 @@ export function usePriorityConversation(): PriorityConversationView {
     if (dialogBeat === 'interpretation' || dialogBeat === 'thinking') {
       return false;
     }
-    return dialogQueue.every((id) => answers[id] !== undefined);
+    return dialogQueue.every((id) => (answers[id]?.length ?? 0) > 0);
   }, [answers, dialogBeat, dialogQueue]);
 
   const phase: PriorityConversationPhase = (() => {
@@ -242,10 +245,7 @@ export function usePriorityConversation(): PriorityConversationView {
       return 'instruction';
     }
     if (!selectionClosed) {
-      if (
-        selectedCount >= PRIORITY_CONVERSATION_MINIMUM &&
-        !awaitingMore
-      ) {
+      if (selectedCount >= PRIORITY_CONVERSATION_MINIMUM && !awaitingMore) {
         return 'collection-gate';
       }
       return 'collecting';
@@ -288,7 +288,7 @@ export function usePriorityConversation(): PriorityConversationView {
     ) {
       return dialogQuestionFor(activePriorityId);
     }
-    const nextId = dialogQueue.find((id) => answers[id] === undefined);
+    const nextId = dialogQueue.find((id) => (answers[id]?.length ?? 0) === 0);
     if (nextId === undefined) {
       return null;
     }
@@ -336,7 +336,7 @@ export function usePriorityConversation(): PriorityConversationView {
       setDialogBeat('question');
       setInterpretation(null);
       setActivePriorityId(null);
-      setPendingOptionId(null);
+      setPendingOptionIds([]);
       setSelectionClosed(true);
       setAwaitingMore(false);
       setPrepAcknowledged(false);
@@ -376,54 +376,54 @@ export function usePriorityConversation(): PriorityConversationView {
       setDialogBeat('question');
       setInterpretation(null);
       setActivePriorityId(null);
-      setPendingOptionId(null);
+      setPendingOptionIds([]);
     });
   };
 
   const answerQuestion = (priorityId: string, optionId: string) => {
-    if (dialogBeat !== 'question' || isAdvancing || thinkingTimerRef.current) {
+    if (dialogBeat !== 'question' || isAdvancing) {
       return;
     }
-
-    const isFinalQuestion =
-      dialogQueue.filter((id) => answers[id] === undefined).length === 1;
-
-    setPendingOptionId(optionId);
     setActivePriorityId(priorityId);
-    setInterpretation(null);
-    progress.record({
-      type: 'dialog-answer',
-      priorityId,
-      optionId,
-      at: Date.now(),
+    setPendingOptionIds((current) => {
+      if (current.includes(optionId)) {
+        return current.filter((id) => id !== optionId);
+      }
+      return current.length >= 3 ? current : [...current, optionId];
     });
+  };
+
+  const confirmQuestion = () => {
+    if (
+      activePriorityId === null ||
+      pendingOptionIds.length === 0 ||
+      isAdvancing
+    ) {
+      return;
+    }
+    const priorityId = activePriorityId;
+    const question = dialogQuestionFor(priorityId);
+    const answerIds =
+      question?.options
+        .filter((option) => pendingOptionIds.includes(option.id))
+        .map((option) => option.id) ?? [];
+    for (const optionId of answerIds) {
+      progress.record({
+        type: 'dialog-answer',
+        priorityId,
+        optionId,
+        at: Date.now(),
+      });
+    }
     dispatch({
       type: 'AnswerQuestion',
       questionId: prioritySupplementaryQuestionId(priorityId),
-      answerId: optionId,
+      answerIds,
     });
-
-    if (isFinalQuestion) {
-      setAnswers((current) => ({ ...current, [priorityId]: optionId }));
-      setDialogBeat('question');
-      setActivePriorityId(null);
-      setPendingOptionId(null);
-      return;
-    }
-
-    setDialogBeat('thinking');
-    progress.record({
-      type: 'dialog-thinking',
-      priorityId,
-      at: Date.now(),
-    });
-
-    thinkingTimerRef.current = window.setTimeout(() => {
-      setAnswers((current) => ({ ...current, [priorityId]: optionId }));
-      setInterpretation(interpretationFor(priorityId, optionId));
-      setDialogBeat('interpretation');
-      thinkingTimerRef.current = null;
-    }, CONIS_THINKING_MS);
+    setAnswers((current) => ({ ...current, [priorityId]: answerIds }));
+    setPendingOptionIds([]);
+    setActivePriorityId(null);
+    setInterpretation(null);
   };
 
   const continueDialog = () => {
@@ -439,7 +439,7 @@ export function usePriorityConversation(): PriorityConversationView {
     setDialogBeat('question');
     setInterpretation(null);
     setActivePriorityId(null);
-    setPendingOptionId(null);
+    setPendingOptionIds([]);
   };
 
   const continueToFaq = () => {
@@ -504,13 +504,14 @@ export function usePriorityConversation(): PriorityConversationView {
     progressPercent,
     canAddMore: selectedCount < categories.length,
     isAdvancing,
-    pendingOptionId,
+    pendingOptionIds,
     progress,
     finishSelection,
     addMorePriorities,
     continueToSummary,
     acknowledgePrep,
     answerQuestion,
+    confirmQuestion,
     continueDialog,
     continueToFaq,
     askConis,

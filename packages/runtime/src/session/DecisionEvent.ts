@@ -49,7 +49,7 @@ export type DecisionEvent =
   | {
       readonly type: "QuestionAnswered";
       readonly questionId: string;
-      readonly answerId: string;
+      readonly answerIds: readonly string[];
       readonly at: Timestamp;
     }
   | {

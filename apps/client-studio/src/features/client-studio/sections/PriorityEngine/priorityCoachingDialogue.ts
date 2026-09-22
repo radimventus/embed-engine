@@ -81,14 +81,11 @@ export const PRIORITY_QUESTION_INTENT: Readonly<Record<string, string>> =
       'Tahle otázka mi pomůže pochopit, jak přemýšlíte o nákladech v čase.',
     layout:
       'Tahle otázka mi pomůže pochopit, jak má dům podporovat váš denní rytmus.',
-    privacy:
-      'Tahle otázka mi pomůže pochopit, co pro vás znamená soukromí.',
-    design:
-      'Tahle otázka mi pomůže pochopit, jaký charakter domu k vám patří.',
+    privacy: 'Tahle otázka mi pomůže pochopit, co pro vás znamená soukromí.',
+    design: 'Tahle otázka mi pomůže pochopit, jaký charakter domu k vám patří.',
     quality:
       'Tahle otázka mi pomůže pochopit, kde pro vás začíná pocit kvality.',
-    plot:
-      'Tahle otázka mi pomůže pochopit, co je pro vás u pozemku zásadní.',
+    plot: 'Tahle otázka mi pomůže pochopit, co je pro vás u pozemku zásadní.',
     investment:
       'Tahle otázka mi pomůže pochopit, jak vnímáte dlouhodobou jistotu rozhodnutí.',
     maintenance:
@@ -134,8 +131,7 @@ export const PRIORITY_ANSWER_INTERPRETATION: Readonly<
       'Zdá se, že soukromí hledáte především uvnitř domu, mezi místnostmi.',
   }),
   design: Object.freeze({
-    timeless:
-      'Zdá se, že vám blíže je nadčasový klid než výrazná móda.',
+    timeless: 'Zdá se, že vám blíže je nadčasový klid než výrazná móda.',
     character:
       'Zdá se, že dům má mít charakter — aby bylo poznat, že patří právě vám.',
     materials:
@@ -144,26 +140,21 @@ export const PRIORITY_ANSWER_INTERPRETATION: Readonly<
   quality: Object.freeze({
     durability:
       'Zdá se, že kvalita pro vás znamená především trvanlivost v čase.',
-    detail:
-      'Zdá se, že si všímáte detailů — tam, kde se pozná pečlivá práce.',
+    detail: 'Zdá se, že si všímáte detailů — tam, kde se pozná pečlivá práce.',
     warranty:
       'Zdá se, že jistotu kvality hledáte i v tom, co je za domem zaručeno.',
   }),
   plot: Object.freeze({
-    orientation:
-      'Zdá se, že u pozemku je pro vás klíčová orientace a světlo.',
-    size:
-      'Zdá se, že velikost pozemku je pro vás zásadní součást rozhodnutí.',
-    access:
-      'Zdá se, že stejně jako samotný pozemek vnímáte přístup a okolí.',
+    orientation: 'Zdá se, že u pozemku je pro vás klíčová orientace a světlo.',
+    size: 'Zdá se, že velikost pozemku je pro vás zásadní součást rozhodnutí.',
+    access: 'Zdá se, že stejně jako samotný pozemek vnímáte přístup a okolí.',
   }),
   investment: Object.freeze({
     'value-hold':
       'Zdá se, že investici vnímáte jako udržení hodnoty — ne jako spekulaci.',
     budget:
       'Zdá se, že potřebujete jasný rámec rozpočtu, abyste se mohli rozhodnout v klidu.',
-    return:
-      'Zdá se, že hledáte dlouhodobou jistotu spíš než krátkodobý efekt.',
+    return: 'Zdá se, že hledáte dlouhodobou jistotu spíš než krátkodobý efekt.',
   }),
   maintenance: Object.freeze({
     'low-effort':
@@ -174,8 +165,7 @@ export const PRIORITY_ANSWER_INTERPRETATION: Readonly<
       'Zdá se, že chcete mít možnost některé věci řešit sami — s přehledem.',
   }),
   flexibility: Object.freeze({
-    lifecycle:
-      'Zdá se, že dům má umět růst s vámi — přes změny během let.',
+    lifecycle: 'Zdá se, že dům má umět růst s vámi — přes změny během let.',
     'work-home':
       'Zdá se, že je pro vás důležité, aby dům unesl i práci z domova.',
     guests:
@@ -219,31 +209,34 @@ export type PriorityHypothesisSummary = {
 
 export function buildPriorityHypothesisSummary(input: {
   readonly tags: readonly { readonly id: string; readonly title: string }[];
-  readonly answers: Readonly<Record<string, string>>;
+  readonly answers: Readonly<Record<string, readonly string[]>>;
 }): PriorityHypothesisSummary {
   const titles = input.tags.map((tag) => tag.title);
   const list = formatPriorityListCs(titles);
   const insightLines: string[] = [];
 
   for (const tag of input.tags) {
-    const optionId = input.answers[tag.id];
-    if (!optionId) {
+    const optionIds = input.answers[tag.id];
+    if (!optionIds?.length) {
       continue;
     }
     const question = dialogQuestionFor(tag.id);
-    const option = question?.options.find((item) => item.id === optionId);
-    if (option) {
+    const labels = optionIds.flatMap((optionId) => {
+      const option = question?.options.find((item) => item.id === optionId);
+      return option ? [option.label.toLowerCase()] : [];
+    });
+    if (labels.length > 0) {
       insightLines.push(
-        `U priority ${tag.title.toLowerCase()} vnímám důraz na „${option.label.toLowerCase()}“.`,
+        `U priority ${tag.title.toLowerCase()} vnímám důraz na ${labels.map((label) => `„${label}“`).join(', ')}.`,
       );
     }
   }
 
   // Fallback when answers are missing ids that don't match tag order.
   if (insightLines.length === 0) {
-    for (const [priorityId, optionId] of Object.entries(input.answers)) {
+    for (const [priorityId, optionIds] of Object.entries(input.answers)) {
       const question = dialogQuestionFor(priorityId);
-      const option = question?.options.find((item) => item.id === optionId);
+      const option = question?.options.find((item) => item.id === optionIds[0]);
       const title = priorityTitleForId(priorityId);
       if (option) {
         insightLines.push(
@@ -389,9 +382,7 @@ export function coachChatOpeningFromPriorities(
     return null;
   }
 
-  const titles = priorityIds
-    .slice(0, 5)
-    .map((id) => priorityTitleForId(id));
+  const titles = priorityIds.slice(0, 5).map((id) => priorityTitleForId(id));
   const list = formatPriorityListCs(titles);
 
   return [

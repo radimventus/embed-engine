@@ -1,19 +1,19 @@
-import type { HouseDataMode } from "../domain/types";
+import type { HouseDataMode } from '../domain/types';
 import {
   projectLeadProfilZajemce,
   resolveCorrelatedSnapshot,
-} from "./projectLeadProfil";
+} from './projectLeadProfil';
 import {
   REFERENCE_CASE_TEMPLATES,
   type ReferenceCaseTemplate,
-} from "./referenceOperationalTemplates";
-import type { ReadinessCatalog } from "../readiness/readinessTypes";
+} from './referenceOperationalTemplates';
+import type { ReadinessCatalog } from '../readiness/readinessTypes';
 import type {
   HouseOperationalCase,
   OperationalDecisionSnapshot,
   OperationalHouseScope,
   OperationalLeadRecord,
-} from "./operationalTypes";
+} from './operationalTypes';
 
 function scopedCaseId(
   templateId: string,
@@ -44,16 +44,16 @@ function instantiateTemplate(
     projectId: scope.projectId,
     houseId: scope.houseId,
     houseName: scope.houseName,
-    origin: "REFERENCE",
+    origin: 'REFERENCE',
     leadId: null,
     decisionSessionId: null,
-    processingStatus: "new",
+    processingStatus: 'new',
     createdAt: template.createdAt,
     contact: template.contact,
     conversion: {
-      source: "EMBED",
-      intent: "audit",
-      status: "accepted",
+      source: 'EMBED',
+      intent: 'audit',
+      status: 'accepted',
     },
     profilZajemce: {
       land: template.land,
@@ -64,6 +64,7 @@ function instantiateTemplate(
         label,
         importance: null,
         answer: null,
+        answers: [],
       })),
       openedQuestions: [],
       insight: template.insight(scope.houseName),
@@ -87,7 +88,7 @@ function leadToCase(
     projectId: lead.projectId,
     houseId: lead.houseId,
     houseName,
-    origin: "LEAD",
+    origin: 'LEAD',
     leadId: lead.leadId,
     decisionSessionId: lead.decisionSessionId,
     processingStatus: lead.processingStatus,
@@ -150,7 +151,7 @@ export function selectHouseOperationalCases(input: {
   }
 
   const referenceCases =
-    input.dataMode === "REFERENCE_DEMO"
+    input.dataMode === 'REFERENCE_DEMO'
       ? REFERENCE_CASE_TEMPLATES.map((template) =>
           instantiateTemplate(template, {
             companyId,
