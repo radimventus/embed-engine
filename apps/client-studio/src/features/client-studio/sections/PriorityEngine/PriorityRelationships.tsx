@@ -6,6 +6,7 @@ import {
   HouseRelationshipOutputCache,
   type HouseRelationshipEvidenceBundle,
   type HouseRelationshipOutput,
+  type HouseKnowledgeAtom,
 } from '@embed-engine/object-house';
 
 import { useDecisionSessionRuntime } from '../../runtime/DecisionSessionRuntimeProvider';
@@ -15,6 +16,7 @@ import { PILOT_SECTION_IDS } from '../../pilot/pilotVocabulary';
 import { openDecisionTopicInChat } from '../AIAdvisor/decisionTopicChatBridge';
 import { createRelationshipNarrativeGenerator } from './relationshipNarrativeGenerator';
 import { BUNGALOV_4KK_FIT_CONTRACT } from './priorityFitContract';
+import type { PriorityFitContractEntry } from './priorityFitContract';
 
 const outputCache = new HouseRelationshipOutputCache();
 
@@ -50,17 +52,21 @@ function RelationshipDialog({
   bundle,
   generator,
   onClose,
+  topicEntry,
+  topicFacts = [],
 }: {
   readonly bundle: HouseRelationshipEvidenceBundle;
   readonly generator: ReturnType<typeof createRelationshipNarrativeGenerator>;
   readonly onClose: () => void;
+  readonly topicEntry?: PriorityFitContractEntry;
+  readonly topicFacts?: readonly HouseKnowledgeAtom[];
 }) {
   const [output, setOutput] = useState<HouseRelationshipOutput | null>(null);
   const [failed, setFailed] = useState(false);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
 
   const askConis = () => {
-    openDecisionTopicInChat({ houseId: bundle.houseId, topicTitle: bundle.title });
+    openDecisionTopicInChat({ houseId: bundle.houseId, topicTitle: topicEntry?.answer ?? bundle.title });
     onClose();
     navigateToJourneySection(PILOT_SECTION_IDS.aiAdvisor);
     window.setTimeout(() => {
@@ -71,12 +77,18 @@ function RelationshipDialog({
   useEffect(() => {
     let active = true;
     const { primaryFact: _primary, relatedFact: _related, supportingFacts: _supporting, ...evidence } = bundle;
-    setOutput({ ...evidence, narrative: evidenceBoundNarrative(bundle) });
+    if (topicEntry) {
+      setOutput(null);
+    } else {
+      setOutput({ ...evidence, narrative: evidenceBoundNarrative(bundle) });
+    }
     setFailed(false);
-    void outputCache.getOrGenerate(bundle, generator).then(
-      (value) => { if (active) setOutput(value); },
-      () => { /* Grounded synchronous fallback remains visible. */ },
-    );
+    if (!topicEntry) {
+      void outputCache.getOrGenerate(bundle, generator).then(
+        (value) => { if (active) setOutput(value); },
+        () => { /* Grounded synchronous fallback remains visible. */ },
+      );
+    }
     closeButtonRef.current?.focus();
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape') onClose();
@@ -86,7 +98,7 @@ function RelationshipDialog({
       active = false;
       window.removeEventListener('keydown', onKeyDown);
     };
-  }, [bundle, generator, onClose]);
+  }, [bundle, generator, onClose, topicEntry]);
 
   return createPortal(
     <div
@@ -121,7 +133,32 @@ function RelationshipDialog({
             ×
           </button>
         </header>
-        {output === null && !failed ? (
+        {topicEntry ? (
+          <div className="mt-8 text-[16px] leading-[1.65] mobile:mt-6 mobile:text-[15px]" data-testid="priority-topic-content">
+            {topicFacts.length > 0 ? (
+              <>
+                <section className="max-w-[800px]">
+                  <h4 className="m-0 text-[12px] font-bold uppercase tracking-[0.08em] text-[#B8922D]">{SECTION_LABELS.houseSolution}</h4>
+                  <p className="mb-0 mt-2 text-[19px] font-medium leading-[1.5] mobile:text-[17px]">{topicEntry.why}</p>
+                </section>
+                <section className="mt-8 rounded-[10px] bg-[#F7F6F4] px-7 py-6 mobile:px-5 mobile:py-5">
+                  <h4 className="m-0 text-[17px] font-bold uppercase leading-[1.35]">{SECTION_LABELS.facts}</h4>
+                  <ul className="mb-0 mt-3 flex list-none flex-col gap-2 p-0">
+                    {topicFacts.map((fact) => <li key={fact.id} className="relative pl-4 before:absolute before:left-0 before:top-[0.72em] before:h-1.5 before:w-1.5 before:-translate-y-1/2 before:rounded-full before:bg-[#B8922D]">{fact.safeInterpretation ?? fact.statement}</li>)}
+                  </ul>
+                </section>
+              </>
+            ) : (
+              <section className="rounded-[10px] bg-[#F7F6F4] px-7 py-6 mobile:px-5 mobile:py-5" data-testid="priority-topic-knowledge-gap">
+                <h4 className="m-0 text-[17px] font-bold uppercase text-[#8C6B24]">OVĚŘIT S PRODEJCEM</h4>
+                <p className="mb-0 mt-3">{topicEntry.why}</p>
+                {topicEntry.missingEvidence ? <p className="mb-0 mt-2 text-embed-foreground-primary/70">Je potřeba doplnit: {topicEntry.missingEvidence}</p> : null}
+              </section>
+            )}
+            <button type="button" onClick={askConis} className="mt-7 rounded-[8px] border-0 bg-[#B8922D] px-5 py-3 text-[15px] font-bold text-[#001930]" data-testid="priority-relationship-ask-conis">Zeptat se CONIS</button>
+          </div>
+        ) : null}
+        {!topicEntry && output === null && !failed ? (
           <div className="mt-8" role="status">
             <p className="m-0 text-[18px] font-bold leading-[1.5] text-[#001930]">
               Díváme se, co pro vás znamená „{bundle.title}“
@@ -138,10 +175,10 @@ function RelationshipDialog({
             </div>
           </div>
         ) : null}
-        {failed ? (
+        {!topicEntry && failed ? (
           <p className="mt-6" role="alert">Pro tuto souvislost se nepodařilo připravit doložený výstup.</p>
         ) : null}
-        {output !== null ? (
+        {!topicEntry && output !== null ? (
           <div className="mt-8 text-[16px] leading-[1.65] mobile:mt-6 mobile:text-[15px]" data-testid="priority-relationship-content">
             <section className="max-w-[800px]">
               <h4 className="m-0 text-[12px] font-bold uppercase tracking-[0.08em] text-[#B8922D]">{SECTION_LABELS.connection}</h4>
@@ -199,7 +236,7 @@ export function PriorityRelationships({
   readonly excludeTitles?: readonly string[];
   readonly priorityV2?: boolean;
 } = {}) {
-  const { relationshipEvidence } = useDecisionSessionRuntime();
+  const { relationshipEvidence, chatHouseKnowledge } = useDecisionSessionRuntime();
   const decision = useDecisionContext();
   const [active, setActive] = useState<HouseRelationshipEvidenceBundle | null>(null);
   const generator = useMemo(
@@ -256,7 +293,20 @@ export function PriorityRelationships({
           </button>
         ))}
       </div>
-      {active !== null ? <RelationshipDialog bundle={active} generator={generator} onClose={() => setActive(null)} /> : null}
+      {active !== null ? <RelationshipDialog
+        bundle={active}
+        generator={generator}
+        onClose={() => setActive(null)}
+        topicEntry={active.outputId.startsWith('priority-v2:')
+          ? BUNGALOV_4KK_FIT_CONTRACT.find((entry) => `priority-v2:${entry.answerId}` === active.outputId)
+          : undefined}
+        topicFacts={active.outputId.startsWith('priority-v2:')
+          ? (chatHouseKnowledge?.facts ?? []).filter((fact) => {
+              const topic = BUNGALOV_4KK_FIT_CONTRACT.find((entry) => `priority-v2:${entry.answerId}` === active.outputId);
+              return topic?.evidenceFactIds.includes(fact.id) ?? false;
+            })
+          : []}
+      /> : null}
     </section>
   );
 }

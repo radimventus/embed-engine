@@ -21,7 +21,7 @@ test("Decision Topic CTA transfers a client-visible topic prompt to the existing
   assert.match(relationships, /Zeptat se CONIS/);
   assert.match(
     relationships,
-    /openDecisionTopicInChat\(\{ houseId: bundle\.houseId, topicTitle: bundle\.title \}\)/,
+    /openDecisionTopicInChat\(\{ houseId: bundle\.houseId, topicTitle: topicEntry\?\.answer \?\? bundle\.title \}\)/,
   );
   assert.match(
     advisor,
