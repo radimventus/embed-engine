@@ -36,6 +36,7 @@ import { AmbientSocialProof } from "./sections/Hero/AmbientSocialProof";
 import { SocialProofFeedProvider } from "./sections/Hero/useSocialProofFeed";
 import { AuditLeadCapture } from "./sections/AuditLeadCapture/AuditLeadCapture";
 import { PriorityEngine } from "./sections/PriorityEngine/PriorityEngine";
+import { PRIORITY_BRIDGE_ANCHOR_ID } from "./foundation/scrollToSection";
 import { PriorityExperienceProvider } from "./sections/PriorityEngine/PriorityExperienceProvider";
 import { SpatialTerminal } from "./sections/SpatialTerminal/SpatialTerminal";
 import { prepareInitialScrollMedia } from "./sections/MediaExplorer/initialScrollMediaReadiness";
@@ -531,6 +532,12 @@ export function ClientStudioPage({
     currentSceneBoundaryId: activePinnedStop.readingBoundaryId,
     currentSceneScrollOffsetPx: activePinnedStop.scrollOffsetPx,
     progressKey: `${revealedSceneCount}:${scrollIntentResetKey}`,
+    thresholdPx: () =>
+      activeSceneId === scenes[1]?.id &&
+      window.matchMedia("(min-width: 768px)").matches &&
+      document.getElementById(PRIORITY_BRIDGE_ANCHOR_ID) !== null
+        ? 600
+        : 80,
     onNavigate: navigateProgressively,
   });
 

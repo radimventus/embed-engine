@@ -4,15 +4,15 @@ import test from 'node:test';
 
 const read = (name: string) => readFileSync(new URL(name, import.meta.url), 'utf8');
 
-test('VR3 separates priority intensity from answer fit and preserves every selection', () => {
+test('VR4 keeps priority intensity internal and preserves every answer selection', () => {
   const output = read('PriorityFitAssessment.tsx');
   assert.match(output, /tags\.map\(\(tag\)/);
-  assert.match(output, /PRO VÁS \{tag\.percent\} %/);
+  assert.doesNotMatch(output, /PRO VÁS \{tag\.percent\} %/);
   assert.match(output, /data-result-source="priority"/);
   assert.match(output, /data-result-source="answer"/);
   assert.match(output, /answerRows\.map/);
   assert.doesNotMatch(output, /Pro tuto prioritu zatím chybí konkrétní odpověď klienta/);
-  assert.match(output, /PRIORITY_SYNTHESIS/);
+  assert.match(output, /BUNGALOV_4KK_PRIORITY_LEVEL_FIT_CONTRACT/);
 });
 
 test('VR3 visual insights are eligible, concrete, exactly three, and retain zoom', () => {

@@ -13,6 +13,11 @@ export type PriorityFitContractEntry = {
   readonly roomId: string;
 };
 
+export type PriorityLevelFitContractEntry = Pick<
+  PriorityFitContractEntry,
+  'priorityId' | 'resultType' | 'rating' | 'why' | 'evidenceFactIds'
+>;
+
 const entry = (value: PriorityFitContractEntry): PriorityFitContractEntry =>
   Object.freeze(value);
 
@@ -302,6 +307,19 @@ export const BUNGALOV_4KK_FIT_CONTRACT: readonly PriorityFitContractEntry[] =
         'Seznam úkonů vhodných pro vlastníka a úkonů vyžadujících odborný servis.',
       roomId: 'technical-room',
     }),
+  ]);
+
+/** Product-owner approved house-level assessment; client intensity never changes it. */
+export const BUNGALOV_4KK_PRIORITY_LEVEL_FIT_CONTRACT: readonly PriorityLevelFitContractEntry[] =
+  Object.freeze([
+    { priorityId: 'plot', resultType: 'verify', why: 'Dům má jasné nároky na orientaci, příjezd i vztah k zahradě; skutečnou shodu určí konkrétní parcela.', evidenceFactIds: ['kb04-row-43', 'kb04-row-50', 'kb04-row-537'] },
+    { priorityId: 'layout', resultType: 'rating', rating: 5, why: 'Otevřený společný prostor, oddělená klidová část a částečně upravitelné pokoje dávají dispozici velmi dobrou funkční rovnováhu.', evidenceFactIds: ['kb04-row-88', 'kb04-row-90', 'kb04-row-102'] },
+    { priorityId: 'comfort', resultType: 'rating', rating: 5, why: 'Vytápění a chlazení, řízené větrání i velké prosklení společně vytvářejí velmi dobré podmínky pro každodenní komfort.', evidenceFactIds: ['kb04-row-383', 'kb04-row-386', 'kb04-row-586'] },
+    { priorityId: 'design', resultType: 'rating', rating: 5, why: 'Jednoduchá hmota, výrazné prosklení a střídmá kombinace materiálů dávají domu osobitý, ale umírněný charakter.', evidenceFactIds: ['kb04-row-116', 'kb04-row-121', 'kb04-row-296'] },
+    { priorityId: 'energy', resultType: 'rating', rating: 5, why: 'Dům kombinuje velmi nízkou spotřebu s vlastní výrobou energie a chytrým řízením jejího využití, nákupu a prodeje.', evidenceFactIds: ['kb04-row-637', 'kb04-row-638', 'kb04-row-639', 'task120-vr4-energy-battery'] },
+    { priorityId: 'realization', resultType: 'knowledge-gap', why: 'Možnosti individuálních úprav známe; cenu, garantovaný rozsah a dobu realizace je potřeba upřesnit s dodavatelem.', evidenceFactIds: ['kb04-row-109', 'kb04-row-115', 'kb04-row-130'] },
+    { priorityId: 'quality', resultType: 'rating', rating: 5, why: 'Konstrukce, materiály, technologie i kontrola provedení jsou podrobně doložené; známá je také návrhová životnost a záruka.', evidenceFactIds: ['kb04-row-238', 'kb04-row-269', 'kb04-row-359', 'kb04-row-663'] },
+    { priorityId: 'maintenance', resultType: 'rating', rating: 4, why: 'Technické řešení je záměrně jednoduché a většina technologií vyžaduje jen standardní nebo minimální servis; pravidelnou péči vyžadují především dřevěné prvky.', evidenceFactIds: ['kb04-row-283', 'kb04-row-295', 'kb04-row-398', 'task120-vr4-maintenance-system'] },
   ]);
 
 export function priorityFitEntry(

@@ -7,6 +7,7 @@ import { PriorityRelationships } from './PriorityRelationships';
 import { MediaLightbox } from '../MediaExplorer/MediaLightbox';
 import { SpatialZoomControl } from '../SpatialZoomControl';
 import {
+  BUNGALOV_4KK_PRIORITY_LEVEL_FIT_CONTRACT,
   priorityFitEntry,
   type PriorityFitContractEntry,
 } from './priorityFitContract';
@@ -28,34 +29,23 @@ type GroundedFitEntry = PriorityFitContractEntry & {
   readonly rowKind: 'priority' | 'answer';
 };
 
-const PRIORITY_SYNTHESIS: Readonly<Record<string, string>> = {
-  plot: 'U tohoto domu bude důležité prověřit orientaci, příjezd a vztah terasy k zahradě na konkrétní parcele.',
-  layout: 'Dům pracuje s otevřeným společným prostorem, oddělenou klidovou částí a částečně upravitelnými pokoji.',
-  comfort: 'Tepelný komfort, řízené větrání a velké prosklení společně podporují příjemné vnitřní prostředí.',
-  design: 'Dům stojí na jednoduché hmotě, výrazném prosklení a kombinaci střídmých materiálů.',
-  energy: 'Energetická třída, řízené technologie a příprava výroby energie tvoří společný provozní celek.',
-  realization: 'Rozsah úprav je částečně doložený; cenu, harmonogram a závazný rozsah je nutné potvrdit s prodejcem.',
-  quality: 'Konstrukce, materiály, technologie a kontrola provedení jsou popsané jako jeden technický systém.',
-  maintenance: 'Použité materiály omezují pravidelnou péči, konkrétní servisní intervaly a náklady je ale potřeba ověřit.',
-};
-
 function derivePriorityResult(
   priorityId: string,
   label: string,
-  _intensity: number,
   selected: readonly GroundedFitEntry[],
 ): GroundedFitEntry {
-  const nonRating = selected.find((entry) => entry.resultType === 'verify') ??
-    selected.find((entry) => entry.resultType === 'knowledge-gap') ??
-    selected.find((entry) => entry.resultType === 'information');
+  const approved = BUNGALOV_4KK_PRIORITY_LEVEL_FIT_CONTRACT.find(
+    (entry) => entry.priorityId === priorityId,
+  );
+  if (!approved) throw new Error(`Missing Priority-level fit contract: ${priorityId}`);
   return {
     priorityId,
     answerId: `priority:${priorityId}`,
     answer: label,
-    resultType: nonRating?.resultType ?? 'information',
-    why: PRIORITY_SYNTHESIS[priorityId] ?? 'Tuto oblast porovnáváme s doloženými vlastnostmi domu a vašimi konkrétními potřebami.',
-    evidenceFactIds: selected.flatMap((entry) => entry.evidenceFactIds),
-    missingEvidence: nonRating?.missingEvidence,
+    resultType: approved.resultType,
+    rating: approved.rating,
+    why: approved.why,
+    evidenceFactIds: approved.evidenceFactIds,
     roomId: selected[0]?.roomId ?? 'exterior',
     grounded: selected.length > 0 && selected.every((entry) => entry.grounded),
     rowKind: 'priority',
@@ -129,7 +119,7 @@ export function PriorityFitAssessment() {
     () => tags.flatMap((tag) => {
       const selected = grounded.filter((entry) => entry.priorityId === tag.id);
       return [
-        derivePriorityResult(tag.id, tag.title, tag.percent, selected),
+        derivePriorityResult(tag.id, tag.title, selected),
         ...selected,
       ];
     }),
@@ -220,7 +210,7 @@ export function PriorityFitAssessment() {
             <section key={tag.id} className="border-t border-solid border-[#E7E7E3] first:border-t-0" data-testid="priority-result-group">
               <article className="grid min-h-[72px] grid-cols-[1.15fr_145px_2fr] items-center bg-[#F7F7F5] text-[15px] mobile:m-2 mobile:grid-cols-[1fr_auto] mobile:rounded-[8px]" data-result-source="priority">
                 <strong className="px-3 py-3 text-[17px] uppercase text-embed-brand-navy">{priority.answer}</strong>
-                <span className="px-3 py-3 text-[13px] font-extrabold uppercase text-[#8C6B24] mobile:text-right">PRO VÁS {tag.percent} %</span>
+                <span className={`px-3 py-3 font-extrabold ${priority.resultType === 'rating' ? 'text-[20px] tracking-[1px] text-embed-brand-gold' : 'text-[12px] uppercase text-[#8C6B24]'} mobile:text-right`}>{resultLabel(priority)}</span>
                 <span className="px-3 py-3 leading-[1.45] text-embed-foreground-primary/75 mobile:col-span-2">{priority.why}</span>
               </article>
               {answerRows.map((entry) => {
@@ -342,21 +332,21 @@ export function PriorityFitAssessment() {
           <button
             type="button"
             onClick={continueWithPlotCheck}
-            className="rounded-[6px] border border-white/50 bg-transparent px-4 py-3 text-[13px] font-extrabold text-white"
+            className="rounded-[6px] border-2 border-white bg-embed-brand-navy px-4 py-3 text-[13px] font-extrabold text-white"
           >
             MÁM POZEMEK
           </button>
           <button
             type="button"
             onClick={continueWithPlotFind}
-            className="rounded-[6px] border border-white/50 bg-transparent px-4 py-3 text-[13px] font-extrabold text-white"
+            className="rounded-[6px] border-2 border-white bg-embed-brand-navy px-4 py-3 text-[13px] font-extrabold text-white"
           >
             HLEDÁM POZEMEK
           </button>
           <button
             type="button"
             onClick={askConis}
-            className="rounded-[6px] border border-white/50 bg-transparent px-4 py-3 text-[13px] font-extrabold text-white"
+            className="rounded-[6px] border-2 border-white bg-embed-brand-navy px-4 py-3 text-[13px] font-extrabold text-white"
           >
             MÁM DOTAZ
           </button>

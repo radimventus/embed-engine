@@ -131,7 +131,7 @@ type UseProgressiveScrollUnlockOptions = {
   readonly currentSceneScrollOffsetPx: number;
   readonly progressKey: string | number;
   readonly onNavigate: (direction: ProgressiveNavigationDirection) => void;
-  readonly thresholdPx?: number;
+  readonly thresholdPx?: number | (() => number);
 };
 
 function scrollRoot(): HTMLElement | Window {
@@ -317,10 +317,12 @@ export function useProgressiveScrollUnlock({
         return false;
       }
 
+      const effectiveThresholdPx =
+        typeof thresholdPx === "function" ? thresholdPx() : thresholdPx;
       const result = applyDirectionalIntent(
         intentRef.current,
         signedDeltaPx,
-        thresholdPx,
+        effectiveThresholdPx,
       );
       intentRef.current = result.state;
       clearIdleTimer();
