@@ -66,10 +66,11 @@ function RelationshipDialog({
   const closeButtonRef = useRef<HTMLButtonElement>(null);
 
   const askConis = () => {
-    openDecisionTopicInChat({ houseId: bundle.houseId, topicTitle: topicEntry?.answer ?? bundle.title });
+    const detail = { houseId: bundle.houseId, topicTitle: topicEntry?.answer ?? bundle.title };
     onClose();
     navigateToJourneySection(PILOT_SECTION_IDS.aiAdvisor);
     window.setTimeout(() => {
+      openDecisionTopicInChat(detail);
       document.querySelector<HTMLInputElement>(`#${PILOT_SECTION_IDS.aiAdvisor} input`)?.focus();
     }, 450);
   };

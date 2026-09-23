@@ -29,4 +29,5 @@ test('Ask CONIS transfers the Priority V2 label while chat remains canonical-wid
   assert.match(source, /topicTitle: topicEntry\?\.answer \?\? bundle\.title/);
   assert.match(source, /openDecisionTopicInChat/);
   assert.match(source, /navigateToJourneySection\(PILOT_SECTION_IDS\.aiAdvisor\)/);
+  assert.ok(source.indexOf('navigateToJourneySection(PILOT_SECTION_IDS.aiAdvisor)') < source.indexOf('openDecisionTopicInChat(detail)'));
 });
