@@ -26,10 +26,18 @@ test('VR4 maps all eight approved house-level results and WHY copy', () => {
 
   const output = read(new URL('PriorityFitAssessment.tsx', import.meta.url));
   assert.doesNotMatch(output, /PRO VÁS/);
-  assert.equal((output.match(/border-2 border-white bg-embed-brand-navy/g) ?? []).length, 3);
+  assert.equal((output.match(/border: '2px solid #FFFFFF'/g) ?? []).length, 3);
+  assert.equal((output.match(/hover:bg-white hover:text-embed-brand-navy/g) ?? []).length, 3);
   assert.match(output, /onClick=\{continueWithPlotCheck\}/);
   assert.match(output, /onClick=\{continueWithPlotFind\}/);
   assert.match(output, /onClick=\{askConis\}/);
+});
+
+test('VR4-FIX aligns the rating column and keeps hierarchy in the first column only', () => {
+  const output = read(new URL('PriorityFitAssessment.tsx', import.meta.url));
+  assert.doesNotMatch(output, /className="ml-6 grid min-h-\[64px\]/);
+  assert.match(output, /className="py-3 pl-9 pr-3 text-embed-brand-navy/);
+  assert.equal((output.match(/grid-cols-\[1\.15fr_145px_2fr\]/g) ?? []).length, 3);
 });
 
 test('VR4 additions are canonical, house-scoped, retrievable and not duplicated in the surface', () => {

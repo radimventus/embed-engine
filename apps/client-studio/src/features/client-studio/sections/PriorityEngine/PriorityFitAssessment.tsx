@@ -216,8 +216,8 @@ export function PriorityFitAssessment() {
               {answerRows.map((entry) => {
                 const effectiveType = entry.grounded ? entry.resultType : 'knowledge-gap';
                 const effective = { ...entry, resultType: effectiveType } as PriorityFitContractEntry;
-                return <article key={`${entry.priorityId}:${entry.answerId}`} className="ml-6 grid min-h-[64px] grid-cols-[1.15fr_145px_2fr] items-center border-t border-solid border-[#ECECE8] bg-white text-[15px] mobile:m-2 mobile:grid-cols-[1fr_auto] mobile:rounded-[8px] mobile:border" data-result-type={effectiveType} data-result-source="answer">
-                  <strong className="px-3 py-3 text-embed-brand-navy mobile:pb-1">↳ {entry.answer}</strong>
+                return <article key={`${entry.priorityId}:${entry.answerId}`} className="grid min-h-[64px] grid-cols-[1.15fr_145px_2fr] items-center border-t border-solid border-[#ECECE8] bg-white text-[15px] mobile:m-2 mobile:grid-cols-[1fr_auto] mobile:rounded-[8px] mobile:border" data-result-type={effectiveType} data-result-source="answer">
+                  <strong className="py-3 pl-9 pr-3 text-embed-brand-navy mobile:pb-1">↳ {entry.answer}</strong>
                   <span className={`px-3 py-3 font-extrabold ${effectiveType === 'rating' ? 'text-[20px] tracking-[1px] text-embed-brand-gold' : 'text-[12px] uppercase text-[#8C6B24]'} mobile:text-right`}>{resultLabel(effective)}</span>
                   <span className="px-3 py-3 leading-[1.4] text-embed-foreground-primary/70 mobile:col-span-2">{entry.why}</span>
                 </article>;
@@ -332,21 +332,24 @@ export function PriorityFitAssessment() {
           <button
             type="button"
             onClick={continueWithPlotCheck}
-            className="rounded-[6px] border-2 border-white bg-embed-brand-navy px-4 py-3 text-[13px] font-extrabold text-white"
+            style={{ border: '2px solid #FFFFFF' }}
+            className="rounded-[6px] bg-embed-brand-navy px-4 py-3 text-[13px] font-extrabold text-white transition-colors hover:bg-white hover:text-embed-brand-navy"
           >
             MÁM POZEMEK
           </button>
           <button
             type="button"
             onClick={continueWithPlotFind}
-            className="rounded-[6px] border-2 border-white bg-embed-brand-navy px-4 py-3 text-[13px] font-extrabold text-white"
+            style={{ border: '2px solid #FFFFFF' }}
+            className="rounded-[6px] bg-embed-brand-navy px-4 py-3 text-[13px] font-extrabold text-white transition-colors hover:bg-white hover:text-embed-brand-navy"
           >
             HLEDÁM POZEMEK
           </button>
           <button
             type="button"
             onClick={askConis}
-            className="rounded-[6px] border-2 border-white bg-embed-brand-navy px-4 py-3 text-[13px] font-extrabold text-white"
+            style={{ border: '2px solid #FFFFFF' }}
+            className="rounded-[6px] bg-embed-brand-navy px-4 py-3 text-[13px] font-extrabold text-white transition-colors hover:bg-white hover:text-embed-brand-navy"
           >
             MÁM DOTAZ
           </button>
