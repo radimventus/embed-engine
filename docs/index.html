@@ -29,8 +29,12 @@
 
   <link rel="preconnect" href="https://res.cloudinary.com" crossorigin>
   <link rel="dns-prefetch" href="https://res.cloudinary.com">
+  <link rel="preconnect" href="https://fast.wistia.com" crossorigin>
+  <link rel="dns-prefetch" href="https://fast.wistia.com">
 
   <link rel="stylesheet" href="css/style.css">
+  <script src="https://fast.wistia.com/player.js" async></script>
+  <script src="https://fast.wistia.com/embed/exw1j8nm3p.js" async type="module"></script>
 </head>
 <body>
 
@@ -61,6 +65,10 @@
     <!-- Core Value Proposition -->
     <section class="core-value positioning" id="top" aria-label="CONIS">
       <div class="container core-value__inner fade">
+        <p class="positioning__intro">
+          Prezentace typových domů a realit, která rozumí klientům.
+        </p>
+
         <h1 class="core-value__headline positioning__headline">
           Atraktivnější. Efektivnější. <span class="gold">Úspěšnější.</span>
         </h1>
@@ -68,19 +76,22 @@
         <p class="eyebrow positioning__eyebrow">
           CONVERSION INTELLIGENCE SYSTEM
         </p>
-
-        <p class="positioning__descriptor">
-          CONIS je inteligentní vrstva mezi produktem, klientem a obchodem.
-        </p>
-
-        <p class="lead positioning__lead">
-          Pomáháme stavebním firmám zvyšovat atraktivitu prezentace,<br>
-          efektivitu práce s klienty a úspěšnost obchodu.
-        </p>
-
-<div class="scroll" aria-hidden="true">
-        SCROLL
       </div>
+    </section>
+
+    <section class="hero-video" aria-label="Video CONIS">
+      <div class="hero-video__inner">
+        <div class="hero-video__frame">
+          <wistia-player
+            media-id="exw1j8nm3p"
+            seo="false"
+            aspect="1.8113207547169812"
+          ></wistia-player>
+        </div>
+        <p class="hero-video__statement">
+          CONIS pomáhá klientům porozumět nabídce a firmám pochopit klienty.
+        </p>
+        <p class="hero-video__scroll" aria-hidden="true">SCROLL</p>
       </div>
     </section>
 

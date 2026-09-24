@@ -1549,3 +1549,117 @@ header {
   transform: none;
   margin-top: 30px;
 }
+
+/* CONIS HOMEPAGE HERO + VIDEO 2026-09-24 */
+.positioning {
+  min-height: auto;
+  padding: 82px 0 26px;
+}
+
+.positioning .core-value__inner {
+  padding: 0;
+}
+
+.positioning__intro {
+  max-width: 900px;
+  margin: 0 auto 18px;
+  color: var(--gold);
+  font-size: clamp(25.92px, 2.232vw, 33.12px);
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+.positioning__headline {
+  font-size: clamp(34.02px, 3.8475vw, 56.7px);
+}
+
+.positioning__eyebrow {
+  margin-top: 18px;
+}
+
+.hero-video {
+  padding: 0 0 40px;
+  background: var(--bg);
+}
+
+.hero-video__inner {
+  width: min(960px, 92%);
+  margin: 0 auto;
+}
+
+.hero-video__frame {
+  width: 100%;
+  overflow: hidden;
+  background: #fff;
+  border: 1px solid rgba(0, 25, 48, 0.18);
+  border-radius: 14px;
+}
+
+.hero-video__frame wistia-player {
+  display: block;
+  width: 100%;
+}
+
+.hero-video__frame wistia-player:not(:defined) {
+  background: center / contain no-repeat url("https://fast.wistia.com/embed/medias/exw1j8nm3p/swatch");
+  filter: blur(5px);
+  padding-top: 55.21%;
+}
+
+.hero-video__statement {
+  max-width: 980px;
+  margin: 26px auto 0;
+  color: var(--gold);
+  font-size: clamp(18.9px, 1.62vw, 24.3px);
+  font-weight: 700;
+  line-height: 1.25;
+  letter-spacing: -0.02em;
+  text-align: center;
+}
+
+.hero-video__scroll {
+  margin: 34px auto 0;
+  color: var(--navy);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.42em;
+  line-height: 1;
+  opacity: 0.28;
+  text-align: center;
+}
+
+@media (max-width: 760px) {
+  .positioning {
+    padding: 142px 0 24px;
+  }
+
+  .positioning .core-value__inner {
+    padding: 0;
+  }
+
+  .positioning__intro {
+    margin-bottom: 24px;
+    font-size: 24.48px;
+  }
+
+  .positioning__headline {
+    font-size: clamp(31.59px, 8.91vw, 43.74px);
+  }
+
+  .hero-video {
+    padding-bottom: 56px;
+  }
+
+  .hero-video__inner {
+    width: 92%;
+  }
+
+  .hero-video__statement {
+    margin-top: 24px;
+    font-size: 18.9px;
+  }
+
+  .hero-video__scroll {
+    margin-top: 30px;
+  }
+}
