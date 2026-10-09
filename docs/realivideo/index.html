@@ -718,7 +718,7 @@ h1,h2,h3,h4,
   font-size:13.65px !important; /* 13px +5% */
   font-weight:800 !important;
 }
-h1{font-size:58.8px !important;}       /* 56 +5% */
+h1{font-size:52.92px !important;}      /* -10 % proti dosavadním 58.8 px */
 h2{font-size:42px !important;}         /* 40 +5% */
 h3{font-size:25.2px !important;}       /* 24 +5% */
 .pricing-title{font-size:42px !important;}
@@ -751,7 +751,7 @@ h3{font-size:25.2px !important;}       /* 24 +5% */
 
 @media(max-width:768px){
   .services{grid-template-columns:1fr !important}
-  h1{font-size:48.3px !important}
+  h1{font-size:43.47px !important}
   h2,.pricing-title,.service-head{font-size:37.8px !important}
   h3,.price-sub{font-size:23.1px !important}
   .site-header .brand{font-size:16px !important}
@@ -2554,6 +2554,20 @@ html, body{
 /* V03 calibration */
 
 /* A) Popup overlay: 50% navy */
+.rv-video-modal,
+.rv-benefit-modal,
+.video-popup,
+.sliders-popup-zone,
+.mobile-zoom-popup{
+    top:0 !important;
+    right:0 !important;
+    bottom:0 !important;
+    left:0 !important;
+    width:100dvw !important;
+    min-width:100vw !important;
+    height:100dvh !important;
+    min-height:100vh !important;
+}
 .video-popup,
 .sliders-popup-zone,
 .mobile-zoom-popup{
@@ -3042,7 +3056,7 @@ article.builder-card.rv-builder-megabutton:focus-visible .builder-media::after{
 
 <header class="site-header">
   <div class="container header-inner">
-    <div class="brand">VIZUÁLNÍ KOMUNIKACE PRO REALITNÍ BYZNYS</div>
+    <div class="brand">VIZUÁLNÍ KOMUNIKACE PRO REALITY</div>
     <nav class="nav" aria-label="Hlavní navigace">
       <a href="#realitky">REALITKY</a>
       <a href="#developeri">DEVELOPEŘI</a>
@@ -3972,6 +3986,37 @@ article.builder-card.rv-builder-megabutton:focus-visible .builder-media::after{
 
 
 <script>
+/*
+ * Google Sites embeds this page in a cross-origin iframe. CSS can cover the
+ * iframe, but it cannot paint over the parent document. Entering fullscreen
+ * from the user's opening click gives every popup a true viewport-sized
+ * backdrop. Unsupported/blocked fullscreen requests safely fall back to the
+ * regular in-frame overlay.
+ */
+window.rvEnterPopupFullscreen=function(){
+  if(window.self===window.top || document.fullscreenElement) return;
+  var root=document.documentElement;
+  var request=root.requestFullscreen || root.webkitRequestFullscreen;
+  if(typeof request!=="function") return;
+  try{
+    var result=request.call(root);
+    if(result && typeof result.catch==="function") result.catch(function(){});
+  }catch(_){}
+};
+
+window.rvExitPopupFullscreen=function(){
+  if(!document.fullscreenElement && !document.webkitFullscreenElement) return;
+  var exit=document.exitFullscreen || document.webkitExitFullscreen;
+  if(typeof exit!=="function") return;
+  try{
+    var result=exit.call(document);
+    if(result && typeof result.catch==="function") result.catch(function(){});
+  }catch(_){}
+};
+</script>
+
+
+<script>
 (()=>{
   const openBtn=document.getElementById("rvConisBenefitOpen");
   const modal=document.getElementById("rvConisBenefitModal");
@@ -3980,6 +4025,7 @@ article.builder-card.rv-builder-megabutton:focus-visible .builder-media::after{
   if(!openBtn || !modal || !closeBtn) return;
 
   function openBenefit(){
+    window.rvEnterPopupFullscreen?.();
     modal.classList.add("is-open");
     modal.setAttribute("aria-hidden","false");
     document.body.classList.add("rv-benefit-modal-lock");
@@ -3990,6 +4036,7 @@ article.builder-card.rv-builder-megabutton:focus-visible .builder-media::after{
     modal.classList.remove("is-open");
     modal.setAttribute("aria-hidden","true");
     document.body.classList.remove("rv-benefit-modal-lock");
+    window.rvExitPopupFullscreen?.();
     openBtn.focus();
   }
 
@@ -4049,6 +4096,7 @@ article.builder-card.rv-builder-megabutton:focus-visible .builder-media::after{
 
     pauseSource();
 
+    window.rvEnterPopupFullscreen?.();
     lastTrigger=trigger;
     stage.innerHTML="";
 
@@ -4092,6 +4140,7 @@ article.builder-card.rv-builder-megabutton:focus-visible .builder-media::after{
     modal.setAttribute("aria-hidden","true");
     document.body.classList.remove("rv-modal-lock");
     stage.innerHTML="";
+    window.rvExitPopupFullscreen?.();
     if(lastTrigger) lastTrigger.focus({preventScroll:true});
   }
 
@@ -4165,6 +4214,7 @@ var rvDataset = {
     }
 
     function rvOpenVideo(id) {
+        window.rvEnterPopupFullscreen?.();
         var l = document.getElementById('rotateLayer');
         if (l) l.style.display = '';
         document.getElementById('videoWistiaInjectTarget').innerHTML = '<wistia-player media-id="' + id + '" autoplay="true"></wistia-player>';
@@ -4175,6 +4225,7 @@ var rvDataset = {
         if (e) { e.preventDefault(); e.stopPropagation(); }
         document.getElementById('globalDynamicPopup').classList.remove('active');
         document.getElementById('videoWistiaInjectTarget').innerHTML = '';
+        window.rvExitPopupFullscreen?.();
     }
 
     function rvDismissRotate(e) {
@@ -4184,6 +4235,7 @@ var rvDataset = {
     }
 
     function rvOpenSliders(key) {
+        window.rvEnterPopupFullscreen?.();
         rvCurrentContext = rvDataset[key];
         document.getElementById('globalSlidersPopup').classList.add('active');
         var h = "";
@@ -4285,6 +4337,7 @@ var rvDataset = {
         rvKillAnim();
         document.getElementById('globalSlidersPopup').classList.remove('active');
         document.getElementById('popupSlidersInjectZone').innerHTML = '';
+        window.rvExitPopupFullscreen?.();
     }
 </script>
 <!-- RV_REFERENCE_CASES_SCRIPTS_END -->
