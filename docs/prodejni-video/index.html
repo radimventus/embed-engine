@@ -1,0 +1,303 @@
+<!doctype html>
+<html lang="cs">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Prodejní video pro váš web a sociální sítě | Realivideo</title>
+<meta name="description" content="Prodejní video z vašich stávajících obrázků do týdne. Zaváděcí cena 9 970 Kč do 31. 10. 2026.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{--navy:#061d34;--text:#162334;--muted:#697582;--line:#d9dde2;--soft:#f7f8f9;--gold:#f3b819;--max:1217px}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;overflow-x:hidden;background:#fff;color:var(--navy);font-family:"Inter",Arial,sans-serif;font-size:16px;line-height:1.5;-webkit-font-smoothing:antialiased}
+img,video{display:block;max-width:100%}
+button,input{font:inherit}
+a{color:inherit}
+.container{width:min(var(--max),calc(100% - 40px));margin-inline:auto}
+.hero{padding:76px 0 70px;background:var(--navy);color:#fff;text-align:center}
+.hero h1{max-width:1040px;margin:0 auto 24px;font-size:clamp(40px,5.2vw,68px);font-weight:800;line-height:1.08;letter-spacing:-.035em}
+.hero h1 span{display:block}
+.hero p{margin:0;font-size:clamp(19px,2.2vw,27px)}
+.hero strong{color:var(--gold)}
+.section{padding:68px 0}
+.section.alt{background:var(--soft)}
+.section h2{margin:0 0 30px;font-size:clamp(31px,3.3vw,43px);font-weight:800;line-height:1.12;letter-spacing:-.022em}
+.eyebrow{margin:0 0 10px;font-size:13px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--gold)}
+.reasons{list-style:none;margin:0;padding:0;display:grid;gap:0}
+.reasons li{display:flex;gap:18px;padding:18px 0;border-bottom:1px solid var(--line);font-size:clamp(17px,1.8vw,21px)}
+.reasons li:first-child{border-top:1px solid var(--line)}
+.check{color:var(--gold);font-weight:900;font-size:24px;line-height:1.1}
+.videos{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
+.video-card{position:relative;min-height:260px;aspect-ratio:16/10;border:0;border-radius:12px;overflow:hidden;padding:20px;display:flex;align-items:flex-end;background:var(--navy) center/cover no-repeat;color:#fff;text-align:left;cursor:pointer}
+.video-card::before{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 38%,rgba(6,29,52,.92))}
+.video-card>*{position:relative;z-index:1}
+.video-card strong{font-size:18px}
+.play{position:absolute;z-index:2;left:50%;top:50%;width:62px;height:62px;border-radius:50%;display:grid;place-items:center;transform:translate(-50%,-50%);background:#fff;color:var(--navy);font-size:22px;box-shadow:0 8px 30px rgba(0,0,0,.2)}
+.benefits{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(330px,.85fr);gap:42px;align-items:start}
+.checks{list-style:none;margin:0;padding:0}
+.checks li{position:relative;padding:12px 0 12px 30px;border-bottom:1px solid var(--line)}
+.checks li::before{content:"✓";position:absolute;left:0;color:var(--gold);font-weight:900}
+.offer{padding:35px;border:1px solid var(--line);border-radius:12px;text-align:center;background:#fff}
+.old{color:#7e8e9d;font-size:25px;text-decoration:line-through}
+.price{font-size:clamp(49px,5vw,66px);font-weight:900;line-height:1.05;letter-spacing:-.05em}
+.offer p{margin:12px 0 22px;color:var(--muted)}
+.btn{min-height:50px;border:2px solid transparent;border-radius:6px;padding:0 24px;display:inline-flex;align-items:center;justify-content:center;background:var(--navy);color:#fff;font-weight:800;text-decoration:none;cursor:pointer;transition:.18s ease}
+.btn:hover{border-color:var(--navy);background:#e4e7ea;color:var(--navy)}
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:26px}
+.step{padding-top:18px;border-top:3px solid var(--gold)}
+.step .num{color:var(--gold);font-weight:900}
+.step h3{margin:7px 0 8px;font-size:21px}
+.step p{margin:0;color:var(--muted)}
+.order{padding:70px 0;background:var(--navy);color:#fff}
+.order h2{color:#fff}
+.order-grid{display:grid;grid-template-columns:minmax(0,.78fr) minmax(0,1.22fr);gap:38px;align-items:start}
+.order-copy .price{color:#fff}
+.order-copy .old{color:#9faeb9}
+.order-copy p{color:#d4e0e9}
+.form{padding:28px;border:1px solid #758b9b;border-radius:12px}
+.fields{display:grid;grid-template-columns:1fr 1fr;gap:15px}
+.field{display:grid;gap:6px}
+.field.full{grid-column:1/-1}
+.field label{font-size:12px;font-weight:800;text-transform:uppercase}
+.field input{width:100%;min-height:46px;padding:0 12px;border:1px solid #bbc6ce;border-radius:6px;background:#fff;color:var(--navy)}
+.field input:focus{outline:none;border-color:var(--gold);box-shadow:0 0 0 2px rgba(243,184,25,.25)}
+.legal{margin:18px 0;font-size:13px;color:#d4e0e9}
+.legal a{text-decoration:underline}
+.consent{display:flex;gap:9px;align-items:flex-start}
+.consent input{margin-top:4px}
+.form .btn{width:100%;background:var(--gold);color:var(--navy)}
+.form .btn:hover{background:#e4e7ea;border-color:#fff}
+.validation{margin:0 0 14px;padding:11px 13px;border:2px solid var(--gold);background:#fff;color:var(--navy);font-weight:700}
+.payment{margin-top:18px;padding:21px;border-radius:9px;background:#fff;color:var(--navy)}
+.payment h3{margin:0 0 10px}
+.payment-row{display:flex;justify-content:space-between;gap:16px;padding:8px 0;border-top:1px solid var(--line)}
+#paymentQr{width:220px;height:220px;margin:14px auto}
+.invoice-links{display:flex;justify-content:center;gap:18px;flex-wrap:wrap}
+.invoice-links a{text-decoration:underline;text-underline-offset:3px}
+.fine{font-size:12px;color:var(--muted)}
+.footer{padding:25px 0;background:#031526;color:#d4e0e9;font-size:13px}
+.modal{position:fixed;inset:0;z-index:99999;display:none;align-items:center;justify-content:center;padding:5vh 5vw;background:rgba(0,27,51,.82);backdrop-filter:blur(3px)}
+.modal.open{display:flex}
+.modal-dialog{position:relative;width:90vw;height:90vh;display:flex;align-items:center;justify-content:center;border-radius:12px;overflow:hidden;background:#000}
+.modal-stage{width:100%;height:100%}
+.modal-stage iframe{display:block;width:100%;height:100%;border:0}
+.modal-close{position:absolute;right:12px;top:12px;z-index:2;width:42px;height:42px;border:0;border-radius:6px;background:#fff;color:var(--navy);font-size:28px;cursor:pointer}
+body.modal-lock{overflow:hidden}
+@media(max-width:850px){.benefits,.order-grid{grid-template-columns:1fr}.videos,.steps{grid-template-columns:1fr}.video-card{min-height:230px}.order-copy{text-align:center}}
+@media(max-width:560px){.container{width:min(100% - 36px,var(--max))}.hero{padding:54px 0 50px}.section{padding:48px 0}.fields{grid-template-columns:1fr}.field.full{grid-column:auto}.form{padding:20px}.price{font-size:48px}.modal{padding:3vh 3vw}.modal-dialog{width:94vw;height:88vh}.hero h1 span{display:inline}}
+@media(min-width:1080px){.hero h1 span{white-space:nowrap}}
+</style>
+<script src="https://fast.wistia.com/player.js" async></script>
+<script src="https://fast.wistia.com/embed/vceryswqqv.js" async type="module"></script>
+<script src="https://fast.wistia.com/embed/53zcam8uuf.js" async type="module"></script>
+<script src="https://fast.wistia.com/embed/lciempxu0r.js" async type="module"></script>
+<script src="../realivideo/qrcode-1.5.4.min.js"></script>
+</head>
+<body>
+<header class="hero">
+  <div class="container">
+    <h1><span>Prodejní video pro váš web</span><span>a sociální sítě</span></h1>
+    <p>Z vašich obrázků. Do týdne. <strong>Za symbolickou zaváděcí cenu.</strong></p>
+  </div>
+</header>
+
+<main>
+<section class="section">
+  <div class="container">
+    <p class="eyebrow">JEDNODUŠE A BEZ NATÁČENÍ</p>
+    <h2>Proč si to koupíte?</h2>
+    <ul class="reasons">
+      <li><span class="check">✓</span><span><strong>Video vytvoříme z vašich stávajících obrázků.</strong> Bez natáčení a složité přípravy.</span></li>
+      <li><span class="check">✓</span><span><strong>Váš web získá novou dynamiku.</strong> Dům představíte v pohybu, s atmosférou, titulky a hudbou.</span></li>
+      <li><span class="check">✓</span><span><strong>Součástí je i profesionální tuning vašich obrázků.</strong> Budou atraktivnější a připravené k použití.</span></li>
+      <li><span class="check">✓</span><span><strong>Video i obrázky můžete využít na sociálních sítích.</strong> A v další propagaci.</span></li>
+      <li><span class="check">✓</span><span><strong>Vše je připravené - stačí objednat a do týdne máte hotovo.</strong></span></li>
+    </ul>
+  </div>
+</section>
+
+<section class="section alt">
+  <div class="container">
+    <p class="eyebrow">UKÁZKY REALIVIDEO</p>
+    <h2>Podívejte se na ukázky</h2>
+    <div class="videos">
+      <button class="video-card" type="button" data-wistia-id="vceryswqqv" style="background-image:url('https://fast.wistia.com/embed/medias/vceryswqqv/swatch')"><span class="play">▶</span><strong>Ukázka 01</strong></button>
+      <button class="video-card" type="button" data-wistia-id="53zcam8uuf" style="background-image:url('https://fast.wistia.com/embed/medias/53zcam8uuf/swatch')"><span class="play">▶</span><strong>Ukázka 02</strong></button>
+      <button class="video-card" type="button" data-wistia-id="lciempxu0r" style="background-image:url('https://fast.wistia.com/embed/medias/lciempxu0r/swatch')"><span class="play">▶</span><strong>Ukázka 03</strong></button>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container benefits">
+    <div>
+      <p class="eyebrow">JEDEN KOMPLETNÍ BALÍČEK</p>
+      <h2>Co přesně dostanete?</h2>
+      <ul class="checks">
+        <li>Vizuální tuning <strong>6 obrázků jednoho domu</strong>.</li>
+        <li>Prodejní video vytvořené z upravených obrázků.</li>
+        <li>Titulky, střih a hudební doprovod.</li>
+        <li>MP4 Full HD.</li>
+        <li>Výstupy použitelné pro web a sociální sítě.</li>
+      </ul>
+    </div>
+    <aside class="offer">
+      <p class="eyebrow">ZAVÁDĚCÍ NABÍDKA · DO 31. 10. 2026</p>
+      <div class="old">14 970 Kč</div>
+      <div class="price">9 970 Kč</div>
+      <p>Video + tuning 6 obrázků jednoho domu</p>
+      <a class="btn" href="#objednat">OBJEDNAT BALÍČEK →</a>
+    </aside>
+  </div>
+</section>
+
+<section class="section alt">
+  <div class="container">
+    <p class="eyebrow">TŘI KROKY</p>
+    <h2>Jak jednoduše to proběhne?</h2>
+    <div class="steps">
+      <article class="step"><div class="num">01</div><h3>Dokončíte objednávku</h3><p>Vyplníte formulář a uhradíte částku podle skutečných platebních údajů s QR kódem.</p></article>
+      <article class="step"><div class="num">02</div><h3>Připravíme scénář a obrázky</h3><p>Upravíme vašich šest obrázků a připravíme scénář ke schválení.</p></article>
+      <article class="step"><div class="num">03</div><h3>Vytvoříme video</h3><p>Po vašem schválení video dokončíme a zašleme hotové výstupy.</p></article>
+    </div>
+  </div>
+</section>
+
+<section class="order" id="objednat">
+  <div class="container">
+    <p class="eyebrow">ZAVÁDĚCÍ NABÍDKA · DO 31. 10. 2026</p>
+    <h2>Objednat prodejní video</h2>
+    <div class="order-grid">
+      <div class="order-copy">
+        <h3>Video + tuning 6 obrázků</h3>
+        <p>Jeden dům · hotové výstupy pro web a sociální sítě</p>
+        <div class="old">14 970 Kč</div>
+        <div class="price">9 970 Kč</div>
+        <p>Po potvrzení objednávky zobrazíme platební údaje a skutečný QR kód. Fakturu a instrukce k předání podkladů obdržíte v návaznosti na ověření platby.</p>
+      </div>
+      <form id="orderForm" class="form" novalidate>
+        <div id="validation" class="validation" role="alert" hidden></div>
+        <div class="fields">
+          <div class="field"><label for="company">Název firmy</label><input id="company" name="company" autocomplete="organization" required></div>
+          <div class="field"><label for="ico">IČO</label><input id="ico" name="ico" inputmode="numeric" autocomplete="off" required></div>
+          <div class="field full"><label for="person">Jméno a příjmení</label><input id="person" name="person" autocomplete="name" required></div>
+          <div class="field"><label for="email">E-mail</label><input id="email" name="email" type="email" autocomplete="email" required></div>
+          <div class="field"><label for="phone">Telefon</label><input id="phone" name="phone" type="tel" autocomplete="tel" required></div>
+          <div id="addressField" class="field full" hidden><label for="address">Sídlo firmy</label><input id="address" name="address" readonly></div>
+        </div>
+        <div class="legal">
+          <label class="consent"><input id="terms" type="checkbox" required><span>Souhlasím s <a href="../realivideo/documents/01-obchodni-podminky-realivideo.pdf" target="_blank" rel="noopener">Všeobecnými obchodními podmínkami</a> a <a href="../realivideo/documents/02-ramcova-smlouva-realivideo.pdf" target="_blank" rel="noopener">Rámcovou smlouvou</a>.</span></label>
+        </div>
+        <button id="submitOrder" class="btn" type="submit">POTVRDIT OBJEDNÁVKU →</button>
+        <p class="fine">Cena je konečná pro uvedený rozsah. Práce začíná po ověření platby a převzetí úplných podkladů.</p>
+        <div id="payment" class="payment" hidden>
+          <h3>Platební údaje</h3>
+          <img id="paymentQr" alt="QR kód pro platbu">
+          <div class="payment-row"><span>Částka</span><strong id="paymentAmount"></strong></div>
+          <div class="payment-row"><span>Účet</span><strong id="paymentAccount"></strong></div>
+          <div class="payment-row"><span>Variabilní symbol</span><strong id="paymentVs"></strong></div>
+          <div class="invoice-links"><a id="invoicePreview" target="_blank" rel="noopener">Náhled faktury</a><a id="invoiceDownload">Stáhnout fakturu</a></div>
+          <p id="paymentError" class="validation" hidden></p>
+        </div>
+      </form>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer class="footer"><div class="container">REALIVIDEO × CONIS · <a href="../realivideo/">Realivideo</a> · <a href="../">CONIS</a></div></footer>
+
+<div id="videoModal" class="modal" aria-hidden="true">
+  <div class="modal-dialog" role="dialog" aria-modal="true" aria-label="Ukázkové video">
+    <button id="videoClose" class="modal-close" type="button" aria-label="Zavřít video">×</button>
+    <div id="videoStage" class="modal-stage"></div>
+  </div>
+</div>
+
+<script>
+(()=>{
+  const modal=document.getElementById("videoModal"),stage=document.getElementById("videoStage"),close=document.getElementById("videoClose");
+  let lastTrigger=null;
+  function openVideo(trigger){
+    const mediaId=trigger.dataset.wistiaId;if(!mediaId)return;
+    lastTrigger=trigger;stage.innerHTML="";
+    const player=document.createElement("iframe");
+    player.src="https://fast.wistia.net/embed/iframe/"+encodeURIComponent(mediaId)+"?seo=false&videoFoam=true&autoPlay=true";
+    player.allow="autoplay; fullscreen";player.allowFullscreen=true;player.title="Ukázkové video";
+    stage.appendChild(player);modal.classList.add("open");modal.setAttribute("aria-hidden","false");document.body.classList.add("modal-lock");close.focus();
+  }
+  function closeVideo(){modal.classList.remove("open");modal.setAttribute("aria-hidden","true");document.body.classList.remove("modal-lock");stage.innerHTML="";lastTrigger?.focus({preventScroll:true})}
+  document.querySelectorAll("[data-wistia-id]").forEach(button=>button.addEventListener("click",()=>openVideo(button)));
+  close.addEventListener("click",closeVideo);modal.addEventListener("click",e=>{if(e.target===modal)closeVideo()});document.addEventListener("keydown",e=>{if(e.key==="Escape"&&modal.classList.contains("open"))closeVideo()});
+})();
+</script>
+
+<script>
+(()=>{
+  "use strict";
+  const API="https://api.conis.cz";
+  const PRODUCT={id:"prodejni-video-9970-intro",name:"Prodejní video + tuning 6 obrázků",group:"Prodejní video pro web a sociální sítě",price:9970};
+  const $=id=>document.getElementById(id);
+  const form=$("orderForm"),validation=$("validation"),button=$("submitOrder"),payment=$("payment"),paymentError=$("paymentError");
+  let aresCompany="",aresAddress="",pdfObjectUrl="";
+  const value=id=>String($(id)?.value||"").trim();
+  const money=value=>new Intl.NumberFormat("cs-CZ").format(value)+" Kč";
+  async function jsonFetch(url,options){const response=await fetch(url,options);const body=await response.json().catch(()=>({}));if(!response.ok)throw new Error(body.error||("HTTP "+response.status));return body}
+  function showError(message){validation.textContent=message;validation.hidden=!message}
+  function validate(){
+    if(!value("company"))return "Doplňte název firmy.";
+    const ico=value("ico").replace(/\s+/g,"");
+    if(!ico)return "Doplňte IČO.";
+    if(!/^\d{8}$/.test(ico))return "IČO musí obsahovat 8 číslic.";
+    if(!value("person"))return "Doplňte jméno a příjmení.";
+    if(!value("email")||!$("email").validity.valid)return "Doplňte platný e-mail.";
+    if(!value("phone"))return "Doplňte telefon.";
+    if(!$("terms").checked)return "Potvrďte souhlas s obchodními podmínkami a rámcovou smlouvou.";
+    return "";
+  }
+  async function loadAres(){
+    const ico=value("ico").replace(/\s+/g,"");
+    if(!/^\d{8}$/.test(ico))return;
+    try{
+      const ares=await jsonFetch(API+"/local-pilot/realivideo/ares/"+encodeURIComponent(ico),{method:"GET"});
+      aresCompany=typeof ares.companyName==="string"?ares.companyName.trim():"";aresAddress=typeof ares.address==="string"?ares.address.trim():"";
+      if(aresCompany)$("company").value=aresCompany;
+      if(aresAddress){$("address").value=aresAddress;$("addressField").hidden=false}
+    }catch(error){console.warn("ARES lookup unavailable:",error)}
+  }
+  $("ico").addEventListener("blur",loadAres);$("ico").addEventListener("change",loadAres);
+  async function submitOrder(){
+    const now=new Date().toISOString(),ico=value("ico").replace(/\s+/g,"");
+    if(!aresCompany||!aresAddress)await loadAres();
+    const orderId="prodejni-video-"+Date.now()+"-"+Math.random().toString(36).slice(2,8);
+    const capability=await jsonFetch(API+"/local-pilot/realivideo/offer-write-capabilities",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({offerSlug:"realivideo",companyId:"company-realivideo",partnerId:"partner-realivideo"})});
+    if(!capability.token)throw new Error("Chybí platební oprávnění.");
+    const token=capability.token;
+    const order={orderId,offerSlug:"realivideo",companyId:"company-realivideo",partnerId:"partner-realivideo",createdAt:now,partner:{partnerName:value("person"),companyName:value("company")||aresCompany,contactName:value("person"),email:value("email"),phone:value("phone"),ico,address:aresAddress||value("address")},package:{id:PRODUCT.id,name:PRODUCT.name,licenseLabel:PRODUCT.group,trialDays:0},priceCzk:PRODUCT.price,termsVersion:"realivideo-v1",termsAcceptedAt:now};
+    await jsonFetch(API+"/local-pilot/orders",{method:"POST",headers:{"content-type":"application/json","authorization":"Bearer "+token},body:JSON.stringify(order)});
+    const proforma=await jsonFetch(API+"/local-pilot/orders/"+encodeURIComponent(orderId)+"/proforma",{method:"POST",headers:{"content-type":"application/json","authorization":"Bearer "+token},body:"{}"});
+    if(proforma.amountCzk!==9970||!proforma.spdPayload)throw new Error("Platební údaje neodpovídají objednávce.");
+    if(typeof QRCode==="undefined"||typeof QRCode.toDataURL!=="function")throw new Error("QR renderer není dostupný.");
+    const qrUrl=await QRCode.toDataURL(proforma.spdPayload,{errorCorrectionLevel:"H",margin:4,width:320,color:{dark:"#000000",light:"#ffffff"}});
+    const artifact=await jsonFetch(API+"/local-pilot/orders/"+encodeURIComponent(orderId)+"/proforma/pdf",{method:"GET"});
+    const attachment=artifact?.attachment;
+    if(!attachment||attachment.mimeType!=="application/pdf"||typeof attachment.bytesBase64!=="string")throw new Error("Fakturu se nepodařilo připravit.");
+    const raw=atob(attachment.bytesBase64),bytes=new Uint8Array(raw.length);for(let i=0;i<raw.length;i++)bytes[i]=raw.charCodeAt(i);
+    if(pdfObjectUrl)URL.revokeObjectURL(pdfObjectUrl);pdfObjectUrl=URL.createObjectURL(new Blob([bytes],{type:"application/pdf"}));
+    $("paymentQr").src=qrUrl;$("paymentAmount").textContent=money(proforma.amountCzk);$("paymentAccount").textContent=proforma.bankAccount?.accountNumber||"";$("paymentVs").textContent=proforma.variableSymbol||"";
+    $("invoicePreview").href=pdfObjectUrl;$("invoiceDownload").href=pdfObjectUrl;$("invoiceDownload").download=attachment.fileName||"realivideo-proforma.pdf";
+    payment.hidden=false;payment.scrollIntoView({behavior:"smooth",block:"start"});
+  }
+  form.addEventListener("submit",async event=>{
+    event.preventDefault();payment.hidden=true;paymentError.hidden=true;showError("");
+    const message=validate();if(message){showError(message);return}
+    button.disabled=true;button.textContent="PŘIPRAVUJEME OBJEDNÁVKU…";
+    try{await submitOrder()}catch(error){showError(error instanceof Error?error.message:"Objednávku se nepodařilo připravit.")}finally{button.disabled=false;button.textContent="POTVRDIT OBJEDNÁVKU →"}
+  });
+})();
+</script>
+</body>
+</html>
