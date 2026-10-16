@@ -85,8 +85,8 @@ export function formatOfferPriceCzk(amount: number): string {
 
 /** Hero photography — same Cloudinary asset as CONIS nabídka pilot. */
 export const OFFER_HERO_IMAGE_URL =
-  'https://res.cloudinary.com/djiq5pxj1/image/upload/v1785073673/Sni%CC%81mek_obrazovky_2026-07-26_v_15.45.55_fsdfjn.png' as const;
+  'https://res.cloudinary.com/djiq5pxj1/image/upload/f_auto,q_auto,w_1200/v1785073673/Sni%CC%81mek_obrazovky_2026-07-26_v_15.45.55_fsdfjn.png' as const;
 
 /** Soft circle watermark from CONIS nabídka pilot. */
 export const OFFER_WATERMARK_URL =
-  'https://res.cloudinary.com/djiq5pxj1/image/upload/v1785055783/motiv_pro_vodoznak_lzr0l6.png' as const;
+  'https://res.cloudinary.com/djiq5pxj1/image/upload/f_auto,q_auto,w_1200/v1785055783/motiv_pro_vodoznak_lzr0l6.png' as const;

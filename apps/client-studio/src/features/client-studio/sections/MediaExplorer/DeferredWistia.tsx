@@ -1,6 +1,6 @@
 import { useEffect, useId, useState } from 'react';
 
-export const WISTIA_POSTER = 'https://res.cloudinary.com/djiq5pxj1/image/upload/v1789593526/Sni%CC%81mek_obrazovky_2026-09-16_v_23.13.32_ocmynv.png';
+export const WISTIA_POSTER = 'https://res.cloudinary.com/djiq5pxj1/image/upload/f_auto,q_auto/v1789593526/Sni%CC%81mek_obrazovky_2026-09-16_v_23.13.32_ocmynv.png';
 const PLAYER_SCRIPT = 'https://fast.wistia.net/assets/external/E-v1.js';
 
 export function activatedWistiaUrl(src: string): string {
