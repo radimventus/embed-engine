@@ -7,44 +7,29 @@ window.REALIVIDEO_LANDING_CONFIG = {
   },
   constructionPackages: [
     {
-      id: "video",
-      name: "VIDEO",
-      situation: "Hotový dům a kvalitní fotografie",
-      product: "Video z existujících fotografií",
-      features: ["Výběr podkladů", "Scénář a střih", "Animace obrazu", "Hudba a titulky", "Finální video"],
-      price: null,
-      inputPhotos: null,
-      videoLength: null,
-      revisions: null,
-      edits: "Bez rozsáhlých úprav fotografií",
-      delivery: null
+      id: "construction-basic",
+      name: "BASIC",
+      situation: "Máme kvalitní fotografie nebo vizualizace",
+      product: "Video z připravených obrazových podkladů",
+      features: ["Výběr vhodných podkladů", "Návrh posloupnosti videa", "Animace fotografií", "Střih, hudba a titulky", "Výsledné video"],
+      price: "Cena dle rozsahu"
     },
     {
-      id: "video-plus",
-      name: "VIDEO PLUS",
-      situation: "Hotový dům, fotografie vyžadují úpravy",
-      product: "Úpravy fotografií a videoprezentace",
-      features: ["Vše z balíčku VIDEO", "Dohodnuté digitální úpravy fotografií", "Sjednocení obrazového dojmu", "Příprava podkladů pro video"],
-      price: null,
-      inputPhotos: null,
-      videoLength: null,
-      revisions: null,
-      edits: null,
-      delivery: null,
+      id: "construction-tip",
+      name: "TIP",
+      situation: "Fotografie potřebují profesionálně vylepšit",
+      product: "Obrazový tuning a výsledné prodejní video",
+      features: ["Vše z balíčku BASIC", "Profesionální úprava fotografií", "Sjednocení obrazové atmosféry", "Úpravy světla a barev", "Dílčí vizualizace v dohodnutém rozsahu"],
+      price: "Cena dle rozsahu",
       featured: true
     },
     {
-      id: "video-vision",
-      name: "VIDEO VISION",
-      situation: "Nedokončený dům nebo projekt",
-      product: "Příprava obrazových podkladů a videoprezentace",
-      features: ["Vizualizace nebo rozsáhlejší obrazové zpracování", "Příprava potřebných scén", "Scénář, střih, hudba a titulky", "Finální video"],
-      price: null,
-      inputPhotos: null,
-      videoLength: null,
-      revisions: null,
-      edits: null,
-      delivery: null
+      id: "construction-premium",
+      name: "PREMIUM",
+      situation: "Potřebujeme připravit obrazové podklady",
+      product: "Vizualizace, obrazové zpracování a výsledné video",
+      features: ["Příprava nebo doplnění obrazových podkladů", "Vizualizace dle dostupné dokumentace", "Obrazové zpracování pro prezentaci", "Následné vytvoření videa", "Výstupy pro sjednaná média"],
+      price: "Cena dle rozsahu"
     }
   ]
 };

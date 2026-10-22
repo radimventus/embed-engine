@@ -51,23 +51,15 @@
 
   const grid = document.querySelector("[data-construction-packages]");
   if (grid && Array.isArray(config.constructionPackages)) {
-    const display = (value) => value || "Bude doplněno";
     grid.innerHTML = config.constructionPackages.map((pkg, index) => `
       <article class="package-card${pkg.featured ? " is-featured" : ""}" data-package="${pkg.id}">
-        ${pkg.featured ? '<div class="package-badge">Nejčastější výchozí situace</div>' : ""}
+        ${pkg.featured ? '<div class="package-badge">DOPORUČUJEME</div>' : ""}
         <div class="package-number">0${index + 1}</div>
         <p class="package-situation">${pkg.situation}</p>
         <h3>${pkg.name}</h3>
         <p class="package-product">${pkg.product}</p>
         <ul>${pkg.features.map((item) => `<li>${item}</li>`).join("")}</ul>
-        <dl class="package-specs">
-          <div><dt>Cena</dt><dd>${pkg.price || "Cena bude doplněna"}</dd></div>
-          <div><dt>Vstupní fotografie</dt><dd>${display(pkg.inputPhotos)}</dd></div>
-          <div><dt>Délka videa</dt><dd>${display(pkg.videoLength)}</dd></div>
-          <div><dt>Revize</dt><dd>${display(pkg.revisions)}</dd></div>
-          <div><dt>Rozsah úprav</dt><dd>${display(pkg.edits)}</dd></div>
-          <div><dt>Dodání</dt><dd>${display(pkg.delivery)}</dd></div>
-        </dl>
+        <div class="broker-price">${pkg.price || "Cena dle rozsahu"}</div>
         <button class="button button-secondary package-select" type="button" data-package-select="${pkg.id}">Vybrat ${pkg.name}</button>
       </article>
     `).join("");
