@@ -40,6 +40,15 @@
     update();
   });
 
+  document.querySelectorAll(".compare-item").forEach((item) => {
+    item.addEventListener("toggle", () => {
+      if (!item.open) return;
+      document.querySelectorAll(".compare-item").forEach((other) => {
+        if (other !== item) other.open = false;
+      });
+    });
+  });
+
   const grid = document.querySelector("[data-construction-packages]");
   if (grid && Array.isArray(config.constructionPackages)) {
     const display = (value) => value || "Bude doplněno";
@@ -166,7 +175,6 @@
       document.querySelectorAll("[data-broker-card]").forEach((card) => card.classList.toggle("is-selected", card.dataset.brokerCard === next));
     }, true);
 
-    new doc.defaultView.MutationObserver(() => labelPremium(orderModule)).observe(orderModule, { childList: true, subtree: true });
     new doc.defaultView.ResizeObserver(() => {
       checkoutFrame.style.height = `${Math.ceil(orderModule.getBoundingClientRect().height + 4)}px`;
     }).observe(orderModule);
