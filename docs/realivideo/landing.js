@@ -25,29 +25,73 @@
     });
   });
 
-  document.querySelectorAll("[data-compare]").forEach((comparison) => {
+  const compareSequences = new Map();
+
+  function updateComparison(comparison, value, animate = false) {
     const range = comparison.querySelector("input[type=range]");
     const after = comparison.querySelector(".compare-after");
     const divider = comparison.querySelector(".compare-divider");
     if (!range || !after || !divider) return;
-    const update = () => {
-      const value = Number(range.value);
-      after.style.clipPath = `inset(0 ${100 - value}% 0 0)`;
-      divider.style.left = `${value}%`;
-      range.setAttribute("aria-valuetext", `${value} % upravené fotografie`);
+    const transition = animate ? "left .8s ease-in-out, clip-path .8s ease-in-out" : "none";
+    after.style.transition = transition;
+    divider.style.transition = transition;
+    after.style.clipPath = `inset(0 ${100 - value}% 0 0)`;
+    divider.style.left = `${value}%`;
+    range.value = String(value);
+    range.setAttribute("aria-valuetext", `${value} % upravené fotografie`);
+  }
+
+  function stopComparison(comparison) {
+    const sequence = compareSequences.get(comparison);
+    if (!sequence) return;
+    window.clearInterval(sequence.interval);
+    sequence.timeouts.forEach((timeout) => window.clearTimeout(timeout));
+    compareSequences.delete(comparison);
+    updateComparison(comparison, Number(comparison.querySelector("input[type=range]")?.value || 50), false);
+  }
+
+  function startComparison(comparison) {
+    stopComparison(comparison);
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const sequence = { interval: 0, timeouts: [] };
+    const run = () => {
+      sequence.timeouts.forEach((timeout) => window.clearTimeout(timeout));
+      sequence.timeouts = [
+        window.setTimeout(() => updateComparison(comparison, 100, true), 1000),
+        window.setTimeout(() => updateComparison(comparison, 0, true), 2300),
+        window.setTimeout(() => updateComparison(comparison, 50, true), 3600),
+        window.setTimeout(() => updateComparison(comparison, 50, false), 5000)
+      ];
     };
+    run();
+    sequence.interval = window.setInterval(run, 8000);
+    compareSequences.set(comparison, sequence);
+  }
+
+  document.querySelectorAll("[data-compare]").forEach((comparison) => {
+    const range = comparison.querySelector("input[type=range]");
+    if (!range) return;
+    const update = () => updateComparison(comparison, Number(range.value), false);
+    range.addEventListener("pointerdown", () => stopComparison(comparison));
+    range.addEventListener("touchstart", () => stopComparison(comparison), { passive: true });
     range.addEventListener("input", update);
     update();
   });
 
   document.querySelectorAll(".compare-item").forEach((item) => {
     item.addEventListener("toggle", () => {
-      if (!item.open) return;
+      if (!item.open) {
+        item.querySelectorAll("[data-compare]").forEach(stopComparison);
+        return;
+      }
       document.querySelectorAll(".compare-item").forEach((other) => {
         if (other !== item) other.open = false;
       });
+      document.querySelectorAll("[data-compare]").forEach(stopComparison);
+      item.querySelectorAll("[data-compare]").forEach(startComparison);
     });
   });
+  document.querySelectorAll(".compare-item[open] [data-compare]").forEach(startComparison);
 
   const grid = document.querySelector("[data-construction-packages]");
   if (grid && Array.isArray(config.constructionPackages)) {
