@@ -3497,6 +3497,12 @@ article.builder-card.rv-builder-megabutton:focus-visible .builder-media::after{
                 <option value="tip">TIP — 11 970 Kč</option>
                 <option value="top">TOP — 19 970 Kč</option>
               </optgroup>
+              <optgroup label="Volitelné služby pro makléře">
+                <option value="photo">Lokální fotografování — 4 970 Kč</option>
+                <option value="viz1">1 vizualizace navíc — 1 970 Kč</option>
+                <option value="viz3">3 vizualizace navíc — 3 970 Kč</option>
+                <option value="viz5">5 vizualizací navíc — 5 970 Kč</option>
+              </optgroup>
               <optgroup label="Prezentace domů pro výstavbu">
                 <option value="tuning">TUNING obrázků — 9 970 Kč</option>
                 <option value="video">Prodejní VIDEO — 14 970 Kč</option>
@@ -3832,6 +3838,10 @@ article.builder-card.rv-builder-megabutton:focus-visible .builder-media::after{
     basic:{name:"BALÍČEK BASIC",group:"Prezentace nemovitostí",price:2970,eligible:false},
     tip:{name:"BALÍČEK TIP",group:"Prezentace nemovitostí",price:11970,eligible:false},
     top:{name:"BALÍČEK TOP",group:"Prezentace nemovitostí",price:19970,eligible:false},
+    photo:{name:"Lokální fotografování",group:"Volitelné služby",price:4970,eligible:false},
+    viz1:{name:"1 vizualizace navíc",group:"Volitelné služby",price:1970,eligible:false},
+    viz3:{name:"3 vizualizace navíc",group:"Volitelné služby",price:3970,eligible:false},
+    viz5:{name:"5 vizualizací navíc",group:"Volitelné služby",price:5970,eligible:false},
     tuning:{name:"TUNING obrázků",group:"Domy pro výstavbu",price:9970,eligible:"free"},
     video:{name:"Prodejní VIDEO",group:"Domy pro výstavbu",price:14970,eligible:"half"},
     viz:{name:"VIZUALIZACE",group:"Domy pro výstavbu",price:19970,eligible:"half"}
@@ -4493,6 +4503,26 @@ var rvDataset = {
       group:"Prezentace nemovitostí",
       price:19970
     },
+    photo:{
+      name:"Lokální fotografování",
+      group:"Volitelné služby",
+      price:4970
+    },
+    viz1:{
+      name:"1 vizualizace navíc",
+      group:"Volitelné služby",
+      price:1970
+    },
+    viz3:{
+      name:"3 vizualizace navíc",
+      group:"Volitelné služby",
+      price:3970
+    },
+    viz5:{
+      name:"5 vizualizací navíc",
+      group:"Volitelné služby",
+      price:5970
+    },
     tuning:{
       name:"TUNING obrázků",
       group:"Domy pro výstavbu",
@@ -4558,6 +4588,35 @@ var rvDataset = {
     return authority.getCart().filter(function(id){
       return Boolean(PRODUCTS[id]);
     });
+  }
+
+  function resolveOrderProduct(productIds){
+    const brokerBases=["basic","tip","top"];
+    const brokerAddons=["photo","viz1","viz3","viz5"];
+    const visualizationAddons=["viz1","viz3","viz5"];
+    const bases=productIds.filter(function(id){return brokerBases.includes(id);});
+    const addons=productIds.filter(function(id){return brokerAddons.includes(id);});
+
+    if(productIds.length===1 && !brokerAddons.includes(productIds[0])){
+      const product=PRODUCTS[productIds[0]];
+      return product ? {id:productIds[0],name:product.name,group:product.group,price:product.price} : null;
+    }
+
+    if(
+      bases.length!==1 ||
+      bases.length+addons.length!==productIds.length ||
+      addons.filter(function(id){return visualizationAddons.includes(id);}).length>1
+    ) return null;
+
+    const order=["basic","tip","top","photo","viz1","viz3","viz5"];
+    const ids=[...productIds].sort(function(left,right){return order.indexOf(left)-order.indexOf(right);});
+    const items=ids.map(function(id){return PRODUCTS[id];});
+    return {
+      id:ids.join("+"),
+      name:items.map(function(item){return item.name;}).join(" + "),
+      group:"Prezentace nemovitostí + volitelné služby",
+      price:items.reduce(function(sum,item){return sum+item.price;},0)
+    };
   }
 
 function inputValue(){
@@ -4727,20 +4786,15 @@ function inputValue(){
       );
     }
 
-    if(productIds.length!==1){
-      throw new Error(
-        "Platební runtime zatím vyžaduje jednu službu v objednávce."
-      );
-    }
-
-    const productId=productIds[0];
-    const product=PRODUCTS[productId];
+    const product=resolveOrderProduct(productIds);
 
     if(!product){
       throw new Error(
-        "Vybraná služba není platná."
+        "Vyberte jeden hlavní balíček. Z doplňkových vizualizací lze zvolit pouze jednu variantu."
       );
     }
+
+    const productId=product.id;
 
     const now=new Date().toISOString();
     const orderId=

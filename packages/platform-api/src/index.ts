@@ -68,6 +68,7 @@ import {
   FileProformaRepository,
   type ProformaRepository,
 } from "./proformaRepository";
+import { resolveRealivideoProduct } from "./realivideoProductCatalog";
 import {
   FileOfferWriteTokenRepository,
   type OfferWriteTokenRepository,
@@ -2990,49 +2991,14 @@ export function createPlatformApiServer(
           String(orderInput.companyId).trim() === "company-realivideo" ||
           String(orderInput.partnerId).trim() === "partner-realivideo"
         ) {
-          const catalog: Record<string, {
-            name: string; group: string; price: number;
-          }> = {
-    basic:{
-      name:"BALÍČEK BASIC",
-      group:"Prezentace nemovitostí",
-      price:2970
-    },
-    tip:{
-      name:"BALÍČEK TIP",
-      group:"Prezentace nemovitostí",
-      price:11970
-    },
-    top:{
-      name:"BALÍČEK TOP",
-      group:"Prezentace nemovitostí",
-      price:19970
-    },
-    tuning:{
-      name:"TUNING obrázků",
-      group:"Domy pro výstavbu",
-      price:9970
-    },
-    video:{
-      name:"Prodejní VIDEO",
-      group:"Domy pro výstavbu",
-      price:14970
-    },
-    viz:{
-      name:"VIZUALIZACE",
-      group:"Domy pro výstavbu",
-      price:19970
-    }
-          };
           const id = orderInput.package?.id;
-          const product = typeof id === "string" &&
-            Object.prototype.hasOwnProperty.call(catalog, id)
-              ? catalog[id] : undefined;
+          const product = typeof id === "string"
+            ? resolveRealivideoProduct(id) : null;
           if (
             orderInput.offerSlug !== "realivideo" ||
             orderInput.companyId !== "company-realivideo" ||
             orderInput.partnerId !== "partner-realivideo" ||
-            !product ||
+            product === null ||
             orderInput.priceCzk !== product.price ||
             orderInput.package.name !== product.name ||
             orderInput.package.licenseLabel !== product.group ||

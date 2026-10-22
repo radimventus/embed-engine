@@ -154,25 +154,40 @@
     if (orderHeadCopy) orderHeadCopy.textContent = "Zvolený balíček můžete změnit níže. Poté doplňte údaje a pokračujte podle pokynů.";
 
     const select = doc.getElementById("rvProductSelect");
+    const brokerProducts = ["basic", "tip", "top", "photo", "viz1", "viz3", "viz5"];
+    const brokerBases = ["basic", "tip", "top"];
+    const visualizationAddons = ["viz1", "viz3", "viz5"];
     if (select) {
       [...select.options].forEach((option) => {
-        if (option.value && !["basic", "tip", "top"].includes(option.value)) option.remove();
+        if (option.value && !brokerProducts.includes(option.value)) option.remove();
+      });
+      [...select.querySelectorAll("optgroup")].forEach((group) => {
+        if (!group.querySelector("option")) group.remove();
       });
     }
 
     doc.getElementById("rvAddProduct")?.addEventListener("click", (event) => {
       const next = select?.value;
-      if (!["basic", "tip", "top"].includes(next)) return;
+      if (!brokerProducts.includes(next)) return;
       event.preventDefault();
       event.stopImmediatePropagation();
-      ["basic", "tip", "top"].forEach((id) => {
-        if (id !== next) checkoutFrame.contentWindow.realivideoOrder?.removeProduct(id);
-      });
+      if (brokerBases.includes(next)) {
+        brokerBases.forEach((id) => {
+          if (id !== next) checkoutFrame.contentWindow.realivideoOrder?.removeProduct(id);
+        });
+      }
+      if (visualizationAddons.includes(next)) {
+        visualizationAddons.forEach((id) => {
+          if (id !== next) checkoutFrame.contentWindow.realivideoOrder?.removeProduct(id);
+        });
+      }
       checkoutFrame.contentWindow.realivideoOrder?.addProduct(next);
       select.value = "";
-      pendingBrokerProduct = next;
+      if (brokerBases.includes(next)) pendingBrokerProduct = next;
       labelPremium(orderModule);
-      document.querySelectorAll("[data-broker-card]").forEach((card) => card.classList.toggle("is-selected", card.dataset.brokerCard === next));
+      if (brokerBases.includes(next)) {
+        document.querySelectorAll("[data-broker-card]").forEach((card) => card.classList.toggle("is-selected", card.dataset.brokerCard === next));
+      }
     }, true);
 
     new doc.defaultView.ResizeObserver(() => {
