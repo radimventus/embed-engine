@@ -1594,18 +1594,33 @@ wistia-player[media-id="lciempxu0r"]:not(:defined){
 #rv-order input,
 #rv-order textarea{
   width:100%;
-  min-height:44px;
   padding:0 12px;
   border:1px solid var(--line);
   border-radius:6px;
   background:#fff;
   color:var(--navy);
+  box-sizing:border-box;
+}
+#rv-order input{
+  height:46px;
+  min-height:46px;
+  max-height:46px;
 }
 #rv-order textarea{
   min-height:80px;
   padding-top:11px;
   resize:vertical;
 }
+#rv-order .rv-ares-status{
+  min-height:18px;
+  margin:1px 0 0;
+  color:#5f6d79;
+  font-size:12px;
+  line-height:1.45;
+}
+#rv-order .rv-ares-status[data-state="loading"]{color:#8a6700}
+#rv-order .rv-ares-status[data-state="success"]{color:#1769aa;font-weight:700}
+#rv-order .rv-ares-status[data-state="error"]{color:#9d2f2f}
 #rv-order input:focus,
 #rv-order textarea:focus,
 #rv-order select:focus{
@@ -3064,7 +3079,7 @@ article.builder-card.rv-builder-megabutton:focus-visible .builder-media::after{
   <div class="container header-inner">
     <div class="brand">VIZUÁLNÍ KOMUNIKACE PRO REALITY</div>
     <nav class="nav" aria-label="Hlavní navigace">
-      <a href="https://conis.cz/realivideo/realitky/" target="_top">REALITKY</a>
+      <a href="https://conis.cz/realivideo-realitky/" target="_top">REALITKY</a>
       <a href="https://conis.cz/realivideo/developeri/" target="_top">DEVELOPEŘI</a>
       <a href="https://conis.cz/realivideo/stavebni-firmy/" target="_top">STAVEBNÍ FIRMY</a>
       <a href="https://conis.cz/realivideo/balicky/" target="_top">BALÍČKY SLUŽEB</a>
@@ -3530,12 +3545,12 @@ article.builder-card.rv-builder-megabutton:focus-visible .builder-media::after{
 
           <div class="rv-form-grid">
             <div class="rv-field">
-              <label for="rvCompany">Firma</label>
-              <input id="rvCompany" placeholder="Název firmy">
+              <label for="rvIco">IČ</label>
+              <input id="rvIco" name="ico" inputmode="numeric" autocomplete="off" maxlength="8" placeholder="8 číslic – doplníme z ARES">
             </div>
             <div class="rv-field">
-              <label for="rvIco">IČ</label>
-              <input id="rvIco" placeholder="IČ">
+              <label for="rvCompany">Název firmy</label>
+              <input id="rvCompany" name="company" autocomplete="organization" placeholder="Doplní se automaticky z ARES">
             </div>
             <div class="rv-field">
               <label for="rvName">Jméno a příjmení</label>
@@ -3782,7 +3797,7 @@ article.builder-card.rv-builder-megabutton:focus-visible .builder-media::after{
   });
 
   const cleanSectionRoutes={
-    "#realitky":"/realivideo/realitky/",
+    "#realitky":"/realivideo-realitky/",
     "#developeri":"/realivideo/developeri/",
     "#stavebni-firmy":"/realivideo/stavebni-firmy/",
     "#balicky":"/realivideo/balicky/",
@@ -4663,7 +4678,7 @@ function inputValue(){
           .trim()
           .toLocaleLowerCase("cs-CZ");
 
-      if(text!=="firma"){
+      if(text!=="firma" && text!=="název firmy"){
         continue;
       }
 
@@ -5105,10 +5120,7 @@ function inputValue(){
     if(icoInput){
       const preview=document.createElement("div");
       preview.id="rvAresCompanyPreview";
-      preview.hidden=true;
-      preview.style.marginTop="12px";
-      preview.style.display="grid";
-      preview.style.gap="8px";
+      preview.className="rv-field";
 
       const addressLabel=document.createElement("label");
       addressLabel.textContent="Sídlo firmy";
@@ -5122,26 +5134,52 @@ function inputValue(){
       addressInput.required=false;
       addressInput.removeAttribute("pattern");
       addressInput.removeAttribute("inputmode");
-      addressInput.placeholder="Načte se podle IČ";
+      addressInput.placeholder="Doplní se automaticky z ARES";
+
+      const status=document.createElement("p");
+      status.className="rv-ares-status";
+      status.setAttribute("aria-live","polite");
+      status.textContent="Po zadání 8 číslic doplníme název a sídlo firmy z ARES.";
 
       preview.append(
         addressLabel,
-        addressInput
+        addressInput,
+        status
       );
 
-      const icoMount=
-        icoInput.closest(".field") ||
+      const companyField=resolveCompanyInput();
+      const companyMount=
+        companyField?.closest(".rv-field") ||
+        companyField?.parentElement ||
+        icoInput.closest(".rv-field") ||
         icoInput.parentElement ||
         icoInput;
 
-      icoMount.insertAdjacentElement(
+      companyMount.insertAdjacentElement(
         "afterend",
         preview
       );
 
+      let lookupTimer=0;
+      let lookupSequence=0;
+      let lastAresCompany="";
+
+      const setAresStatus=(message,state="")=>{
+        status.textContent=message;
+        status.dataset.state=state;
+      };
+
       const clearAresPreview=()=>{
+        lookupSequence+=1;
         addressInput.value="";
-        preview.hidden=true;
+        addressInput.placeholder="Doplní se automaticky z ARES";
+        if(companyField && companyField.value===lastAresCompany){
+          companyField.value="";
+        }
+        lastAresCompany="";
+        setAresStatus(
+          "Po zadání 8 číslic doplníme název a sídlo firmy z ARES."
+        );
       };
 
       const loadAresPreview=async()=>{
@@ -5154,6 +5192,9 @@ function inputValue(){
           return;
         }
 
+        const sequence=++lookupSequence;
+        setAresStatus("Načítám údaje z ARES…","loading");
+
         try{
           const ares=await jsonFetch(
             API+
@@ -5161,6 +5202,10 @@ function inputValue(){
             encodeURIComponent(icoRaw),
             {method:"GET"}
           );
+
+          if(sequence!==lookupSequence){
+            return;
+          }
 
           const companyName=
             typeof ares.companyName==="string"
@@ -5173,15 +5218,14 @@ function inputValue(){
               : "";
 
           if(!companyName){
-            clearAresPreview();
+            addressInput.value="";
+            setAresStatus("ARES pro toto IČ nevrátil název firmy.","error");
             return;
           }
 
-          const companyField=
-            resolveCompanyInput();
-
           if(companyField){
             companyField.value=companyName;
+            lastAresCompany=companyName;
             companyField.dispatchEvent(
               new Event(
                 "input",
@@ -5191,14 +5235,22 @@ function inputValue(){
           }
 
           addressInput.value=address;
-          preview.hidden=false;
+          setAresStatus("Údaje byly doplněny z ARES.","success");
 
           console.log(
             "ARES_FORM_AUTOFILL="+
             companyName
           );
         }catch(err){
-          clearAresPreview();
+          if(sequence!==lookupSequence){
+            return;
+          }
+
+          addressInput.value="";
+          setAresStatus(
+            "ARES je nyní nedostupný. Název firmy můžete vyplnit ručně.",
+            "error"
+          );
 
           console.warn(
             "ARES form preview unavailable:",
@@ -5220,13 +5272,14 @@ function inputValue(){
       icoInput.addEventListener(
         "input",
         ()=>{
-          if(
-            String(icoInput.value||"")
-              .replace(/\s+/g,"")
-              .length!==8
-          ){
+          window.clearTimeout(lookupTimer);
+          const icoRaw=String(icoInput.value||"").replace(/\s+/g,"");
+          if(icoRaw.length!==8){
             clearAresPreview();
+            return;
           }
+
+          lookupTimer=window.setTimeout(loadAresPreview,250);
         }
       );
     }
