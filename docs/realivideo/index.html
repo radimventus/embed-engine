@@ -3778,6 +3778,16 @@ article.builder-card.rv-builder-megabutton:focus-visible .builder-media::after{
     "#kontakt":"/realivideo/kontakt/"
   };
 
+  // Google Sites embeds this page in a sandboxed cross-origin iframe and
+  // blocks target="_top" navigation. Keep same-tab navigation on conis.cz,
+  // but let visitors leave the embed through a normal user-initiated tab.
+  if(window.self!==window.top){
+    document.querySelectorAll('.nav a[target="_top"]').forEach(anchor=>{
+      anchor.target="_blank";
+      anchor.rel="noopener";
+    });
+  }
+
   document.querySelectorAll('a[href^="#"]').forEach(anchor=>{
     anchor.addEventListener("click",e=>{
       const href=anchor.getAttribute("href");
