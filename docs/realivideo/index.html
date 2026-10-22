@@ -3059,11 +3059,11 @@ article.builder-card.rv-builder-megabutton:focus-visible .builder-media::after{
   <div class="container header-inner">
     <div class="brand">VIZUÁLNÍ KOMUNIKACE PRO REALITY</div>
     <nav class="nav" aria-label="Hlavní navigace">
-      <a href="#realitky">REALITKY</a>
-      <a href="#developeri">DEVELOPEŘI</a>
-      <a href="#stavebni-firmy">STAVEBNÍ FIRMY</a>
-      <a href="#balicky">BALÍČKY SLUŽEB</a>
-      <a href="#kontakt">KONTAKT</a>
+      <a href="https://conis.cz/realivideo/realitky/" target="_top">REALITKY</a>
+      <a href="https://conis.cz/realivideo/developeri/" target="_top">DEVELOPEŘI</a>
+      <a href="https://conis.cz/realivideo/stavebni-firmy/" target="_top">STAVEBNÍ FIRMY</a>
+      <a href="https://conis.cz/realivideo/balicky/" target="_top">BALÍČKY SLUŽEB</a>
+      <a href="https://conis.cz/realivideo/kontakt/" target="_top">KONTAKT</a>
     </nav>
   </div>
 </header>
@@ -3770,6 +3770,14 @@ article.builder-card.rv-builder-megabutton:focus-visible .builder-media::after{
     }
   });
 
+  const cleanSectionRoutes={
+    "#realitky":"/realivideo/realitky/",
+    "#developeri":"/realivideo/developeri/",
+    "#stavebni-firmy":"/realivideo/stavebni-firmy/",
+    "#balicky":"/realivideo/balicky/",
+    "#kontakt":"/realivideo/kontakt/"
+  };
+
   document.querySelectorAll('a[href^="#"]').forEach(anchor=>{
     anchor.addEventListener("click",e=>{
       const href=anchor.getAttribute("href");
@@ -3791,10 +3799,17 @@ article.builder-card.rv-builder-megabutton:focus-visible .builder-media::after{
       }
 
       if(history.replaceState){
-        history.replaceState(null,"",href);
+        history.replaceState(null,"",cleanSectionRoutes[href] || href);
       }
     });
   });
+
+  const initialHash=window.location.hash;
+  if(cleanSectionRoutes[initialHash] && history.replaceState){
+    window.addEventListener("load",()=>{
+      setTimeout(()=>history.replaceState(null,"",cleanSectionRoutes[initialHash]),0);
+    },{once:true});
+  }
 
   window.realivideoSlowScrollTo=slowScrollTo;
   window.realivideoSlowScrollToBottom=slowScrollToBottom;
