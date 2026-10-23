@@ -71,7 +71,35 @@
 .broker-page .tuning-process li{position:relative;padding-left:22px}
 .broker-page .tuning-process li+li{margin-top:0}
 .broker-page .tuning-process li::before{position:absolute;top:.62em;left:0;width:8px;height:8px;background:var(--gold);content:""}
-.construction-page .hero-benefit-list{font-size:14px}
+.construction-page .hero-benefit-list{font-size:16px}
 .construction-page .hero-benefit-list span:first-child{white-space:nowrap}
 .construction-checkout-section{background:#fff}
 @media(max-width:960px){.homepage .home-section-heading{width:100%}.construction-page .hero-benefit-list span:first-child{white-space:normal}}
+
+/* Shared RealiVideo list and footer treatment — v25 */
+body main ul{padding-left:0;list-style:none}
+body main ul>li{position:relative;padding-left:20px}
+body main ul>li::before,
+.bullet-list li::before,
+.feature-list li::before,
+.home-offer-point::before,
+.hero-benefit-list span::before,
+.tuning-process li::before{
+  width:8px;
+  height:8px;
+  border-radius:0;
+  background:var(--gold);
+  color:transparent;
+  content:"";
+}
+body main ul>li::before{position:absolute;top:.62em;left:0}
+body main .feature-list li{padding-left:48px}
+body main .feature-list li::before{left:18px}
+.broker-page .site-footer,
+.construction-page .site-footer{
+  border-top:1px solid rgba(255,255,255,.42);
+  background:var(--navy);
+  color:rgba(255,255,255,.7);
+}
+.broker-page .site-footer a,
+.construction-page .site-footer a{color:#fff}

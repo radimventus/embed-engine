@@ -1585,7 +1585,7 @@ wistia-player[media-id="lciempxu0r"]:not(:defined){
   gap:11px;
   margin-top:22px;
 }
-#rv-order .rv-field{display:grid;gap:5px}
+#rv-order .rv-field{display:grid;align-self:start;align-content:start;gap:5px}
 #rv-order .rv-field.rv-full{grid-column:1/-1}
 #rv-order label{
   font-size:12px;
@@ -4619,6 +4619,38 @@ var rvDataset = {
     return body;
   }
 
+  async function fetchAres(ico){
+    try{
+      return await jsonFetch(
+        API+
+        "/local-pilot/realivideo/ares/"+
+        encodeURIComponent(ico),
+        {method:"GET"}
+      );
+    }catch(primaryError){
+      const official=await jsonFetch(
+        "https://ares.gov.cz/ekonomicke-subjekty-v-be/rest/ekonomicke-subjekty/"+
+        encodeURIComponent(ico),
+        {method:"GET"}
+      );
+
+      const companyName=
+        typeof official.obchodniJmeno==="string"
+          ? official.obchodniJmeno.trim()
+          : "";
+      const address=
+        typeof official.sidlo?.textovaAdresa==="string"
+          ? official.sidlo.textovaAdresa.trim()
+          : "";
+
+      if(!companyName){
+        throw primaryError;
+      }
+
+      return {companyName,address};
+    }
+  }
+
   function selectedProducts(){
     const authority=window.realivideoOrder;
 
@@ -4787,14 +4819,7 @@ function inputValue(){
     window.rvPaymentStage="ARES";
 
     try{
-      const ares=await jsonFetch(
-        API+
-        "/local-pilot/realivideo/ares/"+
-        encodeURIComponent(icoRaw),
-        {
-          method:"GET"
-        }
-      );
+      const ares=await fetchAres(icoRaw);
 
       aresCompanyName=
         typeof ares.companyName==="string"
@@ -5222,12 +5247,7 @@ function inputValue(){
         setAresStatus("Načítám údaje z ARES…","loading");
 
         try{
-          const ares=await jsonFetch(
-            API+
-            "/local-pilot/realivideo/ares/"+
-            encodeURIComponent(icoRaw),
-            {method:"GET"}
-          );
+          const ares=await fetchAres(icoRaw);
 
           if(sequence!==lookupSequence){
             return;
