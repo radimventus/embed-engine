@@ -1683,7 +1683,7 @@ header {
   font-size:clamp(18px,1.45vw,22px);
   font-weight:400;
   line-height:1.58;
-  text-align:center;
+  text-align:left;
 }
 
 .positioning__perex span{
@@ -1692,6 +1692,10 @@ header {
 
 .positioning__perex span+span{
   margin-top:5px;
+}
+
+.positioning__perex-detail{
+  font-size:clamp(16px,1.3vw,20px);
 }
 
 .hero-video{
@@ -1736,6 +1740,10 @@ header {
     margin-top:26px;
     font-size:18px;
     line-height:1.52;
+  }
+
+  .positioning__perex-detail{
+    font-size:16px;
   }
 
   .positioning__perex span+span{
