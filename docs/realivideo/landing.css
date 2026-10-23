@@ -58,3 +58,20 @@
 .construction-page .construction-package-grid .package-card:nth-child(2) .package-select{background:var(--navy);color:#fff}
 @media(max-width:960px){.construction-page .hero-grid,.construction-page #ukazky .section-head,.construction-page #vyuziti .section-head{grid-template-columns:1fr}.tuning-process{grid-template-columns:1fr;gap:14px}}
 @media(max-width:650px){.hero-benefit-list{font-size:16px}.tuning-process{padding:23px}.construction-page .construction-package-grid .package-card ul{min-height:0}}
+
+/* RealiVideo content and checkout refinements — v24 */
+.homepage .home-section-heading{width:50%;max-width:none}
+.hero-benefit-list span::before{top:.55em;width:8px;height:8px;background:var(--gold);content:""}
+.broker-page .hero-benefit-list{font-weight:400}
+.broker-page .hero-benefit-list span:last-child{font-weight:900}
+.broker-page .broker-tuning{padding-top:28px}
+.broker-page .tuning-process{display:block;margin:24px 0 28px;padding:0;border:0;background:transparent}
+.broker-page .tuning-process h3{margin:0 0 14px;text-align:left}
+.broker-page .tuning-process ul{display:grid;gap:7px;padding:0;list-style:none;text-align:left}
+.broker-page .tuning-process li{position:relative;padding-left:22px}
+.broker-page .tuning-process li+li{margin-top:0}
+.broker-page .tuning-process li::before{position:absolute;top:.62em;left:0;width:8px;height:8px;background:var(--gold);content:""}
+.construction-page .hero-benefit-list{font-size:14px}
+.construction-page .hero-benefit-list span:first-child{white-space:nowrap}
+.construction-checkout-section{background:#fff}
+@media(max-width:960px){.homepage .home-section-heading{width:100%}.construction-page .hero-benefit-list span:first-child{white-space:normal}}

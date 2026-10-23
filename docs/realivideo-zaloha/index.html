@@ -3518,7 +3518,12 @@ article.builder-card.rv-builder-megabutton:focus-visible .builder-media::after{
                 <option value="tip">TIP — 11 970 Kč</option>
                 <option value="top">TOP — 19 970 Kč</option>
               </optgroup>
-              <optgroup label="Volitelné služby pro makléře">
+              <optgroup label="Prezentace pro stavební firmy">
+                <option value="construction-basic">VIDEO — 5 970 Kč</option>
+                <option value="construction-tip">VIDEO PLUS — 11 970 Kč</option>
+                <option value="construction-premium">VIDEO MAX — 19 970 Kč</option>
+              </optgroup>
+              <optgroup label="Doplňkové služby">
                 <option value="photo">Lokální fotografování — 4 970 Kč</option>
                 <option value="viz1">1 vizualizace navíc — 1 970 Kč</option>
                 <option value="viz3">3 vizualizace navíc — 3 970 Kč</option>
@@ -3859,6 +3864,9 @@ article.builder-card.rv-builder-megabutton:focus-visible .builder-media::after{
     basic:{name:"BALÍČEK BASIC",group:"Prezentace nemovitostí",price:2970,eligible:false},
     tip:{name:"BALÍČEK TIP",group:"Prezentace nemovitostí",price:11970,eligible:false},
     top:{name:"BALÍČEK TOP",group:"Prezentace nemovitostí",price:19970,eligible:false},
+    "construction-basic":{name:"VIDEO",group:"Prezentace pro stavební firmy",price:5970,eligible:false},
+    "construction-tip":{name:"VIDEO PLUS",group:"Prezentace pro stavební firmy",price:11970,eligible:false},
+    "construction-premium":{name:"VIDEO MAX",group:"Prezentace pro stavební firmy",price:19970,eligible:false},
     photo:{name:"Lokální fotografování",group:"Volitelné služby",price:4970,eligible:false},
     viz1:{name:"1 vizualizace navíc",group:"Volitelné služby",price:1970,eligible:false},
     viz3:{name:"3 vizualizace navíc",group:"Volitelné služby",price:3970,eligible:false},
@@ -4524,6 +4532,21 @@ var rvDataset = {
       group:"Prezentace nemovitostí",
       price:19970
     },
+    "construction-basic":{
+      name:"VIDEO",
+      group:"Prezentace pro stavební firmy",
+      price:5970
+    },
+    "construction-tip":{
+      name:"VIDEO PLUS",
+      group:"Prezentace pro stavební firmy",
+      price:11970
+    },
+    "construction-premium":{
+      name:"VIDEO MAX",
+      group:"Prezentace pro stavební firmy",
+      price:19970
+    },
     photo:{
       name:"Lokální fotografování",
       group:"Volitelné služby",
@@ -4613,9 +4636,11 @@ var rvDataset = {
 
   function resolveOrderProduct(productIds){
     const brokerBases=["basic","tip","top"];
+    const constructionBases=["construction-basic","construction-tip","construction-premium"];
+    const allBases=[...brokerBases,...constructionBases];
     const brokerAddons=["photo","viz1","viz3","viz5"];
     const visualizationAddons=["viz1","viz3","viz5"];
-    const bases=productIds.filter(function(id){return brokerBases.includes(id);});
+    const bases=productIds.filter(function(id){return allBases.includes(id);});
     const addons=productIds.filter(function(id){return brokerAddons.includes(id);});
 
     if(productIds.length===1 && !brokerAddons.includes(productIds[0])){
@@ -4629,13 +4654,13 @@ var rvDataset = {
       addons.filter(function(id){return visualizationAddons.includes(id);}).length>1
     ) return null;
 
-    const order=["basic","tip","top","photo","viz1","viz3","viz5"];
+    const order=["basic","tip","top","construction-basic","construction-tip","construction-premium","photo","viz1","viz3","viz5"];
     const ids=[...productIds].sort(function(left,right){return order.indexOf(left)-order.indexOf(right);});
     const items=ids.map(function(id){return PRODUCTS[id];});
     return {
       id:ids.join("+"),
       name:items.map(function(item){return item.name;}).join(" + "),
-      group:"Prezentace nemovitostí + volitelné služby",
+      group:items[0].group+" + volitelné služby",
       price:items.reduce(function(sum,item){return sum+item.price;},0)
     };
   }

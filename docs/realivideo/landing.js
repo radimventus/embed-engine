@@ -104,25 +104,10 @@
         <p class="package-product">${pkg.product}</p>
         <ul>${pkg.features.map((item) => `<li>${item}</li>`).join("")}</ul>
         <div class="broker-price">${pkg.price || "Cena dle rozsahu"}</div>
-        <button class="button button-secondary package-select" type="button" data-package-select="${pkg.id}">Objednat ${pkg.name}</button>
+        <button class="button button-secondary package-select" type="button" data-construction-product="${pkg.id}">Objednat ${pkg.name}</button>
       </article>
     `).join("");
   }
-
-  const selection = document.querySelector("[data-package-selection]");
-  document.addEventListener("click", (event) => {
-    const button = event.target.closest("[data-package-select]");
-    if (!button || !selection) return;
-    const pkg = config.constructionPackages?.find((item) => item.id === button.dataset.packageSelect);
-    if (!pkg) return;
-    document.querySelectorAll(".package-card").forEach((card) => card.classList.remove("is-selected"));
-    button.closest(".package-card")?.classList.add("is-selected");
-    selection.hidden = false;
-    selection.querySelector("[data-selected-name]").textContent = pkg.name;
-    const mail = selection.querySelector("[data-selected-mail]");
-    mail.href = `mailto:kontakt@realivideo.cz?subject=${encodeURIComponent(`RealiVideo – zájem o ${pkg.name}`)}`;
-    selection.scrollIntoView({ behavior: "smooth", block: "center" });
-  });
 
   const checkoutShell = document.querySelector("[data-broker-checkout]");
   const checkoutFrame = document.querySelector("[data-checkout-frame]");
@@ -232,5 +217,104 @@
 
     checkoutShell.classList.add("is-ready");
     selectBrokerProduct(pendingBrokerProduct);
+  });
+
+  const constructionCheckoutShell = document.querySelector("[data-construction-checkout]");
+  const constructionCheckoutFrame = document.querySelector("[data-construction-frame]");
+  const constructionBases = ["construction-basic", "construction-tip", "construction-premium"];
+  const sharedAddons = ["photo", "viz1", "viz3", "viz5"];
+  const constructionProducts = [...constructionBases, ...sharedAddons];
+  let pendingConstructionProduct = "construction-tip";
+
+  function selectConstructionProduct(productId) {
+    const order = constructionCheckoutFrame?.contentWindow?.realivideoOrder;
+    if (!order || !constructionBases.includes(productId)) return false;
+    constructionBases.forEach((id) => {
+      if (id !== productId) order.removeProduct(id);
+    });
+    order.addProduct(productId);
+    document.querySelectorAll("[data-package]").forEach((card) => {
+      card.classList.toggle("is-selected", card.dataset.package === productId);
+    });
+    return true;
+  }
+
+  function openConstructionCheckout(productId) {
+    if (!constructionCheckoutShell || !constructionCheckoutFrame) return;
+    pendingConstructionProduct = productId;
+    constructionCheckoutShell.hidden = false;
+    selectConstructionProduct(productId);
+    constructionCheckoutShell.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+
+  document.querySelectorAll("[data-construction-product]").forEach((button) => {
+    button.addEventListener("click", () => openConstructionCheckout(button.dataset.constructionProduct));
+  });
+
+  constructionCheckoutFrame?.addEventListener("load", () => {
+    const doc = constructionCheckoutFrame.contentDocument;
+    const orderModule = doc?.getElementById("order-module");
+    if (!doc || !orderModule) return;
+
+    const style = doc.createElement("style");
+    style.textContent = `
+      html,body{margin:0!important;background:#fff!important;overflow-x:hidden!important}
+      body>:not(main){display:none!important}
+      main>:not(#balicky){display:none!important}
+      #balicky{display:block!important;padding:0!important;border:0!important}
+      #balicky>.container{width:100%!important;max-width:none!important;margin:0!important;padding:0!important}
+      #balicky>.container>*:not(#order-module){display:none!important}
+      #order-module{display:block!important;margin:0!important;padding:0!important}
+      #rv-order{margin:0!important;padding:28px!important}
+      #rv-order .rv-mode{display:none!important}
+      @media(max-width:650px){#rv-order{padding:18px 12px!important}#rv-order .rv-order-head h2{font-size:27px!important}}
+    `;
+    doc.head.appendChild(style);
+
+    const orderHeadCopy = orderModule.querySelector(".rv-order-head p");
+    if (orderHeadCopy) orderHeadCopy.textContent = "Zvolený stavební balíček můžete změnit níže. Doplňkové služby jsou společné pro obě nabídky.";
+
+    const select = doc.getElementById("rvProductSelect");
+    const visualizationAddons = ["viz1", "viz3", "viz5"];
+    if (select) {
+      [...select.options].forEach((option) => {
+        if (option.value && !constructionProducts.includes(option.value)) option.remove();
+      });
+      [...select.querySelectorAll("optgroup")].forEach((group) => {
+        if (!group.querySelector("option")) group.remove();
+      });
+    }
+
+    doc.getElementById("rvAddProduct")?.addEventListener("click", (event) => {
+      const next = select?.value;
+      if (!constructionProducts.includes(next)) return;
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      if (constructionBases.includes(next)) {
+        constructionBases.forEach((id) => {
+          if (id !== next) constructionCheckoutFrame.contentWindow.realivideoOrder?.removeProduct(id);
+        });
+      }
+      if (visualizationAddons.includes(next)) {
+        visualizationAddons.forEach((id) => {
+          if (id !== next) constructionCheckoutFrame.contentWindow.realivideoOrder?.removeProduct(id);
+        });
+      }
+      constructionCheckoutFrame.contentWindow.realivideoOrder?.addProduct(next);
+      select.value = "";
+      if (constructionBases.includes(next)) {
+        pendingConstructionProduct = next;
+        document.querySelectorAll("[data-package]").forEach((card) => {
+          card.classList.toggle("is-selected", card.dataset.package === next);
+        });
+      }
+    }, true);
+
+    new doc.defaultView.ResizeObserver(() => {
+      constructionCheckoutFrame.style.height = `${Math.ceil(orderModule.getBoundingClientRect().height + 4)}px`;
+    }).observe(orderModule);
+
+    constructionCheckoutShell.classList.add("is-ready");
+    selectConstructionProduct(pendingConstructionProduct);
   });
 })();
