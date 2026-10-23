@@ -104,7 +104,7 @@
         <p class="package-product">${pkg.product}</p>
         <ul>${pkg.features.map((item) => `<li>${item}</li>`).join("")}</ul>
         <div class="broker-price">${pkg.price || "Cena dle rozsahu"}</div>
-        <button class="button button-secondary package-select" type="button" data-package-select="${pkg.id}">Vybrat ${pkg.name}</button>
+        <button class="button button-secondary package-select" type="button" data-package-select="${pkg.id}">Objednat ${pkg.name}</button>
       </article>
     `).join("");
   }
