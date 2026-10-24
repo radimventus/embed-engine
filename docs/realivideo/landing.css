@@ -105,3 +105,8 @@ body main .feature-list li::before{left:18px}
 }
 .broker-page .site-footer a,
 .construction-page .site-footer a{color:#fff}
+
+@media(max-width:650px){
+  .broker-page .compare-item summary{display:grid;grid-template-columns:minmax(0,1fr) 126px;gap:14px}
+  .broker-page .compare-item summary span{width:126px;margin-left:auto;text-align:right;justify-self:end}
+}
