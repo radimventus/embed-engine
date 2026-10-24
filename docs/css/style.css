@@ -1694,6 +1694,13 @@ header {
   margin-top:5px;
 }
 
+.positioning__perex-primary{
+  font-size:clamp(16px,1.25vw,18px);
+  font-weight:800;
+  letter-spacing:-.012em;
+  white-space:nowrap;
+}
+
 .positioning__perex-detail{
   font-size:clamp(16px,1.3vw,20px);
 }
@@ -1744,6 +1751,11 @@ header {
 
   .positioning__perex-detail{
     font-size:16px;
+  }
+
+  .positioning__perex-primary{
+    font-size:18px;
+    white-space:normal;
   }
 
   .positioning__perex span+span{
