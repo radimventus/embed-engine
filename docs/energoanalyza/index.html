@@ -1,0 +1,957 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="theme-color" content="#ffffff">
+    <meta name="description" content="Mobilní formulář vstupních údajů pro Energoanalýzu.">
+    <link rel="canonical" href="https://conis.cz/energoanalyza/">
+    <title>Energoanalýza – vstupní údaje</title>
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+            min-height: 100%;
+            font-family: Arial, sans-serif;
+            background-color: #f6f8fb;
+            -webkit-overflow-scrolling: touch;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+        body {
+            padding-bottom: env(safe-area-inset-bottom);
+        }
+        .site-header {
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            background: rgba(255, 255, 255, 0.96);
+            border-bottom: 1px solid #dce4ee;
+            backdrop-filter: blur(8px);
+        }
+        .brand-link {
+            width: 100%;
+            max-width: 420px;
+            min-height: 58px;
+            margin: 0 auto;
+            padding: 8px 16px;
+            box-sizing: border-box;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #1c4587;
+            text-decoration: none;
+            font-size: 19px;
+            font-weight: 700;
+        }
+        .brand-mark {
+            flex: 0 0 auto;
+            width: 34px;
+            height: 34px;
+        }
+        .intro {
+            width: calc(100% - 30px);
+            max-width: 390px;
+            margin: 20px auto 4px;
+            padding: 16px;
+            box-sizing: border-box;
+            color: #1c4587;
+            background: #ffffff;
+            border: 1px solid #dce4ee;
+            border-radius: 12px;
+            line-height: 1.5;
+            font-size: 15px;
+        }
+        .intro p {
+            margin: 0;
+        }
+        .intro strong {
+            display: block;
+            margin-bottom: 5px;
+        }
+        .container {
+            width: 100%;
+            max-width: 390px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            padding: 20px 15px;
+            box-sizing: border-box;
+        }
+        .row {
+            display: flex;
+            flex-wrap: nowrap;
+            height: 40px;
+            border-bottom: none;
+        }
+        .row:nth-child(1),
+        .row:nth-child(13),
+        .row:nth-child(43),
+        .row:nth-child(64) {
+            border-bottom: 2px solid #1c4587;
+        }
+        .row:nth-child(36),
+        .row:nth-child(42) {
+            border-bottom: none !important;
+        }
+        .cell {
+            padding: 5px;
+            box-sizing: border-box;
+            border-right: 2px solid #ffffff;
+            display: flex;
+            align-items: center;
+            font-size: 15px;
+            color: #1c4587;
+            background-color: #ffffff;
+            width: 100%;
+            white-space: normal;
+            overflow-wrap: break-word;
+        }
+        .row:nth-child(58) .cell,
+        .row:nth-child(59) .cell,
+        .row:nth-child(60) .cell,
+        .row:nth-child(61) .cell,
+        .row:nth-child(62) .cell,
+        .row:nth-child(63) .cell,
+        .row:nth-child(64) .cell,
+        .row:nth-child(65) .cell,
+        .row:nth-child(66) .cell,
+        .row:nth-child(67) .cell,
+        .row:nth-child(68) .cell,
+        .row:nth-child(69) .cell,
+        .row:nth-child(70) .cell,
+        .row:nth-child(71) .cell,
+        .row:nth-child(72) .cell,
+        .row:nth-child(73) .cell {
+            color: #ff00ff !important;
+        }
+        .row:nth-child(58) .editable input,
+        .row:nth-child(59) .editable input,
+        .row:nth-child(60) .editable input,
+        .row:nth-child(61) .editable input,
+        .row:nth-child(62) .editable input,
+        .row:nth-child(63) .editable input,
+        .row:nth-child(64) .editable input,
+        .row:nth-child(65) .editable input,
+        .row:nth-child(66) .editable input,
+        .row:nth-child(67) .editable input,
+        .row:nth-child(68) .editable input,
+        .row:nth-child(69) .editable input,
+        .row:nth-child(70) .editable input,
+        .row:nth-child(71) .editable input,
+        .row:nth-child(72) .editable input,
+        .row:nth-child(73) .editable input {
+            background-color: #ffecff !important;
+        }
+        .row:nth-child(2) .cell,
+        .row:nth-child(4) .cell,
+        .row:nth-child(8) .cell,
+        .row:nth-child(13) .cell,
+        .row:nth-child(17) .cell,
+        .row:nth-child(21) .cell,
+        .row:nth-child(32) .cell,
+        .row:nth-child(35) .cell,
+        .row:nth-child(38) .cell,
+        .row:nth-child(41) .cell,
+        .row:nth-child(2) .cell-a,
+        .row:nth-child(11) .cell-a,
+        .row:nth-child(30) .cell-a,
+        .row:nth-child(36) .cell-a {
+            font-size: 16px;
+        }
+        .row:nth-child(12) .cell-e-f {
+            font-size: 14px;
+            font-weight: normal;
+            justify-content: flex-start;
+            text-align: left;
+        }
+        .row:nth-child(27) .cell-a-b-c-d-e {
+            justify-content: flex-start;
+            text-align: left;
+        }
+        .cell:last-child {
+            border-left: none;
+        }
+        .cell-a {
+            width: 100%;
+            justify-content: flex-start;
+            text-align: left;
+        }
+        .cell-b-f {
+            width: 33.33%;
+            justify-content: center;
+            text-align: center;
+        }
+        .cell-b-c {
+            width: 100%;
+            justify-content: center;
+            text-align: center;
+        }
+        .cell-d-e-f {
+            width: 100%;
+            justify-content: center;
+            text-align: center;
+        }
+        .cell-e-f {
+            width: 100%;
+        }
+        .cell-a-b-c-d-e {
+            width: 100%;
+            justify-content: flex-end;
+            text-align: left;
+        }
+        .row:nth-child(1) .cell-a.section-header,
+        .row:nth-child(13) .cell-a.section-header,
+        .row:nth-child(43) .cell-a.section-header {
+            font-weight: bold;
+            font-size: 20px;
+            text-align: center;
+            justify-content: center;
+            align-items: center;
+            display: flex;
+            margin: 0 auto;
+            width: 100%;
+        }
+        .bold {
+            font-weight: bold;
+        }
+        .row:nth-child(10) .cell-b-f,
+        .row:nth-child(16) .cell-b-f,
+        .row:nth-child(24) .cell-b-f,
+        .row:nth-child(38) .cell-b-f:nth-child(2),
+        .row:nth-child(38) .cell-b-f:nth-child(3),
+        .row:nth-child(38) .cell-b-f:nth-child(4) {
+            background-color: #ffffff;
+        }
+        .editable input, .editable select {
+            width: 100%;
+            height: 30px;
+            border: none;
+            background-color: #fff2cc;
+            font-size: 16px;
+            font-weight: bold;
+            color: #1c4587;
+            text-align: center;
+            box-sizing: border-box;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .editable input.filled, .editable select.filled {
+            background-color: #e6f3ff !important;
+        }
+        .editable input::placeholder,
+        .editable select option[disabled][selected] {
+            font-size: 14px;
+            color: #1c4587;
+            opacity: 0.6;
+        }
+        .editable select {
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12"><polygon fill="#1c4587" points="0,0 12,0 6,12"/></svg>');
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            padding-right: 20px;
+            text-align: center;
+            text-align-last: center;
+        }
+        .row:nth-child(3) .editable input,
+        .row:nth-child(7) .editable input,
+        .row:nth-child(3) .editable select,
+        .row:nth-child(7) .editable select {
+            background-color: #fff2cc;
+        }
+        .row:nth-child(3) .editable input:-webkit-autofill,
+        .row:nth-child(7) .editable input:-webkit-autofill,
+        .row:nth-child(3) .editable input:-webkit-autofill:hover,
+        .row:nth-child(7) .editable input:-webkit-autofill:hover,
+        .row:nth-child(3) .editable input:-webkit-autofill:focus,
+        .row:nth-child(7) .editable input:-webkit-autofill:focus {
+            -webkit-box-shadow: 0 0 0 1000px #fff2cc inset;
+            -webkit-text-fill-color: #1c4587;
+        }
+        .row:nth-child(3) .editable input.filled:-webkit-autofill,
+        .row:nth-child(7) .editable input.filled:-webkit-autofill,
+        .row:nth-child(3) .editable input.filled:-webkit-autofill:hover,
+        .row:nth-child(7) .editable input.filled:-webkit-autofill:hover,
+        .row:nth-child(3) .editable input.filled:-webkit-autofill:focus,
+        .row:nth-child(7) .editable input.filled:-webkit-autofill:focus {
+            -webkit-box-shadow: 0 0 0 1000px #e6f3ff inset !important;
+            -webkit-text-fill-color: #1c4587;
+        }
+        .editable input:focus, .editable select:focus {
+            outline: none;
+            border: 1px solid #1c4587;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        .editable input:not(:focus), .editable select:not(:focus) {
+            background-color: #fff2cc;
+        }
+        .row:nth-child(58) .editable input:not(:focus),
+        .row:nth-child(59) .editable input:not(:focus),
+        .row:nth-child(61) .editable input:not(:focus),
+        .row:nth-child(62) .editable input:not(:focus),
+        .row:nth-child(63) .editable input:not(:focus),
+        .row:nth-child(64) .editable input:not(:focus),
+        .row:nth-child(65) .editable input:not(:focus),
+        .row:nth-child(66) .editable input:not(:focus) {
+            background-color: #ffecff;
+        }
+        .row:nth-child(58) .editable input.filled:not(:focus),
+        .row:nth-child(59) .editable input.filled:not(:focus),
+        .row:nth-child(61) .editable input.filled:not(:focus),
+        .row:nth-child(62) .editable input.filled:not(:focus),
+        .row:nth-child(63) .editable input.filled:not(:focus),
+        .row:nth-child(64) .editable input.filled:not(:focus),
+        .row:nth-child(65) .editable input.filled:not(:focus),
+        .row:nth-child(66) .editable input.filled:not(:focus) {
+            background-color: #e6f3ff !important;
+        }
+        .submit-button {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            width: 100%;
+            max-width: 360px;
+            height: 40px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            text-align: center;
+            border-radius: 8px;
+            display: block;
+            margin: 20px auto 0;
+        }
+        .submit-button:hover {
+            background-color: #218838;
+        }
+        .submit-button:disabled {
+            background-color: #8ab998;
+            cursor: wait;
+        }
+        .button-group {
+            display: flex;
+            flex-direction: column;
+            gap: 13px;
+            margin: 20px auto;
+            width: 100%;
+            max-width: 360px;
+        }
+        .version-button {
+            width: 100%;
+            max-width: 360px;
+            height: 40px;
+            font-size: 13px;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            text-align: center;
+            text-decoration: none;
+            line-height: 40px;
+        }
+        .active-button {
+            background-color: #ffffff;
+            border: 1px solid #1c4587;
+            color: #1c4587;
+            font-size: 13px;
+            cursor: default;
+        }
+        .desktop-button {
+            background-color: #1c4587;
+            color: white;
+            border: none;
+        }
+        .desktop-button:hover {
+            background-color: #153466;
+        }
+        #message {
+            text-align: center;
+            font-weight: bold;
+            font-size: 13px;
+            margin-top: 13px;
+            display: none;
+        }
+        #message.success {
+            color: #28a745;
+        }
+        #message.error {
+            color: #dc3545;
+        }
+        #message-subtext {
+            text-align: center;
+            font-size: 12px;
+            font-weight: normal;
+            margin-top: 5px;
+            display: none;
+        }
+        #message-subtext.success {
+            color: #28a745;
+        }
+        #message-subtext.error {
+            color: #dc3545;
+        }
+        .site-footer {
+            width: calc(100% - 30px);
+            max-width: 390px;
+            margin: 16px auto 24px;
+            padding: 16px;
+            box-sizing: border-box;
+            text-align: center;
+            color: #53657a;
+            font-size: 12px;
+            line-height: 1.5;
+        }
+        .site-footer a {
+            color: #1c4587;
+            font-weight: 700;
+        }
+        @media (max-width: 360px) {
+            .container {
+                padding-left: 10px;
+                padding-right: 10px;
+            }
+            .cell {
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="site-header">
+        <a class="brand-link" href="https://www.energoanalyza.cz/" aria-label="Zpět na web Energoanalýza">
+            <svg class="brand-mark" viewBox="0 0 40 40" role="img" aria-label="Energoanalýza">
+                <path d="M4 19.5 20 6l16 13.5v14a2.5 2.5 0 0 1-2.5 2.5h-27A2.5 2.5 0 0 1 4 33.5z" fill="#eaf1f8" stroke="#1c4587" stroke-width="2"/>
+                <path d="m22.5 12-8 11h5l-2 9 8-12h-5z" fill="#f2c94c" stroke="#1c4587" stroke-linejoin="round"/>
+            </svg>
+            <span>Energoanalýza</span>
+        </a>
+    </header>
+
+    <section class="intro" aria-label="Pokyny k vyplnění">
+        <p><strong>Prosím vyplňte žlutá pole, u m³ případně pole růžová.</strong>Když některá data nebudete vědět, nevadí. Poradím si, nebo se vás doptám.</p>
+    </section>
+
+    <form id="energyForm" action="https://script.google.com/macros/s/AKfycbwYarGVWvhXu7cnzSxljjoeSNmMQTshUkzbYfQUvy3eGBpoVYaV34HUXSd0dp8TdJql/exec" method="POST" onsubmit="submitForm(event)">
+        <div class="container">
+            <div class="row">
+                <div class="cell cell-a section-header bold">INICIÁLY</div>
+            </div>
+            <div class="row">
+                <div class="cell cell-a"></div>
+            </div>
+            <div class="row">
+                <div class="cell cell-a bold">VAŠE ÚDAJE → uveďte vaše iniciály:</div>
+            </div>
+            <div class="row">
+                <div class="cell cell-b-c editable"><input type="text" id="client" name="client" placeholder="příjmení a jméno" autocomplete="name" required></div>
+            </div>
+            <div class="row">
+                <div class="cell cell-d-e-f editable"><input type="text" id="address" name="address" placeholder="město, ulice, popisné" autocomplete="street-address"></div>
+            </div>
+            <div class="row">
+                <div class="cell cell-a"></div>
+            </div>
+            <div class="row">
+                <div class="cell cell-a"></div>
+            </div>
+            <div class="row">
+                <div class="cell cell-a bold">KONTAKT → uveďte kontaktní údaje:</div>
+            </div>
+            <div class="row">
+                <div class="cell cell-b-c editable"><input type="tel" id="phone" name="phone" inputmode="tel" autocomplete="tel" pattern="\+?[0-9\s]{9,15}" placeholder="tel. číslo ve formátu 123 456 789" required></div>
+            </div>
+            <div class="row">
+                <div class="cell cell-d-e-f editable"><input type="email" id="email" name="email" inputmode="email" autocomplete="email" placeholder="vaše e-mail adresa"></div>
+            </div>
+            <div class="row">
+                <div class="cell cell-a"></div>
+            </div>
+            <div class="row">
+                <div class="cell cell-a"></div>
+            </div>
+            <div class="row">
+                <div class="cell cell-a section-header bold">PARAMETRY</div>
+            </div>
+            <div class="row">
+                <div class="cell cell-a"></div>
+            </div>
+            <div class="row">
+                <div class="cell cell-a bold">PARAMETRY VAŠEHO DOMU → uveďte jeho vlastnosti:</div>
+            </div>
+            <div class="row">
+                <div class="cell cell-b-f bold">obyt. plocha</div>
+                <div class="cell cell-b-f bold">bydlící</div>
+                <div class="cell cell-b-f bold">tepelná ztráta</div>
+            </div>
+            <div class="row">
+                <div class="cell cell-b-f editable"><input type="text" id="living_area" name="living_area" oninput="formatNumberInput(this)" onblur="formatNumberInput(this)" placeholder="m. čtvereční"></div>
+                <div class="cell cell-b-f editable"><input type="text" id="residents" name="residents" oninput="formatNumberInput(this)" onblur="formatNumberInput(this)" placeholder="počet osob"></div>
+                <div class="cell cell-b-f editable"><input type="text" id="heat_loss" name="heat_loss" oninput="formatDecimalInput(this)" onblur="finalizeDecimalInput(this)" placeholder="kW"></div>
+            </div>
+            <div class="row">
+                <div class="cell cell-e-f" colspan="2">Pokud tepel. ztrátu nevíte, spočítám/odhadnu.</div>
+            </div>
+            <div class="row">
+                <div class="cell cell-a"></div>
+            </div>
+            <div class="row">
+                <div class="cell cell-a"></div>
+            </div>
+            <div class="row">
+                <div class="cell cell-a bold">PARAMETRY TOPNÉHO SYSTÉMU → vyberte typ / uveďte objem:</div>
+            </div>
+            <div class="row">
+                <div class="cell cell-b-f bold">vytápění</div>
+                <div class="cell cell-b-f bold">vytápění</div>
+                <div class="cell cell-b-f bold">ohřev TUV</div>
+            </div>
+            <div class="row">
+                <div class="cell cell-b-f editable"><select id="heating_main" name="heating_main">
+                    <option value="" disabled selected>zvolte</option>
+                    <option value="elektřina">elektřina</option>
+                    <option value="plyn">plyn</option>
+                    <option value="uhlí">uhlí</option>
+                    <option value="dřevo">dřevo</option>
+                    <option value="pelety">pelety</option>
+                </select></div>
+                <div class="cell cell-b-f editable"><select id="heating_supplement" name="heating_supplement">
+                    <option value="" disabled selected>zvolte</option>
+                    <option value="elektřina">elektřina</option>
+                    <option value="plyn">plyn</option>
+                    <option value="uhlí">uhlí</option>
+                    <option value="dřevo">dřevo</option>
+                    <option value="pelety">pelety</option>
+                </select></div>
+                <div class="cell cell-b-f editable"><select id="water_heating" name="water_heating">
+                    <option value="" disabled selected>zvolte</option>
+                    <option value="elektřina">elektřina</option>
+                    <option value="plyn">plyn</option>
+                    <option value="uhlí">uhlí</option>
+                    <option value="dřevo">dřevo</option>
+                    <option value="pelety">pelety</option>
+                </select></div>
+            </div>
+            <div class="row">
+                <div class="cell cell-b-f bold">objem boilerů</div>
+                <div class="cell cell-b-f bold">AKU nádoby</div>
+            </div>
+            <div class="row">
+                <div class="cell cell-b-f editable"><input type="text" id="boiler_volume" name="boiler_volume" oninput="formatNumberInput(this)" onblur="formatNumberInput(this)" placeholder="litry"></div>
+                <div class="cell cell-b-f editable"><input type="text" id="aku_volume" name="aku_volume" oninput="formatNumberInput(this)" onblur="formatNumberInput(this)" placeholder="litry"></div>
+            </div>
+            <div class="row">
+                <div class="cell cell-a"></div>
+            </div>
+            <div class="row">
+                <div class="cell cell-a"></div>
+            </div>
+            <div class="row">
+                <div class="cell cell-a bold">PARAMETRY VAŠÍ FVE → uveďte vlastnosti fotovoltaiky, pokud ji máte:</div>
+            </div>
+            <div class="row">
+                <div class="cell cell-b-f bold">počet panelů</div>
+                <div class="cell cell-b-f bold">výkon FVE</div>
+                <div class="cell cell-b-f bold">baterie</div>
+            </div>
+            <div class="row">
+                <div class="cell cell-b-f editable"><input type="text" id="panel_count" name="panel_count" oninput="formatNumberInput(this)" onblur="formatNumberInput(this)" placeholder="ks"></div>
+                <div class="cell cell-b-f editable"><input type="text" id="fve_power" name="fve_power" oninput="formatDecimalInput(this)" onblur="finalizeDecimalInput(this)" placeholder="kWp"></div>
+                <div class="cell cell-b-f editable"><input type="text" id="battery" name="battery" oninput="formatDecimalInput(this)" onblur="finalizeDecimalInput(this)" placeholder="kWh"></div>
+            </div>
+            <div class="row">
+                <div class="cell cell-a"></div>
+            </div>
+            <div class="row">
+                <div class="cell cell-a"></div>
+            </div>
+            <div class="row">
+                <div class="cell cell-a bold">ENERGET. NÁROČNÉ SPOTŘEBIČE → vyberte z možností:</div>
+            </div>
+            <div class="row">
+                <div class="cell cell-b-f bold">sauna</div>
+                <div class="cell cell-b-f bold">vířivka</div>
+                <div class="cell cell-b-f bold">klimatizace</div>
+            </div>
+            <div class="row">
+                <div class="cell cell-b-f editable"><select id="sauna" name="sauna">
+                    <option value="" disabled selected>zvolte</option>
+                    <option value="ANO">ANO</option>
+                    <option value="NE">NE</option>
+                    <option value="plánuji">plánuji</option>
+                </select></div>
+                <div class="cell cell-b-f editable"><select id="hot_tub" name="hot_tub">
+                    <option value="" disabled selected>zvolte</option>
+                    <option value="ANO">ANO</option>
+                    <option value="NE">NE</option>
+                    <option value="plánuji">plánuji</option>
+                </select></div>
+                <div class="cell cell-b-f editable"><select id="ac" name="ac">
+                    <option value="" disabled selected>zvolte</option>
+                    <option value="ANO">ANO</option>
+                    <option value="NE">NE</option>
+                    <option value="plánuji">plánuji</option>
+                </select></div>
+            </div>
+            <div class="row">
+                <div class="cell cell-b-f bold">ohřev bazénu</div>
+                <div class="cell cell-b-f bold">elektromobil</div>
+            </div>
+            <div class="row">
+                <div class="cell cell-b-f editable"><select id="pool_heating" name="pool_heating">
+                    <option value="" disabled selected>zvolte</option>
+                    <option value="ANO">ANO</option>
+                    <option value="NE">NE</option>
+                    <option value="plánuji">plánuji</option>
+                </select></div>
+                <div class="cell cell-b-f editable"><select id="electric_vehicle" name="electric_vehicle">
+                    <option value="" disabled selected>zvolte</option>
+                    <option value="ANO">ANO</option>
+                    <option value="NE">NE</option>
+                    <option value="plánuji">plánuji</option>
+                </select></div>
+            </div>
+            <div class="row">
+                <div class="cell cell-a"></div>
+            </div>
+            <div class="row">
+                <div class="cell cell-a-b-c-d-e bold">ELEKTROMOBIL / POKUD PLÁNUJETE → uveďte, kolik ročně najedete km:</div>
+            </div>
+            <div class="row">
+                <div class="cell cell-b-f bold">roční nájezd</div>
+            </div>
+            <div class="row">
+                <div class="cell cell-b-f editable"><input type="text" id="annual_mileage" name="annual_mileage" oninput="formatNumberInput(this)" onblur="formatNumberInput(this)" placeholder="km"></div>
+            </div>
+            <div class="row">
+                <div class="cell cell-a"></div>
+            </div>
+            <div class="row">
+                <div class="cell cell-a section-header bold">ENERGIE</div>
+            </div>
+            <div class="row">
+                <div class="cell cell-a"></div>
+            </div>
+            <div class="row">
+                <div class="cell cell-a bold">KOLIK ROČNĚ PLATÍTE → uveďte cenu včetně všech poplatků a DPH:</div>
+            </div>
+            <div class="row">
+                <div class="cell cell-b-f bold">elektřina</div>
+                <div class="cell cell-b-f bold">plyn</div>
+                <div class="cell cell-b-f bold">uhlí</div>
+            </div>
+            <div class="row">
+                <div class="cell cell-b-f editable"><input type="text" id="electricity_cost" name="electricity_cost" oninput="formatNumberInput(this)" onblur="formatNumberInput(this)" placeholder="CZK"></div>
+                <div class="cell cell-b-f editable"><input type="text" id="gas_cost" name="gas_cost" oninput="formatNumberInput(this)" onblur="formatNumberInput(this)" placeholder="CZK"></div>
+                <div class="cell cell-b-f editable"><input type="text" id="coal_cost" name="coal_cost" oninput="formatNumberInput(this)" onblur="formatNumberInput(this)" placeholder="CZK"></div>
+            </div>
+            <div class="row">
+                <div class="cell cell-b-f bold">dřevo</div>
+                <div class="cell cell-b-f bold">pelety</div>
+            </div>
+            <div class="row">
+                <div class="cell cell-b-f editable"><input type="text" id="wood_cost" name="wood_cost" oninput="formatNumberInput(this)" onblur="formatNumberInput(this)" placeholder="CZK"></div>
+                <div class="cell cell-b-f editable"><input type="text" id="pellets_cost" name="pellets_cost" oninput="formatNumberInput(this)" onblur="formatNumberInput(this)" placeholder="CZK"></div>
+            </div>
+            <div class="row">
+                <div class="cell cell-a"></div>
+            </div>
+            <div class="row">
+                <div class="cell cell-a"></div>
+            </div>
+            <div class="row">
+                <div class="cell cell-a bold">JAKOU MÁTE ROČNÍ SPOTŘEBU → uveďte údaje z vyúčtování / faktury:</div>
+            </div>
+            <div class="row">
+                <div class="cell cell-b-f bold">elektřina</div>
+                <div class="cell cell-b-f bold">plyn</div>
+                <div class="cell cell-b-f bold">uhlí</div>
+            </div>
+            <div class="row">
+                <div class="cell cell-b-f editable"><input type="text" id="electricity_usage" name="electricity_usage" oninput="formatDecimalInput(this)" onblur="finalizeDecimalInput(this)" placeholder="MWh"></div>
+                <div class="cell cell-b-f editable"><input type="text" id="gas_usage" name="gas_usage" oninput="formatDecimalInput(this)" onblur="finalizeDecimalInput(this)" placeholder="MWh"></div>
+                <div class="cell cell-b-f editable"><input type="text" id="coal_usage" name="coal_usage" oninput="formatDecimalInput(this)" onblur="finalizeDecimalInput(this)" placeholder="MWh"></div>
+            </div>
+            <div class="row">
+                <div class="cell cell-b-f bold">dřevo</div>
+                <div class="cell cell-b-f bold">pelety</div>
+            </div>
+            <div class="row">
+                <div class="cell cell-b-f editable"><input type="text" id="wood_usage" name="wood_usage" oninput="formatDecimalInput(this)" onblur="finalizeDecimalInput(this)" placeholder="MWh"></div>
+                <div class="cell cell-b-f editable"><input type="text" id="pellets_usage" name="pellets_usage" oninput="formatDecimalInput(this)" onblur="finalizeDecimalInput(this)" placeholder="MWh"></div>
+            </div>
+            <div class="row">
+                <div class="cell cell-a"></div>
+            </div>
+            <div class="row">
+                <div class="cell cell-a">Pokud nevíte spotřebu v MWh:</div>
+            </div>
+            <div class="row">
+                <div class="cell cell-a bold">VAŠE ROČNÍ SPOTŘEBA PALIVA → uveďte ve vám známých jednotkách:</div>
+            </div>
+            <div class="row">
+                <div class="cell cell-b-f bold">plyn</div>
+                <div class="cell cell-b-f bold">uhlí</div>
+                <div class="cell cell-b-f bold">dřevo</div>
+            </div>
+            <div class="row">
+                <div class="cell cell-b-f editable"><input type="text" id="gas_fuel" name="gas_fuel" oninput="formatDecimalInput(this)" onblur="finalizeDecimalInput(this)" placeholder="m. kubické"></div>
+                <div class="cell cell-b-f editable"><input type="text" id="coal_fuel" name="coal_fuel" oninput="formatDecimalInput(this)" onblur="finalizeDecimalInput(this)" placeholder="tuny"></div>
+                <div class="cell cell-b-f editable"><input type="text" id="wood_fuel" name="wood_fuel" oninput="formatDecimalInput(this)" onblur="finalizeDecimalInput(this)" placeholder="m. sypané"></div>
+            </div>
+            <div class="row">
+                <div class="cell cell-b-f bold">pelety</div>
+                <div class="cell cell-b-f bold">dřevo</div>
+                <div class="cell cell-b-f bold">pelety</div>
+            </div>
+            <div class="row">
+                <div class="cell cell-b-f editable"><input type="text" id="pellets_fuel" name="pellets_fuel" oninput="formatDecimalInput(this)" onblur="finalizeDecimalInput(this)" placeholder="tuny"></div>
+                <div class="cell cell-b-f editable"><input type="text" id="wood_fuel_meters" name="wood_fuel_meters" oninput="formatDecimalInput(this)" onblur="finalizeDecimalInput(this)" placeholder="m. ukládané"></div>
+                <div class="cell cell-b-f editable"><input type="text" id="pellets_fuel_meters" name="pellets_fuel_meters" oninput="formatDecimalInput(this)" onblur="finalizeDecimalInput(this)" placeholder="m. kubické"></div>
+            </div>
+            <div class="row">
+                <div class="cell cell-a"></div>
+            </div>
+            <div class="row">
+                <div class="cell cell-a"></div>
+            </div>
+            <div>
+                <button type="submit" class="submit-button" id="submitButton">ODESLAT</button>
+            </div>
+            <div id="message"></div>
+            <div id="message-subtext"></div>
+        </div>
+    </form>
+
+    <footer class="site-footer">
+        <a href="https://www.energoanalyza.cz/">Zpět na Energoanalýzu</a><br>
+        © 2026 Radim Věntus
+    </footer>
+
+    <script>
+        function formatNumberInput(input) {
+            let value = input.value.replace(/[^0-9]/g, '');
+            if (!value) {
+                input.value = '';
+                input.classList.remove('filled');
+                return;
+            }
+            let num = parseInt(value, 10);
+            if (num > 999999) num = 999999;
+            input.value = num.toString();
+            input.classList.add('filled');
+        }
+
+        function formatDecimalInput(input) {
+            let value = input.value.replace(/[^0-9,.]/g, '');
+            if (!value) {
+                input.value = '';
+                input.classList.remove('filled');
+                return;
+            }
+            value = value.replace(/[,]/g, '.').replace(/\.+/, '.');
+            if (/^\d*\.?\d*$/.test(value)) {
+                input.value = value.replace('.', ',');
+                input.classList.add('filled');
+            }
+        }
+
+        function finalizeDecimalInput(input) {
+            let value = input.value.replace(/[,]/g, '.').replace(/\.+/, '.');
+            if (!value || value === '.') {
+                input.value = '';
+                input.classList.remove('filled');
+                return;
+            }
+            let num = parseFloat(value);
+            if (isNaN(num)) {
+                input.value = '';
+                input.classList.remove('filled');
+                return;
+            }
+            if (num > 999999) num = 999999;
+            input.value = num.toFixed(2).replace('.', ',');
+            input.classList.add('filled');
+        }
+
+        document.getElementById('energyForm').addEventListener('keydown', (event) => {
+            if (event.key === 'Enter') {
+                event.preventDefault();
+                if (event.target.matches('input[oninput="formatDecimalInput(this)"]')) {
+                    finalizeDecimalInput(event.target);
+                }
+            }
+        });
+
+        function updateSelectFilledState(select) {
+            if (select.value && select.value !== '') {
+                select.classList.add('filled');
+            } else {
+                select.classList.remove('filled');
+            }
+        }
+
+        document.querySelectorAll('.editable select').forEach(select => {
+            select.addEventListener('change', () => updateSelectFilledState(select));
+            updateSelectFilledState(select);
+        });
+
+        document.querySelectorAll('.editable input').forEach(input => {
+            if (input.getAttribute('oninput') === 'formatNumberInput(this)') input.inputMode = 'numeric';
+            if (input.getAttribute('oninput') === 'formatDecimalInput(this)') input.inputMode = 'decimal';
+            input.addEventListener('input', () => {
+                if (input.value && input.value !== '') {
+                    input.classList.add('filled');
+                } else {
+                    input.classList.remove('filled');
+                }
+            });
+            input.addEventListener('blur', () => {
+                if (input.value && input.value !== '') {
+                    input.classList.add('filled');
+                } else {
+                    input.classList.remove('filled');
+                }
+            });
+        });
+
+        let isSubmitting = false;
+
+        async function submitForm(event) {
+            event.preventDefault();
+            if (isSubmitting) return;
+            document.querySelectorAll('input[oninput="formatDecimalInput(this)"]').forEach(input => {
+                finalizeDecimalInput(input);
+            });
+
+            const formData = {
+                client: document.getElementById('client').value.trim(),
+                address: document.getElementById('address').value.trim(),
+                phone: document.getElementById('phone').value.trim(),
+                email: document.getElementById('email').value.trim(),
+                living_area: document.getElementById('living_area').value,
+                residents: document.getElementById('residents').value,
+                heat_loss: document.getElementById('heat_loss').value.replace(/[,]/g, '.'),
+                heating_main: document.getElementById('heating_main').value,
+                heating_supplement: document.getElementById('heating_supplement').value,
+                water_heating: document.getElementById('water_heating').value,
+                boiler_volume: document.getElementById('boiler_volume').value,
+                aku_volume: document.getElementById('aku_volume').value,
+                panel_count: document.getElementById('panel_count').value,
+                fve_power: document.getElementById('fve_power').value.replace(/[,]/g, '.'),
+                battery: document.getElementById('battery').value.replace(/[,]/g, '.'),
+                sauna: document.getElementById('sauna').value,
+                hot_tub: document.getElementById('hot_tub').value,
+                ac: document.getElementById('ac').value,
+                pool_heating: document.getElementById('pool_heating').value,
+                electric_vehicle: document.getElementById('electric_vehicle').value,
+                annual_mileage: document.getElementById('annual_mileage').value,
+                electricity_cost: document.getElementById('electricity_cost').value,
+                gas_cost: document.getElementById('gas_cost').value,
+                coal_cost: document.getElementById('coal_cost').value,
+                wood_cost: document.getElementById('wood_cost').value,
+                pellets_cost: document.getElementById('pellets_cost').value,
+                electricity_usage: document.getElementById('electricity_usage').value.replace(/[,]/g, '.'),
+                gas_usage: document.getElementById('gas_usage').value.replace(/[,]/g, '.'),
+                coal_usage: document.getElementById('coal_usage').value.replace(/[,]/g, '.'),
+                wood_usage: document.getElementById('wood_usage').value.replace(/[,]/g, '.'),
+                pellets_usage: document.getElementById('pellets_usage').value.replace(/[,]/g, '.'),
+                gas_fuel: document.getElementById('gas_fuel').value.replace(/[,]/g, '.'),
+                coal_fuel: document.getElementById('coal_fuel').value.replace(/[,]/g, '.'),
+                wood_fuel: document.getElementById('wood_fuel').value.replace(/[,]/g, '.'),
+                pellets_fuel: document.getElementById('pellets_fuel').value.replace(/[,]/g, '.'),
+                wood_fuel_meters: document.getElementById('wood_fuel_meters').value.replace(/[,]/g, '.'),
+                pellets_fuel_meters: document.getElementById('pellets_fuel_meters').value.replace(/[,]/g, '.')
+            };
+
+            const messageDiv = document.getElementById('message');
+            const subtextDiv = document.getElementById('message-subtext');
+
+            if (!formData.client || !formData.phone) {
+                messageDiv.style.display = 'block';
+                messageDiv.className = 'error';
+                messageDiv.textContent = 'Vyplňte povinná pole: Klient a Telefon';
+                subtextDiv.style.display = 'block';
+                subtextDiv.className = 'error';
+                subtextDiv.textContent = 'Prosím zkontrolujte, zda máte vyplněny povinné údaje (část INICIÁLY). Pokud problém přetrvá, kontaktujte mě prosím – ideálně SMS na 725 020 757.';
+                return;
+            }
+            if (formData.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+                messageDiv.style.display = 'block';
+                messageDiv.className = 'error';
+                messageDiv.textContent = 'Zadejte platnou e-mailovou adresu';
+                subtextDiv.style.display = 'block';
+                subtextDiv.className = 'error';
+                subtextDiv.textContent = 'Prosím zkontrolujte, zda máte vyplněny povinné údaje (část INICIÁLY). Pokud problém přetrvá, kontaktujte mě prosím – ideálně SMS na 725 020 757.';
+                return;
+            }
+            if (formData.living_area && parseFloat(formData.living_area) <= 0) {
+                messageDiv.style.display = 'block';
+                messageDiv.className = 'error';
+                messageDiv.textContent = 'Obytná plocha musí být kladné číslo';
+                subtextDiv.style.display = 'block';
+                subtextDiv.className = 'error';
+                subtextDiv.textContent = 'Prosím zkontrolujte, zda máte vyplněny povinné údaje (část INICIÁLY). Pokud problém přetrvá, kontaktujte mě prosím – ideálně SMS na 725 020 757.';
+                return;
+            }
+            const numberFields = ['living_area', 'residents', 'boiler_volume', 'aku_volume', 'panel_count', 'annual_mileage', 'electricity_cost', 'gas_cost', 'coal_cost', 'wood_cost', 'pellets_cost'];
+            for (const field of numberFields) {
+                if (formData[field] && Number(formData[field]) > 999999) {
+                    messageDiv.style.display = 'block';
+                    messageDiv.className = 'error';
+                    messageDiv.textContent = `Pole ${field} přesahuje maximální hodnotu 999999`;
+                    subtextDiv.style.display = 'block';
+                    subtextDiv.className = 'error';
+                    subtextDiv.textContent = 'Prosím zkontrolujte, zda máte vyplněny povinné údaje (část INICIÁLY). Pokud problém přetrvá, kontaktujte mě prosím – ideálně SMS na 725 020 757.';
+                    return;
+                }
+            }
+
+            const submitButton = document.getElementById('submitButton');
+            isSubmitting = true;
+            submitButton.disabled = true;
+            submitButton.textContent = 'ODESÍLÁM…';
+            messageDiv.style.display = 'block';
+            messageDiv.className = 'success';
+            messageDiv.textContent = 'Odesílání dat...';
+            subtextDiv.style.display = 'none';
+
+            const payload = new URLSearchParams();
+            Object.entries(formData).forEach(([key, value]) => payload.append(key, value));
+
+            try {
+                await fetch(document.getElementById('energyForm').action, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    body: payload,
+                    keepalive: true
+                });
+                messageDiv.style.display = 'block';
+                messageDiv.className = 'success';
+                messageDiv.textContent = 'Data byla úspěšně odeslána!';
+                subtextDiv.style.display = 'block';
+                subtextDiv.className = 'success';
+                subtextDiv.textContent = 'To je vše, děkuji. V příštích dnech pro Vás zpracuji energo-model a budu Vás kontaktovat. Případně dříve, když bude něco nejasné.';
+                document.getElementById('energyForm').reset();
+                document.querySelectorAll('.editable input, .editable select').forEach(element => {
+                    element.classList.remove('filled');
+                });
+                submitButton.textContent = 'ODESLÁNO';
+            } catch (error) {
+                isSubmitting = false;
+                submitButton.disabled = false;
+                submitButton.textContent = 'ODESLAT';
+                messageDiv.style.display = 'block';
+                messageDiv.className = 'error';
+                messageDiv.textContent = 'Chyba při odesílání. Zkontrolujte připojení nebo Google Apps Script.';
+                subtextDiv.style.display = 'block';
+                subtextDiv.className = 'error';
+                subtextDiv.textContent = 'Prosím zkontrolujte, zda máte vyplněny povinné údaje (část INICIÁLY). Pokud problém přetrvá, kontaktujte mě prosím – ideálně SMS na 725 020 757.';
+            }
+        }
+    </script>
+</body>
+</html>
